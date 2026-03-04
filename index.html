@@ -65,7 +65,7 @@ ul     { list-style: none; }
 ::-webkit-scrollbar { width: 0; height: 0; }
 
 /* ════════════════════════════════════════
-   Header & Search
+   Header & Search (Layout Fixed)
 ════════════════════════════════════════ */
 .header-wrap {
   position: sticky;
@@ -85,22 +85,26 @@ ul     { list-style: none; }
 .header-brand {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start; /* 좌측 정렬 */
   margin-bottom: 16px;
   padding: 0 4px;
+  gap: 10px; /* 로고와 텍스트 사이 간격 */
 }
-.header-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--t-hi);
-  letter-spacing: -0.5px;
-  line-height: 1;
-}
+/* 로고 크기 및 어울림 조정 */
 .header-logo {
-  height: 26px;
+  height: 24px;
   width: auto;
   border-radius: 4px;
   display: block;
+  opacity: 0.9;
+}
+/* Any Requests? 텍스트 스타일 디테일 조정 */
+.header-title {
+  font-size: 20px; /* 로고와 어울리는 크기 */
+  font-weight: 600; /* Semi-bold */
+  color: var(--t-hi);
+  letter-spacing: -0.3px; /* 자간 조절 */
+  line-height: 1;
 }
 
 .search-bar {
@@ -180,7 +184,7 @@ ul     { list-style: none; }
 #resultsSection { display: none; }
 #resultsSection.active { display: block; }
 
-.results-header { display: flex; align-items: center; justify-content: flex-start; padding: 16px 16px 8px; }
+.results-header { display: flex; align-items: center; justify(flex-start); padding: 16px 16px 8px; }
 .results-count { font-size: 14px; font-weight: 700; color: var(--uv); letter-spacing: 0.3px; }
 
 #trackList { padding: 0; }
@@ -287,8 +291,8 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 
 <header class="header-wrap" id="headerWrap">
   <div class="header-brand">
-    <span class="header-title">Search</span>
     <img class="header-logo" src="https://miwig-songs.github.io/request/logo.jpg" alt="로고">
+    <span class="header-title">Any Requests?</span>
   </div>
   
   <div class="search-bar" role="search">
@@ -307,9 +311,7 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 
 <section id="homeState" aria-live="polite">
   <img class="home-logo" src="https://miwig-songs.github.io/request/main.jpg" alt="" aria-hidden="true">
-  
   <h1 class="home-brand">미위구 스트리밍 신청곡 페이지</h1>
-  
   <p class="home-sub">듣고 싶은 곡을 검색해서<br>신청하면 같이 들을 수 있어요!</p>
 
   <footer class="app-footer">
