@@ -1,417 +1,964 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-  <title>Midnight With Groove — 신청곡</title>
-  <style>
-    :root {
-      /* Material 3 Base (dark) */
-      --md-sys-color-background: #121212;
-      --md-sys-color-surface: #1e1e1e;
-      --md-sys-color-on-surface: #ffffff;
-      --md-sys-color-on-surface-variant: #b3b3b3;
-      --md-sys-color-primary: #5F4B8B;
-      --md-sys-color-on-primary: #ffffff;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Midnight With Groove — 신청곡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
 
-      /* Spacing */
-      --md-ref-typeface: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-      --md-ref-type-size: 16px;
+/* ════════════════════════════════════════
+   Tokens
+════════════════════════════════════════ */
+:root {
+  /* Neutrals — the whole base */
+  --bg:          #0C0B0F;
+  --surf-1:      #131215;   /* card default */
+  --surf-2:      #1A1820;   /* card hover */
+  --surf-3:      #22202A;   /* elevated / input bg */
+  --surf-4:      #2C2A34;   /* input focused bg */
+  --border-dim:  rgba(255,255,255,0.06);
+  --border-sub:  rgba(255,255,255,0.10);
 
-      /* Shape & shadow */
-      --md-shape-corner-extra-small: 4px;
-      --md-shape-corner-small: 8px;
-      --md-shape-corner-medium: 12px;
-      --md-shape-corner-large: 16px;
-      --md-elevation-low: 0 1px 3px rgba(0,0,0,0.12);
-      --md-elevation-medium: 0 4px 8px rgba(0,0,0,0.15);
-      --md-ref-motion-easing-quick: 0.4;
-    }
+  /* Text */
+  --t-hi:   #F0ECF4;   /* primary text */
+  --t-mid:  #B8B4C0;   /* secondary text */
+  --t-lo:   #6B6875;   /* tertiary / placeholder */
 
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--md-ref-typeface); }
+  /* Ultra Violet — impact only */
+  --uv:         #5F4B8B;   /* raw brand */
+  --uv-light:   #D0BCFF;   /* on-dark accent */
+  --uv-dim:     rgba(208,188,255,0.08);   /* very subtle tint */
 
-    body {
-      background-color: var(--md-sys-color-background);
-      color: var(--md-sys-color-on-surface);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+  /* Semantic */
+  --success:    #5DB97C;
+  --success-bg: rgba(93,185,124,0.12);
 
-    header {
-      background-color: var(--md-sys-color-background);
-      border-bottom: 1px solid #2a2a2a;
-      padding: 16px 20px;
-      box-shadow: var(--md-elevation-medium);
-      margin-bottom: 20px;
-    }
+  /* Shape */
+  --r-sm:   8px;
+  --r-md:  12px;
+  --r-lg:  16px;
+  --r-xl:  24px;
+  --r-f:   9999px;
 
-    .logo-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  /* Motion */
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-std:      cubic-bezier(0.2,  0,    0,    1);
+  --t1: 120ms;
+  --t2: 220ms;
+  --t3: 380ms;
 
-    .logo-container img {
-      height: 24px;
-      cursor: pointer;
-    }
+  font-family: 'Google Sans', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  color-scheme: dark;
+}
 
-    main {
-      flex: 1;
-      padding: 24px 20px;
-      max-width: 500px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-    }
+/* ════════════════════════════════════════
+   Reset
+════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--t-hi);
+  overscroll-behavior: none;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+}
+button { border: none; background: none; cursor: pointer; font: inherit; color: inherit; }
+input  { border: none; background: none; outline: none; font: inherit; color: inherit; }
+img    { display: block; }
+ul     { list-style: none; }
+::-webkit-scrollbar { width: 0; height: 0; }
 
-    .search-header {
-      font-size: 20px;
-      margin-bottom: 16px;
-      letter-spacing: -0.5px;
-    }
+/* ════════════════════════════════════════
+   Top Bar
+════════════════════════════════════════ */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px calc(14px + env(safe-area-inset-top));
+  padding-top: calc(14px + env(safe-area-inset-top));
+  background: rgba(12,11,15,0.85);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-bottom: 1px solid var(--border-dim);
+}
+.top-bar__title {
+  font-family: 'Google Sans Display', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--t-hi);
+  letter-spacing: -0.4px;
+}
+.top-bar__logo {
+  height: 30px;
+  width: auto;
+  border-radius: 6px;
+  opacity: 0.85;
+  filter: brightness(0.95);
+}
 
-    .search-card {
-      background-color: var(--md-sys-color-surface);
-      border-radius: 12px;
-      padding: 16px 20px;
-      box-shadow: var(--md-elevation-medium);
-      margin-bottom: 16px;
-      position: relative;
-    }
+/* ════════════════════════════════════════
+   Search Bar
+════════════════════════════════════════ */
+.search-wrap {
+  padding: 10px 16px 8px;
+  position: sticky;
+  top: calc(58px + env(safe-area-inset-top));
+  z-index: 190;
+  background: rgba(12,11,15,0.80);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  background: var(--surf-3);
+  border-radius: var(--r-f);
+  padding: 0 18px;
+  border: 1px solid var(--border-dim);
+  transition:
+    border-color var(--t1) var(--ease-std),
+    background   var(--t1) var(--ease-std),
+    box-shadow   var(--t2) var(--ease-spring);
+}
+.search-bar:focus-within {
+  border-color: var(--uv-light);
+  background: var(--surf-4);
+  box-shadow: 0 0 0 3px var(--uv-dim);
+}
+.search-bar__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--t-lo);
+  transition: color var(--t1) var(--ease-std);
+}
+.search-bar:focus-within .search-bar__icon { color: var(--uv-light); }
+.search-bar__input {
+  flex: 1;
+  font-size: 15px;
+  color: var(--t-hi);
+  caret-color: var(--uv-light);
+}
+.search-bar__input::placeholder { color: var(--t-lo); }
+.search-bar__clear {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--t-lo);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t1) var(--ease-std), background var(--t1) var(--ease-std);
+}
+.search-bar__clear.visible { opacity: 1; pointer-events: auto; }
+.search-bar__clear:hover  { background: rgba(255,255,255,0.07); }
+.search-bar__clear:active { background: rgba(255,255,255,0.12); }
 
-    .search-input-container {
-      display: flex;
-      align-items: center;
-    }
+/* ════════════════════════════════════════
+   Home State
+════════════════════════════════════════ */
+#homeState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 55vh;
+  padding: 52px 24px;
+  gap: 12px;
+  text-align: center;
+}
+.home-logo {
+  width: 88px;
+  height: 88px;
+  border-radius: var(--r-xl);
+  object-fit: cover;
+  margin-bottom: 8px;
+  /* No glow — let the image speak */
+  box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+}
+.home-brand {
+  font-family: 'Google Sans Display', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--t-hi);
+  letter-spacing: -0.4px;
+}
+.home-sub {
+  font-size: 14px;
+  color: var(--t-mid);
+  line-height: 1.65;
+  max-width: 260px;
+  margin-top: 2px;
+}
+.home-hint-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 12px;
+}
+.hint-chip {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--r-f);
+  background: var(--surf-2);
+  border: 1px solid var(--border-sub);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--t-mid);
+  cursor: pointer;
+  transition:
+    background    var(--t1) var(--ease-std),
+    color         var(--t1) var(--ease-std),
+    border-color  var(--t1) var(--ease-std),
+    transform     var(--t1) var(--ease-spring);
+}
+.hint-chip:hover  { background: var(--surf-3); color: var(--t-hi); border-color: rgba(255,255,255,0.16); }
+.hint-chip:active { transform: scale(0.94); }
 
-    .search-input {
-      flex: 1;
-      padding: 12px 20px;
-      border: none;
-      background-color: transparent;
-      border-radius: var(--md-shape-corner-medium);
-      color: var(--md-sys-color-on-surface);
-      font-size: 16px;
-      outline: 2px solid rgba(255,255,255,0.05);
-      transition: outline-color 0.2s ease;
-    }
+/* ════════════════════════════════════════
+   Loader
+════════════════════════════════════════ */
+#loader {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 56px 24px;
+  color: var(--t-lo);
+  font-size: 13px;
+}
+#loader.active { display: flex; }
+.loader-ring {
+  width: 36px;
+  height: 36px;
+  border: 2.5px solid rgba(255,255,255,0.08);
+  border-top-color: var(--uv-light);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    .search-input:focus {
-      outline-color: var(--md-sys-color-primary);
-    }
+/* ════════════════════════════════════════
+   Results Section
+════════════════════════════════════════ */
+#resultsSection { display: none; }
+#resultsSection.active { display: block; }
 
-    .search-btn {
-      margin-left: 10px;
-      padding: 10px 14px;
-      border: none;
-      background-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(95,75,139,0.2);
-    }
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 6px;
+}
+.results-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--t-lo);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.results-count {
+  font-size: 11px;
+  color: var(--t-lo);
+}
 
-    .track-list {
-      flex: 1;
-      overflow-y: auto;
-      margin-bottom: 16px;
-    }
+/* ════════════════════════════════════════
+   Track List
+════════════════════════════════════════ */
+#trackList { padding: 0 12px 24px; }
 
-    .track-item {
-      display: flex;
-      align-items: center;
-      padding: 8px 12px;
-      border-radius: 8px;
-      background-color: var(--md-sys-color-surface);
-      cursor: pointer;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-      margin-bottom: 6px;
-    }
+/* Stagger fade-in */
+.track-item {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 2px;
+  transition: opacity var(--t2) var(--ease-std);
+  animation: fadeUp var(--t3) var(--ease-spring) both;
+}
+.track-item:nth-child(odd)  { animation-delay: 20ms; }
+.track-item:nth-child(2)    { animation-delay: 50ms; }
+.track-item:nth-child(4)    { animation-delay: 80ms; }
+.track-item:nth-child(6)    { animation-delay: 110ms; }
+.track-item:nth-child(8)    { animation-delay: 140ms; }
+.track-item:nth-child(10)   { animation-delay: 170ms; }
+.track-item:nth-child(12)   { animation-delay: 200ms; }
+.track-item:nth-child(14)   { animation-delay: 230ms; }
+.track-item:nth-child(16)   { animation-delay: 260ms; }
+.track-item:nth-child(18)   { animation-delay: 290ms; }
+.track-item:nth-child(20)   { animation-delay: 310ms; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-    .track-item:hover {
-      background-color: #2a2a2a;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    }
+/* Dim everything else when one is selected */
+body.has-selection .track-item:not(.selected) {
+  opacity: 0.28;
+  pointer-events: none;
+}
 
-    .track-item img {
-      width: 56px;
-      height: 56px;
-      border-radius: 8px;
-      object-fit: cover;
-      margin-right: 12px;
-    }
+/* ── Row ───────────────────────────────── */
+.track-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  background: var(--surf-1);
+  cursor: pointer;
+  min-height: 70px;
+  transition: background var(--t1) var(--ease-std);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.track-row:hover  { background: var(--surf-2); }
+.track-row:active { background: var(--surf-3); }
 
-    .track-info {
-      flex: 1;
-      overflow: hidden;
-    }
+/* Selected: very subtle, not purple-heavy */
+.track-item.selected .track-row {
+  background: var(--surf-2);
+}
 
-    .track-title {
-      font-size: 15px;
-      margin-bottom: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+/* Done */
+.track-item.done .track-row { cursor: default; }
 
-    .track-artist {
-      font-size: 13px;
-      color: var(--md-sys-color-on-surface-variant);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+/* ── Thumbnail ─────────────────────────── */
+.track-thumb {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-md);
+  object-fit: cover;
+  background: var(--surf-3);
+  transition:
+    box-shadow var(--t2) var(--ease-spring),
+    transform  var(--t2) var(--ease-spring);
+}
+/* UV ring ONLY on selected thumb — the single impact moment */
+.track-item.selected .track-thumb {
+  box-shadow: 0 0 0 2px var(--uv-light);
+  transform: scale(1.05);
+}
+.track-item.done .track-thumb { opacity: 0.45; filter: grayscale(1); }
 
-    .no-results {
-      text-align: center;
-      padding: 30px 20px;
-      background-color: var(--md-sys-color-surface);
-      border-radius: 12px;
-      box-shadow: var(--md-elevation-medium);
-      margin-bottom: 20px;
-      color: var(--md-sys-color-on-surface-variant);
-      font-size: 14px;
-    }
+/* ── Text ──────────────────────────────── */
+.track-info { flex: 1; min-width: 0; }
+.track-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--t-hi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  transition: color var(--t1) var(--ease-std);
+}
+.track-item.done .track-title {
+  text-decoration: line-through;
+  color: var(--t-lo);
+}
+.track-sub {
+  font-size: 13px;
+  color: var(--t-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 3px;
+}
 
-    .request-card {
-      background-color: var(--md-sys-color-surface);
-      border-radius: 16px;
-      padding: 20px 20px 24px;
-      box-shadow: var(--md-elevation-medium);
-      margin-bottom: 24px;
-    }
+/* ── Trailing ──────────────────────────── */
+.track-trail {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+}
+.trail-icon {
+  color: var(--t-lo);
+  transition: transform var(--t2) var(--ease-spring), color var(--t1) var(--ease-std);
+}
+.track-item.selected .trail-icon { transform: rotate(90deg); color: var(--t-mid); }
+.done-badge {
+  display: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--success);
+  background: var(--success-bg);
+  border-radius: var(--r-f);
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+.track-item.done .done-badge { display: inline-flex; }
+.track-item.done .trail-icon { display: none; }
 
-    .request-card img {
-      width: 120px;
-      height: 120px;
-      border-radius: 16px;
-      object-fit: cover;
-      margin-bottom: 16px;
-    }
+/* ════════════════════════════════════════
+   Inline Panel — grid expand
+════════════════════════════════════════ */
+.panel-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--t3) var(--ease-spring);
+}
+.track-item.selected .panel-wrap { grid-template-rows: 1fr; }
+.panel-inner { overflow: hidden; }
 
-    .request-card h3 {
-      font-size: 17px;
-      margin-bottom: 4px;
-    }
+.panel {
+  background: var(--surf-2);
+  /* Only UV element inside: the 1px top border */
+  border-top: 1px solid rgba(208,188,255,0.15);
+  padding: 18px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
-    .request-card .track-meta {
-      font-size: 13px;
-      color: var(--md-sys-color-on-surface-variant);
-      margin-bottom: 16px;
-    }
+/* Mini track row inside panel */
+.panel-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-dim);
+}
+.panel-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.panel-info { flex: 1; min-width: 0; }
+.panel-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--t-hi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.panel-artist {
+  font-size: 12px;
+  color: var(--t-mid);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-    .nickname-input {
-      margin-bottom: 16px;
-    }
+/* Nickname field */
+.nick-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--t-lo);
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.nick-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--surf-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-sub);
+  padding: 0 14px;
+  height: 50px;
+  transition:
+    border-color var(--t1) var(--ease-std),
+    box-shadow   var(--t2) var(--ease-spring),
+    background   var(--t1) var(--ease-std);
+}
+.nick-wrap:focus-within {
+  border-color: var(--uv-light);      /* UV appears — impact */
+  box-shadow: 0 0 0 3px var(--uv-dim);
+  background: var(--surf-4);
+}
+.nick-input {
+  flex: 1;
+  font-size: 15px;
+  color: var(--t-hi);
+  caret-color: var(--uv-light);
+}
+.nick-input::placeholder { color: var(--t-lo); }
+.nick-counter {
+  font-size: 12px;
+  color: var(--t-lo);
+  margin-left: 10px;
+  flex-shrink: 0;
+  transition: color var(--t1) var(--ease-std);
+  font-variant-numeric: tabular-nums;
+}
+.nick-counter.near { color: #c49a3c; }
 
-    .nickname-input input {
-      width: 100%;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 12px;
-      background-color: rgba(255,255,255,0.03);
-      color: var(--md-sys-color-on-surface);
-      text-align: center;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-      transition: box-shadow 0.2s ease;
-    }
+/* ── Submit Button — UV as the single CTA ─ */
+.submit-btn {
+  width: 100%;
+  height: 54px;
+  border-radius: var(--r-f);
+  background: var(--uv-light);          /* UV here = primary CTA impact */
+  color: #1C0F3A;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(95,75,139,0.30);
+  transition:
+    transform    var(--t1) var(--ease-spring),
+    box-shadow   var(--t2) var(--ease-spring),
+    filter       var(--t1) var(--ease-std);
+}
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #000;
+  opacity: 0;
+  transition: opacity var(--t1) var(--ease-std);
+}
+.submit-btn:hover::after  { opacity: 0.06; }
+.submit-btn:active::after { opacity: 0.12; }
+.submit-btn:active { transform: scale(0.975); }
+.submit-btn:disabled {
+  background: var(--surf-3);
+  color: var(--t-lo);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.submit-btn.loading { pointer-events: none; }
+.submit-spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(28,15,58,0.25);
+  border-top-color: #1C0F3A;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.submit-btn.loading .submit-spinner { display: block; }
+.submit-btn.loading .submit-text    { display: none; }
 
-    .nickname-input input:focus {
-      box-shadow: 0 4px 8px rgba(95,75,139,0.15);
-    }
+/* Cancel */
+.cancel-btn {
+  width: 100%;
+  height: 40px;
+  border-radius: var(--r-f);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--t-lo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color var(--t1) var(--ease-std), background var(--t1) var(--ease-std);
+}
+.cancel-btn:hover  { color: var(--t-mid); background: rgba(255,255,255,0.04); }
+.cancel-btn:active { background: rgba(255,255,255,0.08); }
 
-    .request-btn {
-      width: 100%;
-      padding: 14px 20px;
-      border: none;
-      border-radius: 16px;
-      background-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 500;
-      box-shadow: 0 4px 12px rgba(95,75,139,0.25);
-      transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    }
+/* ════════════════════════════════════════
+   Divider
+════════════════════════════════════════ */
+.list-divider {
+  height: 1px;
+  background: var(--border-dim);
+  margin: 0 14px;
+}
 
-    .request-btn:hover {
-      background-color: #735bA6;
-      box-shadow: 0 6px 16px rgba(95,75,139,0.3);
-    }
+/* ════════════════════════════════════════
+   Toast
+════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  z-index: 999;
+  background: var(--surf-4);
+  color: var(--t-hi);
+  border-radius: var(--r-lg);
+  padding: 13px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  border: 1px solid var(--border-sub);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity   var(--t2) var(--ease-std),
+    transform var(--t2) var(--ease-spring);
+  white-space: nowrap;
+  max-width: calc(100vw - 40px);
+  text-align: center;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .request-btn:active {
-      transform: scale(0.97);
-    }
-
-    footer {
-      padding: 24px 20px;
-      background-color: var(--md-sys-color-background);
-      border-top: 1px solid #2a2a2a;
-      text-align: center;
-    }
-
-    footer p {
-      color: var(--md-sys-color-on-surface-variant);
-      font-size: 12px;
-      margin-bottom: 4px;
-    }
-
-    .loader {
-      text-align: center;
-      padding: 30px 20px;
-      color: var(--md-sys-color-primary);
-      font-size: 16px;
-      font-weight: 500;
-    }
-  </style>
+/* ════════════════════════════════════════
+   Responsive
+════════════════════════════════════════ */
+@media (min-width: 600px) {
+  #trackList  { max-width: 560px; margin: 0 auto; padding-left: 0; padding-right: 0; }
+  .search-wrap { padding: 12px 20px 8px; }
+  #homeState  { padding: 64px 32px; }
+  .home-logo  { width: 100px; height: 100px; }
+}
+</style>
 </head>
 <body>
 
-  <header>
-    <div class="logo-container" onclick="location.href='.'">
-      <img src="logo.jpg" alt="Midnight With Groove">
-    </div>
-  </header>
+<!-- ── Top Bar ───────────────────────────── -->
+<header class="top-bar">
+  <span class="top-bar__title">검색</span>
+  <img class="top-bar__logo" src="https://miwig-songs.github.io/request/logo.jpg"
+       alt="Midnight With Groove" loading="eager">
+</header>
 
-  <main>
-    <div class="search-header">곡 검색</div>
+<!-- ── Search Bar ───────────────────────── -->
+<div class="search-wrap">
+  <div class="search-bar" role="search">
+    <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input id="searchInput" class="search-bar__input" type="search"
+           placeholder="아티스트, 노래, 가사 등"
+           autocomplete="off" autocorrect="off" spellcheck="false"
+           enterkeyhint="search" aria-label="음악 검색">
+    <button id="clearBtn" class="search-bar__clear" aria-label="검색어 지우기">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+      </svg>
+    </button>
+  </div>
+</div>
 
-    <div class="search-card">
-      <div class="search-input-container">
-        <input type="text" id="searchInput" class="search-input" placeholder="곡명 또는 아티스트">
-        <button class="search-btn" onclick="searchMusic()">🔍</button>
+<!-- ── Home State ───────────────────────── -->
+<section id="homeState" aria-live="polite">
+  <img class="home-logo" src="https://miwig-songs.github.io/request/logo.jpg"
+       alt="" aria-hidden="true">
+  <h1 class="home-brand">Midnight With Groove</h1>
+  <p class="home-sub">듣고 싶은 곡을 검색해서<br>DJ에게 신청하세요</p>
+  <div class="home-hint-row">
+    <button class="hint-chip" data-query="Bruno Mars">Bruno Mars</button>
+    <button class="hint-chip" data-query="Frank Ocean">Frank Ocean</button>
+    <button class="hint-chip" data-query="NewJeans">NewJeans</button>
+    <button class="hint-chip" data-query="The Weeknd">The Weeknd</button>
+  </div>
+</section>
+
+<!-- ── Loader ───────────────────────────── -->
+<div id="loader" role="status" aria-label="검색 중">
+  <div class="loader-ring"></div>
+  <span>검색 중</span>
+</div>
+
+<!-- ── Results ──────────────────────────── -->
+<section id="resultsSection" aria-label="검색 결과">
+  <div class="results-header">
+    <span class="results-label">검색 결과</span>
+    <span class="results-count" id="resultsCount"></span>
+  </div>
+  <ul id="trackList" role="list"></ul>
+</section>
+
+<!-- ── Toast ────────────────────────────── -->
+<div id="toast" role="alert" aria-live="assertive"></div>
+
+<script>
+const GAS_URL = '여기에_웹앱_URL_넣기';
+
+let debTimer      = null;
+let selItem       = null;
+let selTrack      = null;
+
+const $search  = document.getElementById('searchInput');
+const $clear   = document.getElementById('clearBtn');
+const $home    = document.getElementById('homeState');
+const $loader  = document.getElementById('loader');
+const $results = document.getElementById('resultsSection');
+const $list    = document.getElementById('trackList');
+const $count   = document.getElementById('resultsCount');
+const $toast   = document.getElementById('toast');
+
+/* ── Search ─────────────────────────────── */
+function doSearch(q) {
+  q = q.trim();
+  if (!q) { showHome(); return; }
+  showLoader();
+  const s = document.createElement('script');
+  s.src = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=song&country=KR&limit=10&callback=_itcb`;
+  s.onerror = () => { showHome(); toast('검색 중 오류가 발생했습니다'); };
+  document.head.appendChild(s);
+  s.onload = () => document.head.removeChild(s);
+}
+
+window._itcb = function(data) {
+  const r = (data && data.results) || [];
+  r.length ? renderList(r) : showEmpty();
+};
+
+/* ── Render ─────────────────────────────── */
+function renderList(tracks) {
+  resetSel();
+  $list.innerHTML = '';
+  $count.textContent = `${tracks.length}곡`;
+
+  tracks.forEach((t, i) => {
+    const thumb   = (t.artworkUrl100 || '').replace('100x100', '300x300');
+    const song    = t.trackName      || '알 수 없음';
+    const artist  = t.artistName     || '';
+    const album   = t.collectionName || '';
+    const preview = t.previewUrl     || '';
+    const ytLink  = `https://music.youtube.com/search?q=${encodeURIComponent(artist + ' ' + song)}`;
+    const tdata   = { song, artist, album, thumb, link: ytLink, previewUrl: preview };
+
+    const li = document.createElement('li');
+    li.className = 'track-item';
+
+    li.innerHTML = `
+      <div class="track-row" tabindex="0" role="button" aria-expanded="false">
+        <img class="track-thumb" src="${thumb}" alt="" loading="lazy">
+        <div class="track-info">
+          <div class="track-title">${esc(song)}</div>
+          <div class="track-sub">${esc(artist)}${album ? ' · ' + esc(album) : ''}</div>
+        </div>
+        <div class="track-trail">
+          <svg class="trail-icon" width="18" height="18" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+          <span class="done-badge">완료</span>
+        </div>
       </div>
-    </div>
-
-    <div id="loader" class="loader" style="display:none;">로딩 중</div>
-    <div class="track-list" id="trackList"></div>
-
-    <div class="request-card" id="requestArea" style="display:none;">
-      <img id="selImage" src="" alt="앨범" />
-      <h3 id="selTitle"></h3>
-      <p id="selArtist"></p>
-      <p class="track-meta" id="selMeta"></p>
-      <div class="nickname-input">
-        <input type="text" id="nickname" placeholder="닉네임" />
-      </div>
-      <button class="request-btn" onclick="submitRequest()">신청하기</button>
-    </div>
-  </main>
-
-  <footer>
-    <p>Midnight With Groove</p>
-    <p id="currentDate"></p>
-  </footer>
-
-  <script>
-    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('ko-KR');
-
-    const GOOGLE_SCRIPT_URL = '여기에_웹앱_URL을_넣으세요';
-
-    let currentTrack = null;
-
-    function searchMusic() {
-      const query = document.getElementById('searchInput').value.trim();
-      if (!query) return;
-
-      document.getElementById('trackList').innerHTML = '';
-      document.getElementById('requestArea').style.display = 'none';
-      document.getElementById('loader').style.display = 'block';
-
-      const script = document.createElement('script');
-      script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&country=KR&limit=10&callback=handleTracks`;
-      document.body.appendChild(script);
-    }
-
-    function handleTracks(data) {
-      const loader = document.getElementById('loader');
-      loader.style.display = 'none';
-
-      const trackList = document.getElementById('trackList');
-      trackList.innerHTML = '';
-
-      if (data.results.length === 0) {
-        trackList.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
-        return;
-      }
-
-      data.results.forEach(track => {
-        const thumb = track.artworkUrl100.replace('100x100bb', '150x150bb');
-        const item = document.createElement('div');
-        item.className = 'track-item';
-        item.onclick = () => selectTrack(track, thumb);
-        item.innerHTML = `
-          <img src="${thumb}" />
-          <div class="track-info">
-            <div class="track-title">${track.trackName}</div>
-            <div class="track-artist">${track.artistName}</div>
+      <div class="panel-wrap">
+        <div class="panel-inner">
+          <div class="panel">
+            <div class="panel-preview">
+              <img class="panel-thumb" src="${thumb}" alt="">
+              <div class="panel-info">
+                <div class="panel-title">${esc(song)}</div>
+                <div class="panel-artist">${esc(artist)}</div>
+              </div>
+            </div>
+            <div>
+              <div class="nick-label">닉네임</div>
+              <div class="nick-wrap">
+                <input class="nick-input" type="text" maxlength="15"
+                       placeholder="채팅 닉네임을 입력하세요" autocomplete="off">
+                <span class="nick-counter">0 / 15</span>
+              </div>
+            </div>
+            <button class="submit-btn" type="button">
+              <div class="submit-spinner" aria-hidden="true"></div>
+              <span class="submit-text">신청하기</span>
+            </button>
+            <button class="cancel-btn" type="button">취소</button>
           </div>
-        `;
-        trackList.appendChild(item);
-      });
-    }
+        </div>
+      </div>`;
 
-    function selectTrack(track, thumb) {
-      const searchString = `${track.artistName} ${track.trackName} official audio`;
-      const ytMusicUrl = `https://music.youtube.com/search?q=${encodeURIComponent(searchString)}`;
+    const row   = li.querySelector('.track-row');
+    const nick  = li.querySelector('.nick-input');
+    const ctr   = li.querySelector('.nick-counter');
+    const sbtn  = li.querySelector('.submit-btn');
+    const cbtn  = li.querySelector('.cancel-btn');
 
-      currentTrack = {
-        song: track.trackName,
-        artist: track.artistName,
-        album: track.collectionName,
-        thumbnail: thumb.replace('150x150bb', '300x300bb'),
-        link: ytMusicUrl
-      };
-
-      document.getElementById('trackList').innerHTML = '';
-      document.getElementById('requestArea').style.display = 'block';
-
-      document.getElementById('selImage').src = currentTrack.thumbnail;
-      document.getElementById('selTitle').innerText = currentTrack.song;
-      document.getElementById('selArtist').innerText = currentTrack.artist;
-      document.getElementById('selMeta').innerText = currentTrack.album;
-    }
-
-    async function submitRequest() {
-      const nickname = document.getElementById('nickname').value.trim();
-      if (!nickname) {
-        alert('닉네임을 입력해주세요.');
-        return;
+    /* Select */
+    function select() {
+      if (li.classList.contains('done')) return;
+      if (selItem === li) return;
+      if (selItem) {
+        selItem.classList.remove('selected');
+        selItem.querySelector('.track-row').setAttribute('aria-expanded', 'false');
       }
-
-      if (!currentTrack) {
-        alert('곡을 먼저 선택해주세요.');
-        return;
-      }
-
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.innerText = '전송 중...';
-
-      const payload = { ...currentTrack, nickname };
-
-      try {
-        const res = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload),
-          headers: { 'Content-Type': 'application/json' }
-        });
-        if (res.ok) {
-          alert('신청 완료');
-          location.reload();
-        } else {
-          alert('전송 실패');
-        }
-      } catch (err) {
-        alert('오류');
-      } finally {
-        btn.disabled = false;
-        btn.innerText = '신청하기';
-      }
+      selItem  = li;
+      selTrack = tdata;
+      li.classList.add('selected');
+      row.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('has-selection');
+      setTimeout(() => { li.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); nick.focus(); }, 280);
     }
-  </script>
+    row.addEventListener('click', select);
+    row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); } });
+
+    /* Counter */
+    nick.addEventListener('input', () => {
+      const n = nick.value.length;
+      ctr.textContent = `${n} / 15`;
+      ctr.classList.toggle('near', n >= 13);
+    });
+
+    /* Submit */
+    sbtn.addEventListener('click', () => {
+      const u = nick.value.trim();
+      if (!u) { nick.focus(); shake(nick.closest('.nick-wrap')); return; }
+      sbtn.classList.add('loading');
+      sbtn.disabled = true;
+      send({ ...selTrack, user: u }, li, sbtn);
+    });
+
+    /* Cancel */
+    cbtn.addEventListener('click', () => deselect());
+
+    /* Divider */
+    if (i > 0) {
+      const d = document.createElement('li');
+      d.className = 'list-divider';
+      d.setAttribute('role', 'separator');
+      $list.appendChild(d);
+    }
+    $list.appendChild(li);
+  });
+
+  hideAll();
+  $results.classList.add('active');
+}
+
+/* ── Send ───────────────────────────────── */
+async function send(payload, item, btn) {
+  try {
+    if (GAS_URL === '여기에_웹앱_URL_넣기') {
+      await new Promise(r => setTimeout(r, 800));
+      onDone(item);
+      return;
+    }
+    const r = await fetch(GAS_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!r.ok) throw new Error(r.statusText);
+    onDone(item);
+  } catch {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    toast('신청에 실패했습니다. 다시 시도해주세요.');
+  }
+}
+
+function onDone(item) {
+  item.classList.remove('selected');
+  item.classList.add('done');
+  document.body.classList.remove('has-selection');
+  selItem = selTrack = null;
+  toast('신청이 완료되었습니다');
+}
+
+function deselect() {
+  if (!selItem) return;
+  selItem.classList.remove('selected');
+  selItem.querySelector('.track-row').setAttribute('aria-expanded', 'false');
+  document.body.classList.remove('has-selection');
+  selItem = selTrack = null;
+}
+
+function resetSel() {
+  document.body.classList.remove('has-selection');
+  selItem = selTrack = null;
+}
+
+/* ── UI States ──────────────────────────── */
+function showHome()   { hideAll(); $home.style.display = 'flex'; }
+function showLoader() { hideAll(); $loader.classList.add('active'); }
+function showEmpty() {
+  hideAll();
+  $list.innerHTML = `
+    <li style="padding:52px 24px;text-align:center;">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.4" style="margin:0 auto 12px;display:block;opacity:.3">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <p style="font-size:15px;font-weight:500;color:var(--t-mid);">검색 결과가 없습니다</p>
+      <p style="font-size:13px;color:var(--t-lo);margin-top:6px;">다른 키워드로 검색해 보세요</p>
+    </li>`;
+  $count.textContent = '';
+  $results.classList.add('active');
+}
+function hideAll() {
+  $home.style.display    = 'none';
+  $loader.classList.remove('active');
+  $results.classList.remove('active');
+  resetSel();
+}
+
+/* ── Toast ──────────────────────────────── */
+let _tt = null;
+function toast(msg) {
+  $toast.textContent = msg;
+  $toast.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => $toast.classList.remove('show'), 2600);
+}
+
+/* ── Shake ──────────────────────────────── */
+function shake(el) {
+  el.animate([
+    { transform: 'translateX(0)' },
+    { transform: 'translateX(-7px)' },
+    { transform: 'translateX(7px)' },
+    { transform: 'translateX(-4px)' },
+    { transform: 'translateX(4px)' },
+    { transform: 'translateX(0)' }
+  ], { duration: 360, easing: 'ease' });
+}
+
+/* ── Escape ─────────────────────────────── */
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Input Handlers ─────────────────────── */
+$search.addEventListener('input', () => {
+  const v = $search.value;
+  $clear.classList.toggle('visible', v.length > 0);
+  clearTimeout(debTimer);
+  if (!v.trim()) { showHome(); return; }
+  debTimer = setTimeout(() => doSearch(v), 440);
+});
+
+$search.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { clearTimeout(debTimer); doSearch($search.value); }
+});
+
+$clear.addEventListener('click', () => {
+  $search.value = '';
+  $clear.classList.remove('visible');
+  $search.focus();
+  showHome();
+});
+
+document.querySelectorAll('.hint-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    $search.value = c.dataset.query;
+    $clear.classList.add('visible');
+    doSearch(c.dataset.query);
+  });
+});
+
+showHome();
+</script>
 </body>
 </html>
