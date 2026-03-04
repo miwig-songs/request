@@ -41,7 +41,6 @@
   --t2: 220ms;
   --t3: 380ms;
 
-  /* 프리텐다드 폰트 패밀리 설정 */
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   -webkit-tap-highlight-color: transparent;
   color-scheme: dark;
@@ -57,7 +56,8 @@ body {
   background: var(--bg);
   color: var(--t-hi);
   overscroll-behavior: none;
-  padding-bottom: calc(120px + env(safe-area-inset-bottom));
+  /* 하단 검색창이 없어졌으므로 일반적인 안전 여백만 확보 */
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
 }
 button { border: none; background: none; cursor: pointer; font: inherit; color: inherit; }
 input  { border: none; background: none; outline: none; font: inherit; color: inherit; }
@@ -66,35 +66,62 @@ ul     { list-style: none; }
 ::-webkit-scrollbar { width: 0; height: 0; }
 
 /* ════════════════════════════════════════
-   Top Bar
+   Integrated Header (M3 Expressive)
 ════════════════════════════════════════ */
-.top-bar {
-  position: sticky; top: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 20px calc(14px + env(safe-area-inset-top)); padding-top: calc(14px + env(safe-area-inset-top));
-  background: rgba(12,11,15,0.85); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%);
+.header-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  padding: calc(12px + env(safe-area-inset-top)) 20px 16px;
+  background: rgba(12,11,15,0.85);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--t1), box-shadow var(--t2);
+}
+/* 스크롤 시 헤더 그림자 및 보더 표출 */
+.header-wrap.scrolled {
   border-bottom: 1px solid var(--border-dim);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
-.top-bar__title { font-size: 22px; font-weight: 700; color: var(--t-hi); letter-spacing: -0.3px; line-height: 1; }
-.top-bar__logo { height: 22px; width: auto; border-radius: 5px; opacity: 0.85; filter: brightness(0.95); display: block; }
 
-/* ════════════════════════════════════════
-   Search Bar (Floating Bottom)
-════════════════════════════════════════ */
-.search-wrap {
-  position: fixed; left: 0; right: 0; bottom: calc(8px + env(safe-area-inset-bottom)); z-index: 300;
-  padding: 0 16px; opacity: 1; transition: opacity var(--t2) var(--ease-std);
+.header-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
-.search-wrap:focus-within { opacity: 1 !important; }
+.header-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--t-hi);
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+.header-logo {
+  height: 22px;
+  width: auto;
+  border-radius: 5px;
+  opacity: 0.85;
+  filter: brightness(0.95);
+  display: block;
+}
 
 .search-bar {
-  display: flex; align-items: center; gap: 10px; height: 56px;
-  background: rgba(34,32,42,0.78); border-radius: var(--r-f); padding: 0 18px; border: 1px solid var(--border-dim);
-  box-shadow: 0 10px 34px rgba(0,0,0,0.55); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
-  transition: border-color var(--t1) var(--ease-std), background var(--t1) var(--ease-std), box-shadow var(--t2) var(--ease-spring);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  background: var(--surf-2);
+  border-radius: var(--r-f);
+  padding: 0 16px;
+  border: 1px solid var(--border-sub);
+  transition: background var(--t1), border-color var(--t1), box-shadow var(--t2) var(--ease-spring);
 }
 .search-bar:focus-within {
-  border-color: var(--uv); background: rgba(44,42,52,0.82);
-  box-shadow: 0 10px 34px rgba(0,0,0,0.55), 0 0 0 2px rgba(95,75,139,0.45);
+  background: var(--surf-3);
+  border-color: var(--uv);
+  box-shadow: 0 0 0 2px rgba(95,75,139,0.3);
 }
 .search-bar__icon { flex-shrink: 0; width: 20px; height: 20px; color: var(--t-lo); transition: color var(--t1); }
 .search-bar:focus-within .search-bar__icon { color: var(--uv); }
@@ -113,7 +140,8 @@ ul     { list-style: none; }
 ════════════════════════════════════════ */
 #homeState {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 55vh; padding: 52px 24px; gap: 12px; text-align: center;
+  /* 헤더가 커졌으므로 높이 비중 살짝 조정 */
+  min-height: 50vh; padding: 40px 24px; gap: 12px; text-align: center;
 }
 .home-logo { width: 88px; height: 88px; border-radius: var(--r-xl); object-fit: cover; margin-bottom: 8px; box-shadow: 0 8px 40px rgba(0,0,0,0.55); }
 .home-brand { font-size: 26px; font-weight: 700; color: var(--t-hi); letter-spacing: -0.4px; }
@@ -141,7 +169,6 @@ ul     { list-style: none; }
 #resultsSection.active { display: block; }
 
 .results-header { display: flex; align-items: center; justify-content: flex-start; padding: 14px 20px 10px; }
-/* 000 Songs 크기 줄이고, 울트라 바이올렛 원색 적용, 투명도 제거 */
 .results-count { font-size: 14px; font-weight: 700; color: var(--uv); letter-spacing: 0.5px; opacity: 1; }
 
 #trackList { padding: 0 12px 24px; }
@@ -250,7 +277,7 @@ body.has-selection .track-item:not(.selected) { opacity: 0.35; }
    Toast
 ════════════════════════════════════════ */
 #toast {
-  position: fixed; top: calc(24px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%) translateY(-20px);
+  position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(20px);
   z-index: 999; background: rgba(44,42,52,0.95); color: var(--t-hi); border-radius: var(--r-f); padding: 14px 24px; font-size: 14px; font-weight: 600;
   box-shadow: 0 10px 40px rgba(0,0,0,0.8); border: 1px solid var(--border-sub); backdrop-filter: blur(12px);
   opacity: 0; pointer-events: none; transition: opacity var(--t2) var(--ease-spring), transform var(--t2) var(--ease-spring);
@@ -261,19 +288,18 @@ body.has-selection .track-item:not(.selected) { opacity: 0.35; }
 input[type=search]::-webkit-search-cancel-button { display: none; }
 @media (min-width: 600px) {
   #trackList  { max-width: 560px; margin: 0 auto; }
-  .search-wrap { padding: 0 20px; }
   #homeState  { padding: 64px 32px; }
 }
 </style>
 </head>
 <body>
 
-<header class="top-bar">
-  <span class="top-bar__title">Search</span>
-  <img class="top-bar__logo" src="https://miwig-songs.github.io/request/logo.jpg" alt="Midnight With Groove" loading="eager">
-</header>
-
-<div class="search-wrap" id="searchWrap">
+<header class="header-wrap" id="headerWrap">
+  <div class="header-brand">
+    <span class="header-title">Search</span>
+    <img class="header-logo" src="https://miwig-songs.github.io/request/logo.jpg" alt="Midnight With Groove" loading="eager">
+  </div>
+  
   <div class="search-bar" role="search">
     <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -285,7 +311,7 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
       </svg>
     </button>
   </div>
-</div>
+</header>
 
 <section id="homeState" aria-live="polite">
   <img class="home-logo" src="https://miwig-songs.github.io/request/logo.jpg" alt="" aria-hidden="true">
@@ -333,7 +359,7 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 
   const savedNickname = localStorage.getItem('mwg_nickname') || '';
 
-  const $searchWrap = document.getElementById('searchWrap');
+  const $headerWrap = document.getElementById('headerWrap');
   const $search  = document.getElementById('searchInput');
   const $clear   = document.getElementById('clearBtn');
   const $home    = document.getElementById('homeState');
@@ -343,16 +369,17 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   const $count   = document.getElementById('resultsCount');
   const $toast   = document.getElementById('toast');
 
+  /* 상단 헤더 스크롤 그림자 효과 */
   let lastScrollY = window.scrollY;
   let isScrolling = false;
   window.addEventListener('scroll', () => {
     if (!isScrolling) {
       window.requestAnimationFrame(() => {
         const currentScrollY = window.scrollY;
-        if (currentScrollY > 50 && currentScrollY > lastScrollY) {
-          $searchWrap.style.opacity = '0.85'; 
+        if (currentScrollY > 10) {
+          $headerWrap.classList.add('scrolled');
         } else {
-          $searchWrap.style.opacity = '1';
+          $headerWrap.classList.remove('scrolled');
         }
         lastScrollY = currentScrollY;
         isScrolling = false;
@@ -402,6 +429,7 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
       loadMore();
       hideAllStates();
       $results.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       showEmpty();
     }
@@ -678,11 +706,13 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  /* 입력 시 자동 검색/초기화면 돌아감 방지 */
   $search.addEventListener('input', () => {
     const v = $search.value;
     $clear.classList.toggle('visible', v.length > 0);
   });
 
+  /* 엔터 입력 시에만 액션 동작 */
   $search.addEventListener('keydown', e => {
     if (e.key === 'Enter') { 
       e.preventDefault(); 
