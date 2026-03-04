@@ -134,18 +134,17 @@ ul     { list-style: none; }
 }
 .header-brand:active { opacity: 0.7; }
 
-/* ✅ Fix 1 — 로고 비율 유지: 고정 높이 + width:auto */
+/* ✅ 1. 헤더 로고 — 정사각형 썸네일 */
 .header-logo {
-  height: 28px;
-  width: auto;
-  max-width: 120px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
-  border-radius: 5px;
-  object-fit: contain;
+  border-radius: 9px;
+  object-fit: cover;        /* 비율 크롭, 꽉 채움 */
   box-shadow:
-    0 0 0 1px rgba(148,130,255,0.2),
-    0 0 12px rgba(95,75,139,0.45),
-    0 0 26px rgba(95,75,139,0.15);
+    0 0 0 1px rgba(148,130,255,0.22),
+    0 0 12px rgba(95,75,139,0.50),
+    0 0 26px rgba(95,75,139,0.16);
 }
 
 .header-text {
@@ -246,19 +245,21 @@ ul     { list-style: none; }
   max-width: 256px;
 }
 
-/* ── Social Footer ── */
+/* ✅ 2. 푸터 — 아이폰 1줄 3-column 그리드 */
 .app-footer {
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 항상 균등 3분할 */
+  gap: 8px;
   margin-top: 40px;
-  flex-wrap: wrap;
-  justify-content: center;
+  width: 100%;
+  max-width: 340px;          /* 홈 섹션 폭에 맞게 제한 */
 }
+
 .social-link {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 18px;
+  justify-content: center;   /* 아이콘 없으니 텍스트 중앙정렬 */
+  padding: 11px 6px;
   border-radius: var(--r-f);
   border: 1px solid var(--border-mid);
   background: rgba(148,130,255,0.04);
@@ -267,11 +268,12 @@ ul     { list-style: none; }
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.1px;
+  white-space: nowrap;       /* 텍스트 줄바꿈 방지 */
   transition:
-    color      var(--t2),
+    color        var(--t2),
     border-color var(--t2),
-    background var(--t2),
-    box-shadow var(--t2);
+    background   var(--t2),
+    box-shadow   var(--t2);
 }
 .social-link:active,
 .social-link:hover {
@@ -280,26 +282,6 @@ ul     { list-style: none; }
   background: rgba(148,130,255,0.10);
   box-shadow: 0 0 16px rgba(148,128,224,0.18);
 }
-/* SVG 아이콘 */
-.social-link svg {
-  width: 16px; height: 16px;
-  fill: currentColor;
-  flex-shrink: 0;
-}
-/* ✅ Fix 3 — 치지직 img 아이콘 (비율/크기 통일) */
-.social-link .chzzk-icon {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
-  object-fit: contain;
-  flex-shrink: 0;
-  /* 어두운 배경에서 가시성 확보 */
-  filter: brightness(0) invert(1);
-  opacity: 0.65;
-  transition: opacity var(--t2);
-}
-.social-link:hover .chzzk-icon,
-.social-link:active .chzzk-icon { opacity: 1; }
 
 /* ════════════════════════════════════════
    Loader
@@ -595,29 +577,19 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   <p class="home-sub">듣고 싶은 곡을 검색해서<br>신청하면 같이 들을 수 있어요!</p>
 
   <footer class="app-footer">
-    <a href="https://www.youtube.com/@midnightwithgroove" target="_blank" rel="noopener"
-       class="social-link" aria-label="유튜브">
-      <svg viewBox="0 0 24 24">
-        <path d="M21.582 6.186a2.636 2.636 0 0 0-1.854-1.868C18.093 3.883 12 3.883 12 3.883s-6.093 0-7.728.435A2.636 2.636 0 0 0 2.418 6.186C2 7.828 2 12 2 12s0 4.172.418 5.814a2.636 2.636 0 0 0 1.854 1.868c1.635.435 7.728.435 7.728.435s6.093 0 7.728-.435a2.636 2.636 0 0 0 1.854-1.868C22 16.172 22 12 22 12s0-4.172-.418-5.814zM9.995 15.005l.005-6.01L15.5 12l-5.51 3.005z"/>
-      </svg>
-      YouTube
-    </a>
-    <a href="http://instagram.com/midnightwithgroove" target="_blank" rel="noopener"
-       class="social-link" aria-label="인스타그램">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
-      </svg>
-      Instagram
-    </a>
-    <!-- ✅ Fix 3 — 치지직: 공식 favicon 이미지 사용 (simpleicons 미등록 상태) -->
-    <a href="https://chzzk.naver.com/d17bed9f876d6a17be54e4f23c3c30d2" target="_blank" rel="noopener"
-       class="social-link" aria-label="치지직">
-      <img class="chzzk-icon"
-           src="https://chzzk.naver.com/favicon.ico"
-           alt="치지직 아이콘">
-      Chzzk
-    </a>
-  </footer>
+  <a href="https://www.youtube.com/@midnightwithgroove"
+     target="_blank" rel="noopener" class="social-link" aria-label="유튜브">
+    YouTube
+  </a>
+  <a href="http://instagram.com/midnightwithgroove"
+     target="_blank" rel="noopener" class="social-link" aria-label="인스타그램">
+    Instagram
+  </a>
+  <a href="https://chzzk.naver.com/d17bed9f876d6a17be54e4f23c3c30d2"
+     target="_blank" rel="noopener" class="social-link" aria-label="치지직">
+    Chzzk
+  </a>
+</footer>
 </section>
 
 <div id="loader" role="status" aria-label="검색 중">
