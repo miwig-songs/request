@@ -8,31 +8,27 @@
 <style>
 
 /* ════════════════════════════════════════
-   Tokens (Premium Mesh Gradient Style)
+   Tokens (Native Media App Style)
 ════════════════════════════════════════ */
 :root {
-  /* True Black & Premium Gradient Glow */
+  /* True Black Background */
   --bg:          #000000;
   
-  /* Mesh Gradient Colors */
-  --glow-1:      rgba(95, 75, 139, 0.18); /* 울트라 바이올렛 글로우 */
-  --glow-2:      rgba(13, 11, 15, 0);     /* 배경과 자연스럽게 섞이도록 투명 */
-
   /* Flat Dark Surfaces */
   --surf-1:      #121212;   
-  --surf-2:      #1A1A1A;   
-  --surf-3:      #2A2A2A;   
+  --surf-2:      #181818;   
+  --surf-3:      #242424;   
 
-  --border-dim:  rgba(255,255,255,0.06);
+  --border-dim:  rgba(255,255,255,0.08);
 
   --t-hi:   #FFFFFF;   
   --t-mid:  #A7A7A7;  
-  --t-lo:   #6B6B6B;   
+  --t-lo:   #727272;   
 
   --uv:         #5F4B8B;   
   --uv-light:   #D0BCFF;   
 
-  --success:    #1ED760; /* 스포티파이 그린 */
+  --success:    #1ED760;
 
   --r-sm:   4px;
   --r-md:   8px;
@@ -51,7 +47,7 @@
 }
 
 /* ════════════════════════════════════════
-   Reset & Premium 배경 그라데이션
+   Reset
 ════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { height: 100%; -webkit-text-size-adjust: 100%; background: var(--bg); }
@@ -61,24 +57,7 @@ body {
   color: var(--t-hi);
   overscroll-behavior: none;
   padding-bottom: calc(40px + env(safe-area-inset-bottom));
-  position: relative;
-  overflow-x: hidden;
 }
-
-/* 1. 은은한 메쉬 그라데이션 배경 효과 */
-body::before {
-  content: '';
-  position: fixed;
-  inset: -100px;
-  background: 
-    radial-gradient(circle at 20% 10%, var(--glow-1), var(--glow-2) 40%),
-    radial-gradient(circle at 80% 80%, var(--glow-1), var(--glow-2) 40%),
-    radial-gradient(circle at 50% 50%, #0C0B0F, var(--bg));
-  z-index: -1;
-  filter: blur(80px);
-  pointer-events: none;
-}
-
 button { border: none; background: none; cursor: pointer; font: inherit; color: inherit; }
 input  { border: none; background: none; outline: none; font: inherit; color: inherit; }
 img    { display: block; }
@@ -86,97 +65,54 @@ ul     { list-style: none; }
 ::-webkit-scrollbar { width: 0; height: 0; }
 
 /* ════════════════════════════════════════
-   역동적인 대형 헤더 (Scrolled Top Bar)
+   Header & Search
 ════════════════════════════════════════ */
-/* 초기 대형 헤더 */
-.large-header-wrap {
-  padding: calc(16px + env(safe-area-inset-top)) 16px 16px;
-  background: transparent; /* 배경 그라데이션 비치게 투명하게 */
-  transition: opacity var(--t1), transform var(--t1);
-}
-
-.large-header-brand {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  padding: 0 4px;
-}
-.large-header-title {
-  font-size: 32px; /* Material 3 Expressive 대형 타이틀 크기 */
-  font-weight: 700;
-  color: var(--t-hi);
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-}
-.large-header-logo {
-  height: 28px;
-  width: auto;
-  border-radius: 4px;
-  display: block;
-}
-
-/* 스크롤 시 슬림 헤더 */
-.slim-header-wrap {
+.header-wrap {
   position: sticky;
   top: 0;
   z-index: 300;
   padding: calc(16px + env(safe-area-inset-top)) 16px 12px;
-  background: rgba(0, 0, 0, 0.82);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
   border-bottom: 1px solid transparent;
-  display: none; /* 초기상태 가림 */
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: opacity var(--t2), transform var(--t2), border-color var(--t2);
+  transition: border-color var(--t1);
 }
-
-/* 스크롤 시 등장 애니메이션 */
-.slim-header-wrap.show {
-  display: flex;
-  flex-direction: column;
-  opacity: 1;
-  transform: translateY(0);
-}
-.slim-header-wrap.scrolled {
+.header-wrap.scrolled {
   border-bottom: 1px solid var(--border-dim);
 }
 
-.slim-header-brand {
+.header-brand {
   display: flex;
   align-items: center;
-  gap: 12px; /* 로고와 타이틀 간격 */
-  margin-bottom: 12px;
+  justify-content: space-between;
+  margin-bottom: 16px;
   padding: 0 4px;
 }
-.slim-header-logo {
-  height: 20px;
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--t-hi);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.header-logo {
+  height: 26px;
   width: auto;
   border-radius: 4px;
   display: block;
-}
-.slim-header-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--t-hi);
-  letter-spacing: -0.3px;
-  line-height: 1;
 }
 
 .search-bar {
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 44px; /* iOS 네이티브 폼과 유사한 슬림한 높이 */
+  height: 44px;
   background: var(--surf-3);
   border-radius: 10px;
   padding: 0 12px;
   transition: background var(--t1), box-shadow var(--t1);
 }
-/* 대형 헤더 검색창 */
-.large-header-wrap .search-bar { height: 48px; }
-
 .search-bar:focus-within {
   background: #333333;
   box-shadow: 0 0 0 1px var(--uv);
@@ -195,18 +131,18 @@ ul     { list-style: none; }
 .search-bar__clear svg { width: 16px; height: 16px; }
 
 /* ════════════════════════════════════════
-   Home State (미니멀하고 깨끗하게)
+   Home State
 ════════════════════════════════════════ */
 #homeState {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 55vh; padding: 24px 24px 40px; text-align: center;
+  min-height: 60vh; padding: 40px 24px; text-align: center;
 }
 .home-logo { 
   width: 140px; height: 140px; 
   border-radius: var(--r-lg); object-fit: cover; margin-bottom: 24px; 
   box-shadow: 0 12px 40px rgba(0,0,0,0.5); 
 }
-.home-brand { font-size: 28px; font-weight: 700; color: var(--t-hi); letter-spacing: -0.5px; margin-bottom: 8px; line-height: 1.2; }
+.home-brand { font-size: 22px; font-weight: 700; color: var(--t-hi); letter-spacing: -0.4px; margin-bottom: 8px; }
 .home-sub { font-size: 15px; color: var(--t-mid); line-height: 1.5; max-width: 280px; }
 
 /* ── Footer (유튜브 / 인스타그램 / 치지직) ── */
@@ -239,13 +175,13 @@ ul     { list-style: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ════════════════════════════════════════
-   Results Section & Track List (Edge-to-Edge)
+   Results Section & Track List
 ════════════════════════════════════════ */
 #resultsSection { display: none; }
 #resultsSection.active { display: block; }
 
 .results-header { display: flex; align-items: center; justify-content: flex-start; padding: 16px 16px 8px; }
-.results-count { font-size: 14px; font-weight: 700; color: var(--uv-light); letter-spacing: 0.3px; }
+.results-count { font-size: 14px; font-weight: 700; color: var(--uv); letter-spacing: 0.3px; }
 
 #trackList { padding: 0; }
 
@@ -254,7 +190,6 @@ ul     { list-style: none; }
 .track-item:nth-child(even) { animation-delay: 40ms; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* 박스형태, 보더 모두 제거 - 네이티브 엣지 투 엣지 스타일 */
 .track-row { 
   display: flex; align-items: center; gap: 14px; padding: 8px 16px; 
   background: transparent; cursor: pointer; transition: background var(--t1); user-select: none; 
@@ -266,7 +201,6 @@ ul     { list-style: none; }
 .thumb-wrap {
   position: relative; width: 48px; height: 48px; flex-shrink: 0; border-radius: var(--r-sm);
   overflow: hidden; background: var(--surf-3); cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3); /* 은은한 그림자 추가 */
 }
 .track-thumb { width: 100%; height: 100%; object-fit: cover; }
 
@@ -295,7 +229,7 @@ ul     { list-style: none; }
 .track-item.done .trail-icon { display: none; }
 
 /* ════════════════════════════════════════
-   Inline Panel (Expanded State)
+   Inline Panel
 ════════════════════════════════════════ */
 .panel-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--t3) var(--ease-spring); }
 .track-item.selected .panel-wrap { grid-template-rows: 1fr; }
@@ -351,38 +285,18 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 </head>
 <body>
 
-<div class="large-header-wrap" id="largeHeader">
-  <div class="large-header-brand">
-    <h1 class="large-header-title">미위구 스트리밍<br>신청곡 페이지</h1>
-    <img class="large-header-logo" src="https://miwig-songs.github.io/request/logo.jpg" alt="로고">
+<header class="header-wrap" id="headerWrap">
+  <div class="header-brand">
+    <span class="header-title">Search</span>
+    <img class="header-logo" src="https://miwig-songs.github.io/request/logo.jpg" alt="로고">
   </div>
   
   <div class="search-bar" role="search">
     <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
     </svg>
-    <input id="searchInputLarge" class="search-bar__input searchInput" type="search" placeholder="아티스트, 노래, 가사 등" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="음악 검색">
-    <button id="clearBtnLarge" class="search-bar__clear clearBtn" aria-label="검색어 지우기">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
-  </div>
-</div>
-
-<header class="slim-header-wrap" id="slimHeader">
-  <div class="slim-header-brand">
-    <img class="slim-header-logo" src="https://miwig-songs.github.io/request/logo.jpg" alt="로고">
-    <span class="slim-header-title">Search</span>
-  </div>
-  
-  <div class="search-bar" role="search">
-    <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <input id="searchInputSlim" class="search-bar__input searchInput" type="search" placeholder="아티스트, 노래, 가사 등" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="음악 검색">
-    <button id="clearBtnSlim" class="search-bar__clear clearBtn" aria-label="검색어 지우기">
+    <input id="searchInput" class="search-bar__input" type="search" placeholder="아티스트, 노래, 가사 등" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="음악 검색">
+    <button id="clearBtn" class="search-bar__clear" aria-label="검색어 지우기">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -454,10 +368,9 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 
   const savedNickname = localStorage.getItem('mwg_nickname') || '';
 
-  const $largeHeader = document.getElementById('largeHeader');
-  const $slimHeader  = document.getElementById('slimHeader');
-  const $inputs  = document.querySelectorAll('.searchInput');
-  const $clears   = document.querySelectorAll('.clearBtn');
+  const $headerWrap = document.getElementById('headerWrap');
+  const $search  = document.getElementById('searchInput');
+  const $clear   = document.getElementById('clearBtn');
   const $home    = document.getElementById('homeState');
   const $loader  = document.getElementById('loader');
   const $results = document.getElementById('resultsSection');
@@ -465,27 +378,16 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   const $count   = document.getElementById('resultsCount');
   const $toast   = document.getElementById('toast');
 
-  /* 1. 상단 역동적인 헤더 스크롤 제어 */
+  /* 스크롤 시 헤더 하단 라인 추가 */
   let isScrolling = false;
   window.addEventListener('scroll', () => {
     if (!isScrolling) {
       window.requestAnimationFrame(() => {
-        const currentScrollY = window.scrollY;
-        
-        // 대형 헤더가 화면에서 사라질 즈음 슬림 헤더 등장
-        if (currentScrollY > 100) {
-          $slimHeader.classList.add('show');
-          // 슬림 헤더가 상단에 고정된 후 블러 효과와 보더 처리
-          if(currentScrollY > 150) {
-            $slimHeader.classList.add('scrolled');
-          } else {
-            $slimHeader.classList.remove('scrolled');
-          }
+        if (window.scrollY > 10) {
+          $headerWrap.classList.add('scrolled');
         } else {
-          $slimHeader.classList.remove('show');
-          $slimHeader.classList.remove('scrolled');
+          $headerWrap.classList.remove('scrolled');
         }
-        
         isScrolling = false;
       });
       isScrolling = true;
@@ -508,10 +410,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     if (!q) { showHome(); return; }
     showLoader();
     stopAudio();
-    
-    // 검색 시 대형/슬림 검색창 동기화
-    $inputs.forEach(input => input.value = q);
-    $clears.forEach(clear => clear.classList.add('visible'));
     
     const oldScript = document.getElementById('itunes-jsonp');
     if (oldScript) oldScript.remove();
@@ -675,8 +573,7 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
         row.setAttribute('aria-expanded', 'true');
         
         setTimeout(() => { 
-          // 헤더가 슬림 상태일 때 가림 방지를 위해 위치 조정
-          const headerOffset = 130; 
+          const headerOffset = 110; 
           const elementPosition = li.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
           window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -802,34 +699,23 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  /* 대형/슬림 검색창 동기화 및 제어 */
-  $inputs.forEach((input, index) => {
-    input.addEventListener('input', () => {
-      const v = input.value;
-      // 다른 검색창도 똑같이 입력값 적용
-      $inputs.forEach(otherInput => { if(otherInput !== input) otherInput.value = v; });
-      // 다른 지우기 버튼도 똑같이 표출 제어
-      $clears.forEach(clear => clear.classList.toggle('visible', v.length > 0));
-    });
-
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') { 
-        e.preventDefault(); 
-        doSearch(input.value); 
-        input.blur(); // 키보드 내리기
-      }
-    });
+  $search.addEventListener('input', () => {
+    const v = $search.value;
+    $clear.classList.toggle('visible', v.length > 0);
   });
 
-  $clears.forEach((clear) => {
-    clear.addEventListener('click', () => {
-      // 모든 검색창 초기화
-      $inputs.forEach(input => input.value = '');
-      // 모든 지우기 버튼 숨김
-      $clears.forEach(c => c.classList.remove('visible'));
-      // 포커스는 누른 곳 유지 (선택사항)
-      showHome();
-    });
+  $search.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { 
+      e.preventDefault(); 
+      doSearch($search.value); 
+      $search.blur(); 
+    }
+  });
+
+  $clear.addEventListener('click', () => {
+    $search.value = '';
+    $clear.classList.remove('visible');
+    $search.focus();
   });
 
   showHome();
