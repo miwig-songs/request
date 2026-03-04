@@ -21,7 +21,7 @@
   --border-sub:  rgba(255,255,255,0.10);
 
   --t-hi:   #F0ECF4;   
-  --t-mid:  #A39EAD; /* 가독성을 위해 살짝 더 대비를 줌 */  
+  --t-mid:  #A39EAD;  
   --t-lo:   #6B6875;   
 
   --uv:         #5F4B8B;   
@@ -84,7 +84,6 @@ ul     { list-style: none; }
   position: fixed; left: 0; right: 0; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 300;
   padding: 0 16px; opacity: 1; transition: opacity var(--t2) var(--ease-std);
 }
-/* 사파리 키보드 대응 */
 body.nick-focused .search-wrap { display: none !important; }
 .search-wrap:focus-within { opacity: 1 !important; }
 
@@ -152,9 +151,9 @@ body.nick-focused .search-wrap { display: none !important; }
 .track-item:nth-child(even) { animation-delay: 50ms; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-body.has-selection .track-item:not(.selected) { opacity: 0.28; pointer-events: none; }
+/* ✅ 버그 수정 부분: pointer-events: none 제거하여 다른 항목 터치 가능하도록 변경 */
+body.has-selection .track-item:not(.selected) { opacity: 0.35; }
 
-/* 선택된 항목에 희미한 글로우 효과 (Ambient Glow) */
 .track-item.selected { position: relative; z-index: 10; box-shadow: 0 0 40px rgba(95, 75, 139, 0.15); }
 
 .track-row { display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: var(--surf-1); cursor: pointer; min-height: 70px; transition: background var(--t1) var(--ease-std); user-select: none; }
@@ -166,14 +165,12 @@ body.has-selection .track-item:not(.selected) { opacity: 0.28; pointer-events: n
 .thumb-wrap {
   position: relative; width: 52px; height: 52px; flex-shrink: 0; border-radius: var(--r-md);
   overflow: hidden; background: var(--surf-3); cursor: pointer;
-  /* 부드러운 그림자 추가 */
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   transition: transform var(--t2) var(--ease-spring), box-shadow var(--t2) var(--ease-spring);
 }
 .track-thumb { width: 100%; height: 100%; object-fit: cover; transition: transform var(--t2) var(--ease-spring); }
 .track-item.selected .thumb-wrap { box-shadow: 0 0 0 2px var(--uv), 0 8px 20px rgba(0,0,0,0.6); transform: scale(1.05); }
 
-/* 재생 중 애니메이션 디테일 */
 @keyframes pulseGlow {
   0% { box-shadow: 0 0 0 2px var(--uv), 0 0 10px rgba(208,188,255,0.4); }
   50% { box-shadow: 0 0 0 3px var(--uv-light), 0 0 20px rgba(208,188,255,0.7); }
@@ -192,20 +189,11 @@ body.has-selection .track-item:not(.selected) { opacity: 0.28; pointer-events: n
 .thumb-wrap.playing .icon-play { display: none; }
 .thumb-wrap.playing .icon-pause { display: block; }
 
-/* ── Text (시각적 계층화 적용) ── */
+/* ── Text ── */
 .track-info { flex: 1; min-width: 0; }
-.track-title { 
-  font-size: 21px; 
-  font-weight: 700; /* Bolder */
-  color: var(--t-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; 
-}
+.track-title { font-size: 21px; font-weight: 700; color: var(--t-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
 .track-item.done .track-title { text-decoration: line-through; color: var(--t-lo); }
-.track-sub { 
-  font-size: 19px; 
-  color: var(--t-mid); 
-  opacity: 0.8; /* 가수는 살짝 흐리게 하여 제목 강조 */
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; 
-}
+.track-sub { font-size: 19px; color: var(--t-mid); opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
 
 /* ── Trailing ── */
 .track-trail { flex-shrink: 0; display: flex; align-items: center; justify-content: center; min-width: 20px; }
@@ -231,7 +219,7 @@ body.has-selection .track-item:not(.selected) { opacity: 0.28; pointer-events: n
 .nick-counter { font-size: 12px; color: var(--t-lo); margin-left: 10px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .nick-counter.near { color: #c49a3c; }
 
-/* ── Submit Button & Micro-interactions ── */
+/* ── Submit Button ── */
 .submit-btn { 
   width: 100%; height: 54px; border-radius: var(--r-f); background: var(--uv); color: #fff; font-size: 15px; font-weight: 700; 
   letter-spacing: 0.2px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; position: relative; 
@@ -242,14 +230,7 @@ body.has-selection .track-item:not(.selected) { opacity: 0.28; pointer-events: n
 .submit-btn:active::after { opacity: 0.12; }
 .submit-btn:active { transform: scale(0.975); }
 .submit-btn:disabled { background: var(--surf-3); color: var(--t-lo); box-shadow: none; cursor: not-allowed; }
-
-/* 성공 애니메이션 클래스 */
-.submit-btn.success {
-  background: var(--success);
-  color: #000;
-  box-shadow: 0 4px 20px rgba(93, 185, 124, 0.4);
-}
-
+.submit-btn.success { background: var(--success); color: #000; box-shadow: 0 4px 20px rgba(93, 185, 124, 0.4); }
 .submit-btn.loading { pointer-events: none; }
 .submit-spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
 .submit-btn.loading .submit-spinner { display: block; }
@@ -262,7 +243,7 @@ body.has-selection .track-item:not(.selected) { opacity: 0.28; pointer-events: n
 .list-divider { height: 1px; background: var(--border-dim); margin: 0 14px; }
 
 /* ════════════════════════════════════════
-   Toast (Dynamic Island 느낌 추가)
+   Toast
 ════════════════════════════════════════ */
 #toast {
   position: fixed; top: calc(24px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%) translateY(-20px);
@@ -348,7 +329,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   let renderCount = 0;
   const CHUNK_SIZE = 50;
 
-  // 로컬 스토리지 닉네임 불러오기
   const savedNickname = localStorage.getItem('mwg_nickname') || '';
 
   const $searchWrap = document.getElementById('searchWrap');
@@ -361,7 +341,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   const $count   = document.getElementById('resultsCount');
   const $toast   = document.getElementById('toast');
 
-  /* 스크롤 투명도 제어 */
   let lastScrollY = window.scrollY;
   let isScrolling = false;
   window.addEventListener('scroll', () => {
@@ -391,7 +370,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     }
   }
 
-  /* 검색 API (200곡 한도) */
   function doSearch(q) {
     q = q.trim();
     if (!q) { showHome(); return; }
@@ -427,7 +405,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     }
   };
 
-  /* 무한 스크롤 및 렌더링 */
   function loadMore() {
     const chunk = allResults.slice(renderCount, renderCount + CHUNK_SIZE);
     if (!chunk.length) return;
@@ -503,10 +480,8 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
       const checkIcon = li.querySelector('.submit-check');
       const cbtn      = li.querySelector('.cancel-btn');
 
-      // 닉네임 글자수 UI 초기화 (저장된 닉네임 대응)
       if(savedNickname.length >= 13) ctr.classList.add('near');
 
-      /* 오디오 재생 컨트롤 */
       thumbWrap.addEventListener('click', (e) => {
         e.stopPropagation(); 
         e.preventDefault();
@@ -541,7 +516,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
         });
       });
 
-      /* 아코디언 (접고 펴기) */
       function select() {
         if (li.classList.contains('done')) return;
         
@@ -568,41 +542,33 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
         
         setTimeout(() => { 
           li.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-          // 닉네임이 비어있을 때만 포커스 이동 (사용성 개선)
           if (!nick.value) nick.focus(); 
         }, 320);
       }
       row.addEventListener('click', select);
       row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); } });
 
-      /* 사파리 가상 키보드 UI 보호 연동 */
       nick.addEventListener('focus', () => document.body.classList.add('nick-focused'));
       nick.addEventListener('blur', () => document.body.classList.remove('nick-focused'));
 
-      /* 닉네임 Counter */
       nick.addEventListener('input', () => {
         const n = nick.value.length;
         ctr.textContent = `${n} / 15`;
         ctr.classList.toggle('near', n >= 13);
       });
 
-      /* 제출 (성공 마이크로 인터랙션 추가) */
       sbtn.addEventListener('click', () => {
         const u = nick.value.trim();
         if (!u) { nick.focus(); shake(nick.closest('.nick-wrap')); return; }
         sbtn.classList.add('loading');
         sbtn.disabled = true;
         
-        // 닉네임 로컬스토리지 저장
         localStorage.setItem('mwg_nickname', u);
-        
         send({ ...selTrack, user: u }, li, sbtn, checkIcon);
       });
 
-      /* 취소 */
       cbtn.addEventListener('click', () => deselect());
 
-      /* 구분선 추가 */
       if (offsetIndex + i > 0) {
         const d = document.createElement('li');
         d.className = 'list-divider';
@@ -613,11 +579,10 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     });
   }
 
-  /* ── Send 데이터 전송 ── */
   async function send(payload, item, btn, checkIcon) {
     try {
       if (GAS_URL === '여기에_웹앱_URL_넣기') {
-        await new Promise(r => setTimeout(r, 800)); // 통신 지연 시뮬레이션
+        await new Promise(r => setTimeout(r, 800)); 
         triggerSuccess(item, btn, checkIcon);
         return;
       }
@@ -635,16 +600,13 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     }
   }
 
-  // 성공 시 마이크로 인터랙션 처리 함수
   function triggerSuccess(item, btn, checkIcon) {
     btn.classList.remove('loading');
     btn.classList.add('success');
     checkIcon.style.display = 'block';
     
-    // 체크 표시 0.8초 보여준 뒤 완료 처리
     setTimeout(() => {
       onDone(item);
-      // 버튼 상태 원상복구 (혹시 모를 재사용을 위해)
       btn.classList.remove('success');
       btn.disabled = false;
       checkIcon.style.display = 'none';
@@ -673,7 +635,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     selItem = selTrack = null;
   }
 
-  /* ── UI States ── */
   function hideAllStates() {
     $home.style.display    = 'none';
     $loader.classList.remove('active');
@@ -696,7 +657,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     $results.classList.add('active');
   }
 
-  /* ── Toast (Dynamic Island Style) ── */
   let _tt = null;
   function toast(msg) {
     $toast.textContent = msg;
@@ -705,7 +665,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     _tt = setTimeout(() => $toast.classList.remove('show'), 2600);
   }
 
-  /* ── Shake Error Animation ── */
   function shake(el) {
     el.animate([
       { transform: 'translateX(0)' }, { transform: 'translateX(-7px)' },
@@ -720,7 +679,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  /* ── Inputs ── */
   $search.addEventListener('input', () => {
     const v = $search.value;
     $clear.classList.toggle('visible', v.length > 0);
