@@ -2,179 +2,234 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Music App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>My Music App</title>
+    <link rel="manifest" href="application/manifest+json,{
+        'name': 'My Music',
+        'short_name': 'Music',
+        'start_url': '/',
+        'display': 'standalone',
+        'background_color': '#000000',
+        'theme_color': '#FC3B30',
+        'icons': [{'src': 'image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...','sizes': '192x192','type': 'image/png'}]
+    }">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: #000; 
-            color: #fff; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            overflow-x: hidden;
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: rgba(28, 28, 30, 0.92);
+            --glass-blur: blur(50px);
+            --header-red: #FC3B30;
+            --text-primary: #F2F2F7;
+            --text-secondary: #8E8E93;
+            --text-meta: #A9A9AF;
+            --blue-accent: #007AFF;
+            --border-glass: rgba(84, 84, 88, 0.65);
+        }
+
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
         }
         
-        /* 상단 헤더: 빨간 그라데이션, 중앙 로고, 우측 앱 로고 */
+        html, body { 
+            height: 100%; overflow: hidden;
+            background: var(--bg-primary); 
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            font-size: 17px; line-height: 1.294118;
+            scroll-behavior: smooth;
+        }
+        
+        /* Status Bar 흉내 */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            body { padding-top: env(safe-area-inset-top); }
+        }
+        
+        /* 헤더: 왼쪽 로고 + 오른쪽 검색 */
         .header { 
-            background: linear-gradient(135deg, #FF3B30 0%, #FF2D55 100%); 
-            padding: 12px 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            position: sticky; 
-            top: 0; 
-            z-index: 100;
+            position: fixed; top: 0; left: 0; right: 0;
+            height: 44px; background: var(--header-red);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; z-index: 200;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.1);
         }
-        .main-logo { 
-            font-size: 28px; 
-            font-weight: 700; 
-            letter-spacing: -0.5px;
+        .logo-placeholder { 
+            width: 32px; height: 32px; 
+            background: rgba(255,255,255,0.25);
+            border-radius: 6px; border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
         }
-        .app-logo { 
-            width: 36px; 
-            height: 36px; 
-            background: rgba(255,255,255,0.2); 
-            border-radius: 18px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 20px;
+        .logo-placeholder::before {
+            content: 'M'; /* 당신 이니셜 임시 */
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px; font-weight: 700; color: #fff;
+        }
+        .header-search { 
+            font-size: 17px; font-weight: 600; 
+            color: #fff; letter-spacing: -0.2px;
         }
         
-        /* 컨텐츠 영역: 세로 1단 리스팅 */
-        .content { padding: 24px 20px 100px 20px; }
-        .card { 
-            background: linear-gradient(145deg, #1C1C1E, #2C2C2E); 
-            border-radius: 16px; 
-            padding: 24px; 
-            margin-bottom: 20px; 
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.2s;
+        /* 메인 컨텐츠 */
+        .main { padding: 64px 16px 110px 16px; }
+        .playlist-card {
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(20px);
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);
+            padding: 24px 20px; margin-bottom: 24px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        .card:hover { transform: translateY(-2px); }
-        .card-title { 
-            font-size: 22px; 
-            font-weight: 600; 
-            margin-bottom: 6px; 
-            line-height: 1.3;
+        .playlist-card:hover {
+            transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
-        .card-meta { 
-            color: #A1A1A6; 
-            font-size: 16px; 
-            margin-bottom: 20px;
+        .playlist-title { 
+            font-size: 28px; font-weight: 700; 
+            margin-bottom: 4px; letter-spacing: -0.5px;
         }
-        .card-buttons { display: flex; gap: 12px; }
-        .btn-primary { 
-            background: linear-gradient(135deg, #007AFF, #0056CC); 
-            color: #fff; 
-            border: none; 
-            padding: 12px 24px; 
-            border-radius: 28px; 
-            font-size: 16px; 
-            font-weight: 600; 
-            min-width: 80px;
+        .playlist-meta { 
+            color: var(--text-meta); font-size: 16px; 
+            font-weight: 400; margin-bottom: 24px;
         }
-        .btn-secondary { 
-            background: transparent; 
-            color: #fff; 
-            border: 1px solid #38383A; 
-            padding: 12px 24px; 
-            border-radius: 28px; 
-            font-size: 16px; 
-            font-weight: 600;
+        .action-buttons { display: flex; gap: 12px; align-items: center; }
+        .btn-play { 
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-accent), #005BB5);
+            border: none; position: relative; cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,122,255,0.4);
+            transition: all 0.2s;
+        }
+        .btn-play:hover { transform: scale(1.05); }
+        .btn-play::after { 
+            content: ''; position: absolute;
+            border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+            width: 0; height: 0; top: 18px; left: 22px;
+            transform: rotate(45deg) translateX(2px);
+        }
+        .btn-download { 
+            background: transparent; color: var(--text-meta);
+            border: 1px solid var(--border-glass); padding: 10px 22px;
+            border-radius: 25px; font-size: 16px; font-weight: 400;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-download:hover { background: rgba(255,255,255,0.1); }
+        
+        /* 더 작은 카드들 */
+        .mini-card { 
+            padding: 16px 20px; margin-bottom: 16px;
+            background: rgba(255,255,255,0.02); border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
         
-        /* 하단 네비게이션: 홈/검색/라이브러리만 */
-        .bottom-nav { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: rgba(28,28,30,0.95); 
-            backdrop-filter: blur(20px); 
-            border-top: 1px solid #38383A; 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 12px 0;
+        /* iOS 앱 같은 플로팅 네비게이션 */
+        .nav-bar { 
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: 83px; background: var(--bg-secondary);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border-top: 0.5px solid var(--border-glass);
+            display: flex; align-items: flex-end; padding: 8px 32px 12px;
+            gap: 8px; justify-content: center; z-index: 100;
         }
         .nav-item { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            color: #8E8E93; 
-            text-decoration: none; 
-            font-size: 11px; 
-            font-weight: 500; 
-            padding: 8px;
-            transition: color 0.2s;
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--text-secondary); padding: 4px 8px; min-width: 44px;
+            font-size: 10px; font-weight: 500; cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        .nav-item.active { color: #FFF; }
-        .nav-icon { font-size: 24px; margin-bottom: 4px; }
+        .nav-item.active { color: var(--text-primary); }
+        .nav-item:active { transform: scale(0.96); }
+        .nav-icon { 
+            font-size: 26px; margin-bottom: 2px; 
+            display: block; line-height: 1;
+        }
+        .nav-home .nav-icon::before { content: "⌂"; }
+        .nav-search .nav-icon::before { content: "🔍"; }
+        .nav-library .nav-icon::before { content: "⟟"; }
         
         /* 스크롤바 숨김 */
         ::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+        
+        /* PWA 오프라인 지원 */
+        @media (display-mode: standalone) { .header { top: env(safe-area-inset-top); } }
     </style>
 </head>
 <body>
-    <!-- 헤더 -->
+    <!-- 고정 헤더 -->
     <header class="header">
-        <div class="main-logo"> Music</div>
-        <div class="app-logo">♪</div>
+        <div class="logo-placeholder"></div>
+        <div class="header-search">검색</div>
     </header>
     
-    <!-- 메인 컨텐츠 -->
-    <main class="content">
-        <!-- 플레이리스트 카드 -->
-        <div class="card">
-            <div class="card-title">1월 7일 ~ 3월 4일</div>
-            <div class="card-meta">1,234곡 • 89시간 30분</div>
-            <div class="card-buttons">
-                <button class="btn-primary">재생</button>
-                <button class="btn-secondary">다운로드</button>
+    <!-- 스크롤 컨텐츠 -->
+    <main class="main">
+        <!-- 메인 플레이리스트 -->
+        <article class="playlist-card">
+            <h1 class="playlist-title">1월 7일 ~ 3월 4일</h1>
+            <p class="playlist-meta">1,234곡 • 89시간 30분</p>
+            <div class="action-buttons">
+                <button class="btn-play" onclick="playPlaylist()" aria-label="재생"></button>
+                <button class="btn-download" onclick="downloadPlaylist()">다운로드</button>
             </div>
-        </div>
+        </article>
         
-        <!-- Apple Music 1 카드 -->
-        <div class="card">
-            <div class="card-title">아이폰을 위한 Apple Music 1</div>
-            <div class="card-meta">라디오 스테이션</div>
-        </div>
+        <!-- 보조 카드들 -->
+        <article class="mini-card">
+            <h2 class="playlist-title">아이폰을 위한 Apple Music 1</h2>
+            <p class="playlist-meta">라디오 스테이션</p>
+        </article>
         
-        <!-- Apple Music 라이브 카드 -->
-        <div class="card">
-            <div class="card-title">Apple Music 라이브</div>
-            <div class="card-meta">라이브 이벤트</div>
-        </div>
+        <article class="mini-card">
+            <h2 class="playlist-title">Apple Music 라이브</h2>
+            <p class="playlist-meta">라이브 이벤트</p>
+        </article>
         
-        <!-- 추가 더미 카드들 -->
-        <div class="card">
-            <div class="card-title">최근 재생한 곡</div>
-            <div class="card-meta">15곡 • 1시간 2분</div>
+        <!-- 추가 공간 -->
+        <div style="height: 200vh; opacity: 0.5;">
+            <p>스크롤 테스트...</p>
         </div>
     </main>
     
-    <!-- 하단 네비 (재생바 제거, 검색버튼 대체) -->
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
-            <div class="nav-icon">🏠</div>
+    <!-- iOS 앱 완전 동일 플로팅 네비 -->
+    <nav class="nav-bar">
+        <a href="#home" class="nav-item active nav-home">
+            <span class="nav-icon"></span>
             <span>홈</span>
         </a>
-        <a href="#" class="nav-item">
-            <div class="nav-icon">🔍</div>
+        <a href="#search" class="nav-item nav-search">
+            <span class="nav-icon"></span>
             <span>검색</span>
         </a>
-        <a href="#" class="nav-item">
-            <div class="nav-icon">📚</div>
+        <a href="#library" class="nav-item nav-library">
+            <span class="nav-icon"></span>
             <span>라이브러리</span>
         </a>
     </nav>
-    
+
     <script>
-        // 간단한 인터랙션
-        document.querySelectorAll('.btn-primary').forEach(btn => {
-            btn.addEventListener('click', () => {
-                alert('재생 시작!');
+        // 실제 동작 JS
+        function playPlaylist() {
+            const audio = new Audio('audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEA...');
+            audio.play().then(() => {
+                document.querySelector('.btn-play').style.background = '#34C759';
             });
+        }
+        
+        function downloadPlaylist() {
+            alert('다운로드 시작! (데모)');
+        }
+        
+        // 네비 액티브 상태
+        document.querySelectorAll('.nav-item').forEach((item, i) => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+        
+        // PWA 설치 프롬프트
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            deferredPrompt = e;
         });
     </script>
 </body>
