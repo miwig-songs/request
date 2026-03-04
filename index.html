@@ -3,138 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Stylus Seoul - 앨범 기준 검색</title>
+  <title>Stylus Seoul - 신청곡</title>
   <style>
-    /* --- 헤더/푸터는 Stylus Seoul 톤 그대로 (귀하가 기존에 쓰던 헤더/푸터 CSS를 여기에 붙이면 됨) --- */
-    /* (예: logo, header, footer, div.indent, etc.) */
-
-    /* 헤더/푸터 공통 변수만 여기서 정의 */
     :root {
-      /* 헤더/푸터용 톤 (Stylus Seoul 톤 유지) */
-      --header-footer-bg: rgba(18,18,18,0.95);
-      --border-color: rgba(255,255,255,0.1);
-
-      /* 컨텐츠 영역용: 애플뮤직 + 울트라 바이올렛 포인트 */
-      --content-bg: #121212;
+      --bg-color: #121212;
       --card-bg: #1e1e1e;
       --text-main: #ffffff;
       --text-sub: #b3b3b3;
-      --accent: #5F4B8B;      /* 팬톤 울트라 바이올렛 */
-      --accent-hover: #735bA6;
+      --accent: #5F4B8B;
+      --border-color: #2a2a2a;
     }
 
-    /* 기본 리셋 */
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
-      background-color: var(--content-bg);
+      background-color: var(--bg-color);
       color: var(--text-main);
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      font-family: 'Pretendard', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* 헤더 (Stylus Seoul 톤 유지) */
+    header, footer {
+      background-color: var(--bg-color);
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
     header {
       position: sticky;
       top: 0;
-      background-color: var(--header-footer-bg);
-      border-bottom: 1px solid var(--border-color);
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 16px;
       z-index: 100;
     }
-    .logo-container img { height: 22px; cursor: pointer; }
-    .header-right a { color: var(--text-main); text-decoration: none; font-size: 24px; font-weight: 300; }
 
-    /* 푸터 (Stylus Seoul 톤 유지) */
-    footer {
-      padding: 30px 20px 40px;
-      text-align: center;
-      border-top: 1px solid var(--border-color);
-      background: var(--header-footer-bg);
-      margin-top: auto;
-    }
-    footer p {
-      color: #555;
-      font-size: 12px;
-      margin-bottom: 4px;
-      letter-spacing: 0.5px;
+    .logo-container img {
+      height: 24px;
+      cursor: pointer;
     }
 
-    /* ---------------------------------------- */
-    /* 🔥  컨텐츠 영역 (애플뮤직 + 울트라 바이올렛 감성)  */
-    /* ---------------------------------------- */
-
-    main {
+    .main {
       flex: 1;
-      width: 100%;
+      padding: 32px 20px;
       max-width: 500px;
       margin: 0 auto;
-      padding: 24px 20px;
     }
 
-    /* 애플뮤직 검색 헤드라인 */
     .search-header {
       font-size: 20px;
-      font-weight: 700;
       margin-bottom: 24px;
-      text-align: left;
-      letter-spacing: -0.5px;
     }
 
-    /* 검색 바 (곡 기준 검색 UI) */
     .search-bar {
-      position: relative;
       margin-bottom: 24px;
     }
 
     .search-bar input {
       width: 100%;
-      padding: 16px 50px 16px 20px;
-      background: var(--card-bg);
-      border: 1px solid transparent;
+      padding: 16px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
       border-radius: 16px;
-      font-size: 16px;
       color: var(--text-main);
+      font-size: 16px;
       outline: none;
-      transition: all 0.2s ease;
     }
 
     .search-bar input:focus {
       border-color: var(--accent);
-      background: #1a1a1a;
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-sub);
-      font-size: 18px;
     }
 
     .search-btn {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
+      margin-top: 8px;
+      padding: 10px 16px;
+      background-color: var(--accent);
+      color: #ffffff;
       border: none;
-      color: var(--accent);
-      font-size: 18px;
-      padding: 5px;
+      border-radius: 8px;
       cursor: pointer;
+      font-size: 14px;
     }
 
-    /* 검색 결과: 애플뮤직 같은 리스트 디자인 */
     .track-list {
-      margin-bottom: 30px;
+      margin-bottom: 32px;
     }
 
     .track-item {
@@ -142,10 +93,14 @@
       align-items: center;
       padding: 12px 10px;
       border-radius: 12px;
+      background-color: var(--card-bg);
+      margin-bottom: 8px;
       cursor: pointer;
-      transition: background 0.2s;
     }
-    .track-item:hover, .track-item:focus-within { background: rgba(95,75,139,0.15); }
+
+    .track-item:hover {
+      background-color: rgba(95, 75, 139, 0.15);
+    }
 
     .track-item img {
       width: 56px;
@@ -161,162 +116,131 @@
     }
 
     .track-title {
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-bottom: 4px;
     }
 
     .track-artist {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--text-sub);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .track-meta {
-      font-size: 12px;
-      color: #999;
-      margin-top: 4px;
-    }
-
-    /* 검색 결과 없음 */
     .no-results {
       text-align: center;
-      padding: 40px 20px;
-      background: rgba(255,255,255,0.02);
+      padding: 32px;
+      background-color: var(--card-bg);
       border-radius: 12px;
-      color: #666;
-      font-size: 15px;
+      margin-bottom: 24px;
+      color: #999;
+      font-size: 14px;
     }
 
-    /* 곡 선택 후 신청 영역 */
     .request-area {
       display: none;
-      padding: 24px 20px;
-      background: var(--card-bg);
-      border-radius: 20px;
-      margin-bottom: 24px;
+      padding: 24px;
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      margin-bottom: 32px;
       border: 1px solid var(--accent);
     }
 
-    .request-card h3, .request-card p {
-      margin-bottom: 8px;
-      text-align: center;
+    .request-card img {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      object-fit: cover;
     }
 
-    .request-card img {
-      width: 160px;
-      height: 160px;
-      border-radius: 10px;
-      margin: 0 auto;
-      display: block;
+    .request-card h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .request-card .track-meta {
+      font-size: 14px;
+      color: var(--text-sub);
       margin-bottom: 16px;
     }
 
-    .request-nickname {
-      margin: 16px 0;
+    .nickname-input {
+      margin-bottom: 16px;
     }
 
-    .request-nickname input {
+    .nickname-input input {
       width: 100%;
       padding: 16px;
-      background: rgba(255,255,255,0.03);
+      background-color: rgba(255,255,255,0.03);
       border: 1px solid var(--border-color);
       border-radius: 16px;
       color: var(--text-main);
+      font-size: 16px;
       text-align: center;
     }
 
     .request-btn {
       width: 100%;
-      padding: 18px;
-      background: var(--accent);
-      color: #fff;
+      padding: 16px;
+      background-color: var(--accent);
+      color: #ffffff;
       border: none;
       border-radius: 30px;
-      font-size: 17px;
-      font-weight: 700;
+      font-size: 16px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 16px;
     }
-    .request-btn:hover { background: var(--accent-hover); }
-    .request-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* 로딩 UI */
-    .loader { text-align: center; padding: 40px; color: var(--accent); }
   </style>
 </head>
 <body>
-
-  <!-- 헤더 (Stylus Seoul 톤 그대로 사용) -->
   <header>
-    <div class="header-left"></div>
     <div class="logo-container" onclick="location.href='index.html'">
-      <img src="images/logo.png" alt="Stylus Seoul" onerror="this.src='https://via.placeholder.com/120x30?text=Stylus+Seoul'">
-    </div>
-    <div class="header-right">
-      <a href="#" onclick="location.reload(); return false;">✕</a>
+      <img src="images/logo.png" alt="Stylus Seoul">
     </div>
   </header>
 
-  <main>
+  <main class="main">
     <div class="search-header">곡 검색</div>
 
-    <!-- 검색 바 -->
     <div class="search-bar">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="곡명 또는 아티스트 검색" enterkeyhint="search" onkeypress="if(event.key === 'Enter') searchMusic();">
+      <input type="text" id="searchInput" placeholder="곡명 또는 아티스트" />
       <button class="search-btn" onclick="searchMusic()">검색</button>
     </div>
 
-    <!-- 로딩 -->
-    <div id="loader" class="loader" style="display: none;">검색 중…</div>
-
-    <!-- 검색 결과 리스트 (곡 단위) -->
+    <div id="loader" style="display:none;padding:24px">로딩</div>
     <div class="track-list" id="trackList"></div>
 
-    <!-- 곡 선택 후 신청 영역 -->
     <div class="request-area" id="requestArea">
       <div class="request-card">
-        <img id="selImage" src="" alt="Album Art">
+        <img id="selImage" src="" alt="Album" />
         <h3 id="selTitle"></h3>
         <p id="selArtist"></p>
         <p class="track-meta" id="selMeta"></p>
       </div>
-
-      <div class="request-nickname">
-        <input type="text" id="nickname" placeholder="닉네임을 입력해주세요" enterkeyhint="done">
+      <div class="nickname-input">
+        <input type="text" id="nickname" placeholder="닉네임" />
       </div>
-      <button class="request-btn" onclick="submitRequest()" id="submitBtn">신청하기</button>
+      <button class="request-btn" onclick="submitRequest()">신청하기</button>
     </div>
   </main>
 
-  <!-- 푸터 (Stylus Seoul 톤 유지) -->
   <footer>
-    <p>@stylus.seoul</p>
+    <p>Stylus Seoul</p>
     <p id="currentDate"></p>
   </footer>
 
   <script>
-    // 현재 날짜 푸터에 넣기
-    const dateOpts = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    document.getElementById('currentDate').innerText =
-      new Date().toLocaleDateString('ko-KR', dateOpts).replace(/\. /g, '.').slice(0, -1);
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('ko-KR');
 
-    // 구글 시트 웹 앱 URL
     const GOOGLE_SCRIPT_URL = '여기에_웹앱_URL을_넣으세요';
 
     let currentTrack = null;
 
-    function searchMusic() {
+    async function searchMusic() {
       const query = document.getElementById('searchInput').value.trim();
       if (!query) return;
 
@@ -331,9 +255,9 @@
 
     function handleTracks(data) {
       const loader = document.getElementById('loader');
-      const trackList = document.getElementById('trackList');
       loader.style.display = 'none';
 
+      const trackList = document.getElementById('trackList');
       trackList.innerHTML = '';
 
       if (data.results.length === 0) {
@@ -346,13 +270,11 @@
         const item = document.createElement('div');
         item.className = 'track-item';
         item.onclick = () => selectTrack(track, thumb);
-
         item.innerHTML = `
-          <img src="${thumb}" alt="thumbnail" loading="lazy">
+          <img src="${thumb}" />
           <div class="track-info">
             <div class="track-title">${track.trackName}</div>
             <div class="track-artist">${track.artistName}</div>
-            <div class="track-meta">${track.collectionName}</div>
           </div>
         `;
         trackList.appendChild(item);
@@ -368,48 +290,34 @@
         artist: track.artistName,
         album: track.collectionName,
         thumbnail: thumb.replace('150x150bb', '300x300bb'),
-        link: ytMusicUrl,
-        previewUrl: track.previewUrl
+        link: ytMusicUrl
       };
 
       document.getElementById('trackList').innerHTML = '';
-      document.getElementById('loader').style.display = 'none';
       document.getElementById('requestArea').style.display = 'block';
-
       document.getElementById('selImage').src = currentTrack.thumbnail;
       document.getElementById('selTitle').innerText = currentTrack.song;
       document.getElementById('selArtist').innerText = currentTrack.artist;
       document.getElementById('selMeta').innerText = currentTrack.album;
-
-      setTimeout(() => {
-        document.getElementById('requestArea').scrollIntoView({ behavior: 'smooth' });
-      }, 100);
     }
 
     async function submitRequest() {
       const nickname = document.getElementById('nickname').value.trim();
       if (!nickname) {
         alert('닉네임을 입력해주세요.');
-        document.getElementById('nickname').focus();
         return;
       }
 
-      const btn = document.getElementById('submitBtn');
-      btn.innerText = '전송 중...';
+      const btn = document.getElementById('requestBtn');
       btn.disabled = true;
 
-      const payload = { ...currentTrack, user: nickname };
-
+      const payload = { ...currentTrack, nickname };
       try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-        alert('신청이 완료되었습니다!');
+        await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        alert('신청 완료');
         location.reload();
       } catch (err) {
-        alert('전송 중 오류가 발생했습니다.');
-        btn.innerText = '신청하기';
+        alert('오류');
         btn.disabled = false;
       }
     }
