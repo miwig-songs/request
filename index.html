@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Stylus Seoul - 신청곡</title>
+  <title>Midnight With Groove - 신청곡</title>
   <style>
     :root {
       --bg-color: #121212;
@@ -37,9 +37,15 @@
       z-index: 100;
     }
 
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
     .logo-container img {
       height: 24px;
-      cursor: pointer;
     }
 
     .main {
@@ -198,8 +204,9 @@
 </head>
 <body>
   <header>
-    <div class="logo-container" onclick="location.href='index.html'">
-      <img src="images/logo.png" alt="Stylus Seoul">
+    <div class="logo-container" onclick="location.href='.'">
+      <!-- 현재 레포루트에 logo.jpg가 있음 -->
+      <img src="logo.jpg" alt="Midnight With Groove" />
     </div>
   </header>
 
@@ -229,7 +236,7 @@
   </main>
 
   <footer>
-    <p>Stylus Seoul</p>
+    <p>Midnight With Groove</p>
     <p id="currentDate"></p>
   </footer>
 
