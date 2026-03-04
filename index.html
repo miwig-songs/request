@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스트리밍 신청곡</title>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-main: #ffffff;
+      --text-sub: #b3b3b3;
+      --accent: #1db954; /* 스포티파이 그린 (원하시는 색으로 변경 가능) */
+    }
+    body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Pretendard', -apple-system, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 500px; }
+    h2 { text-align: center; margin-bottom: 24px; font-weight: 600; }
+    
+    .search-box { display: flex; gap: 8px; margin-bottom: 20px; }
+    input { flex: 1; padding: 14px; background: var(--card-bg); border: 1px solid #333; color: white; border-radius: 8px; font-size: 15px; outline: none; }
+    input:focus { border-color: var(--accent); }
+    button { padding: 14px 20px; background: var(--accent); color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    button:hover { transform: scale(1.02); }
+    button:disabled { background: #555; cursor: not-allowed; }
+
+    #results { margin-bottom: 20px; }
+    .result-item { display: flex; align-items: center; padding: 12px; background: var(--card-bg); margin-bottom: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+    .result-item:hover { background: #2a2a2a; border-color: #444; }
+    .result-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 12px; }
+    .song-info { display: flex; flex-direction: column; overflow: hidden; }
+    .song-title { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-artist { font-size: 13px; color: var(--text-sub); margin-top: 4px; }
+
+    .selected-song { display: none; padding: 16px; background: #222; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 20px; text-align: center; }
+    .selected-song img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
+    
+    .form-group { margin-bottom: 20px; display: none; }
+    .form-group label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-sub); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>🎧 라이브 신청곡 보내기</h2>
+
+  <!-- 검색 영역 -->
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="곡명 또는 아티스트 검색 (예: 뉴진스)" onkeypress="if(event.key === 'Enter') searchYouTube()">
+    <button onclick="searchYouTube()" id="searchBtn">검색</button>
+  </div>
+
+  <!-- 검색 결과 리스트 -->
+  <div id="results"></div>
+
+  <!-- 선택된 곡 및 신청 폼 -->
+  <div id="selectedSongBox" class="selected-song">
+    <img id="selImage" src="" alt="Thumbnail">
+    <div class="song-info" style="align-items: center;">
+      <div id="selTitle" class="song-title" style="font-size: 18px; white-space: normal;"></div>
+      <div id="selArtist" class="song-artist"></div>
+    </div>
+  </div>
+
+  <div id="submitForm" class="form-group">
+    <label>신청자 닉네임</label>
+    <div class="search-box">
+      <input type="text" id="nickname" placeholder="유튜브 닉네임을 적어주세요" required>
+      <button onclick="submitRequest()" id="submitBtn">신청하기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ★ 1단계에서 복사한 구글 웹 앱 URL을 넣으세요.
+  const GOOGLE_SCRIPT_URL = '여기에_구글_웹앱_URL을_붙여넣으세요'; 
+  
+  // ★ 구글 클라우드 콘솔에서 발급받은 YouTube Data API v3 키를 넣으세요.
+  const YOUTUBE_API_KEY = '여기에_유튜브_API_키를_붙여넣으세요';
+
+  let currentSelectedSong = null;
+
+  async function searchYouTube() {
+    const query = document.getElementById('searchInput').value;
+    if (!query) return alert('검색어를 입력해주세요.');
+
+    const btn = document.getElementById('searchBtn');
+    btn.innerText = '검색중..';
+    btn.disabled = true;
+
+    // 공식 음원 위주로 검색되도록 'topic', 'official audio' 조합 및 카테고리 10(음악) 적용
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${encodeURIComponent(query + ' official audio')}&type=video&videoCategoryId=10&key=${YOUTUBE_API_KEY}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = ''; // 초기화
+
+      data.items.forEach(item => {
+        // HTML 엔티티(&amp; 등) 디코딩 처리를 위한 임시 요소 생성
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = item.snippet.title;
+        const cleanTitle = tempDiv.textContent || tempDiv.innerText;
+
+        const videoId = item.id.videoId;
+        const title = cleanTitle;
+        const artist = item.snippet.channelTitle.replace(' - Topic', ''); // 토픽 채널명 정리
+        const thumbnail = item.snippet.thumbnails.default.url; // 기본 썸네일(16:9)
+
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'result-item';
+        itemDiv.onclick = () => selectSong(videoId, title, artist, thumbnail);
+        itemDiv.innerHTML = `
+          <img src="${thumbnail}" alt="thumb">
+          <div class="song-info">
+            <div class="song-title">${title}</div>
+            <div class="song-artist">${artist}</div>
+          </div>
+        `;
+        resultsDiv.appendChild(itemDiv);
+      });
+    } catch (error) {
+      alert('검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      console.error(error);
+    } finally {
+      btn.innerText = '검색';
+      btn.disabled = false;
+    }
+  }
+
+  function selectSong(videoId, title, artist, thumbnail) {
+    // 선택한 곡 데이터를 변수에 저장
+    currentSelectedSong = {
+      song: title,
+      artist: artist,
+      thumbnail: thumbnail,
+      link: `https://music.youtube.com/watch?v=${videoId}` // 유튜브 뮤직 링크로 자동 변환
+    };
+
+    // UI 업데이트
+    document.getElementById('results').innerHTML = '';
+    document.getElementById('selectedSongBox').style.display = 'block';
+    document.getElementById('selImage').src = thumbnail;
+    document.getElementById('selTitle').innerText = title;
+    document.getElementById('selArtist').innerText = artist;
+    
+    // 닉네임 입력 폼 노출
+    document.getElementById('submitForm').style.display = 'block';
+  }
+
+  async function submitRequest() {
+    const nickname = document.getElementById('nickname').value;
+    if (!nickname) return alert('닉네임을 입력해주세요.');
+    if (!currentSelectedSong) return alert('곡을 먼저 선택해주세요.');
+
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = '전송중..';
+    btn.disabled = true;
+
+    // 보낼 데이터 취합
+    const payload = {
+      ...currentSelectedSong,
+      user: nickname
+    };
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      alert('신청곡이 성공적으로 접수되었습니다! 🎧');
+      
+      // 초기화
+      document.getElementById('searchInput').value = '';
+      document.getElementById('nickname').value = '';
+      document.getElementById('selectedSongBox').style.display = 'none';
+      document.getElementById('submitForm').style.display = 'none';
+      currentSelectedSong = null;
+    } catch (error) {
+      alert('접수 중 오류가 발생했습니다.');
+      console.error(error);
+    } finally {
+      btn.innerText = '신청하기';
+      btn.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>
