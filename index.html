@@ -11,43 +11,36 @@
    Cosmic Dark — Design System
 ════════════════════════════════════════ */
 :root {
-  /* ── Deep Space Base ── */
   --bg:          #07071A;
 
-  /* ── Surfaces (purple-tinted dark) ── */
   --surf-1:      #0D0D24;
   --surf-2:      #111230;
   --surf-3:      #191938;
   --surf-input:  #1E1E44;
 
-  /* ── Borders ── */
-  --border-dim:  rgba(148, 130, 255, 0.07);
-  --border-mid:  rgba(148, 130, 255, 0.16);
-  --border-glow: rgba(148, 130, 255, 0.36);
+  --border-dim:  rgba(148, 130, 255, 0.09);
+  --border-mid:  rgba(148, 130, 255, 0.18);
+  --border-glow: rgba(148, 130, 255, 0.38);
 
-  /* ── Text ── */
-  --t-hi:   #EDE9FF;
-  --t-mid:  #8C87B8;
-  --t-lo:   #4E4975;
+  /* ✅ Fix 4 — 가독성 향상: 밝기 전체 상향 */
+  --t-hi:   #F5F2FF;   /* #EDE9FF → 더 밝은 흰색 */
+  --t-mid:  #A89DC8;   /* #8C87B8 → 확실히 밝게 */
+  --t-lo:   #635E8A;   /* #4E4975 → 한 단계 위로 */
 
-  /* ── Violet / Neon ── */
   --uv:        #5F4B8B;
   --uv-bright: #9480E0;
   --uv-neon:   #B4A4FF;
   --uv-glow:   rgba(95, 75, 139, 0.45);
   --uv-grad:   linear-gradient(135deg, #5F4B8B 0%, #7D52C4 55%, #A070D8 100%);
 
-  /* ── Success ── */
   --success:      #1ED760;
   --success-dark: #0D7A34;
 
-  /* ── Radius ── */
   --r-sm:  6px;
   --r-md:  10px;
   --r-lg:  14px;
   --r-f:   9999px;
 
-  /* ── Motion ── */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-std:    cubic-bezier(0.2,  0,    0,    1);
   --t1: 150ms;
@@ -85,7 +78,6 @@ ul     { list-style: none; }
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  /* top nebula bloom */
   background:
     radial-gradient(ellipse 160% 90% at 50% -10%,
       rgba(95,75,139,0.28) 0%, transparent 58%),
@@ -94,8 +86,6 @@ ul     { list-style: none; }
     radial-gradient(ellipse 55%  35% at  5%  65%,
       rgba(80,55,130,0.09) 0%, transparent 50%);
 }
-
-/* faint star-dust layer */
 .cosmic-bg::after {
   content: '';
   position: absolute;
@@ -144,16 +134,18 @@ ul     { list-style: none; }
 }
 .header-brand:active { opacity: 0.7; }
 
-/* Logo: cosmic halo */
+/* ✅ Fix 1 — 로고 비율 유지: 고정 높이 + width:auto */
 .header-logo {
-  width: 40px; height: 40px;
-  border-radius: 11px;
-  object-fit: cover;
+  height: 28px;
+  width: auto;
+  max-width: 120px;
   flex-shrink: 0;
+  border-radius: 5px;
+  object-fit: contain;
   box-shadow:
-    0 0 0 1px rgba(148,130,255,0.25),
-    0 0 14px rgba(95,75,139,0.50),
-    0 0 32px rgba(95,75,139,0.18);
+    0 0 0 1px rgba(148,130,255,0.2),
+    0 0 12px rgba(95,75,139,0.45),
+    0 0 26px rgba(95,75,139,0.15);
 }
 
 .header-text {
@@ -161,18 +153,18 @@ ul     { list-style: none; }
   flex-direction: column;
   gap: 2px;
 }
-/* Gradient italic title */
 .header-title {
   font-size: 18px;
   font-weight: 800;
   font-style: italic;
   letter-spacing: -0.3px;
   line-height: 1.1;
-  background: linear-gradient(95deg, #EDE9FF 0%, var(--uv-neon) 100%);
+  background: linear-gradient(95deg, #F5F2FF 0%, var(--uv-neon) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+/* ✅ Fix 5 — 서브타이틀 텍스트 변경 */
 .header-sub {
   font-size: 11px;
   font-weight: 500;
@@ -226,8 +218,6 @@ ul     { list-style: none; }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   min-height: 66vh; padding: 52px 24px 44px; text-align: center;
 }
-
-/* logo — layered cosmic glow */
 .home-logo {
   width: 128px; height: 128px;
   border-radius: 30px;
@@ -239,13 +229,12 @@ ul     { list-style: none; }
     0 0 52px   rgba(95,75,139,0.22),
     0 20px 44px rgba(0,0,0,0.65);
 }
-
 .home-brand {
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.5px;
   margin-bottom: 10px;
-  background: linear-gradient(130deg, #EDE9FF 0%, var(--uv-neon) 55%, #C0A8FF 100%);
+  background: linear-gradient(130deg, #F5F2FF 0%, var(--uv-neon) 55%, #C0A8FF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -257,7 +246,7 @@ ul     { list-style: none; }
   max-width: 256px;
 }
 
-/* ── Social Footer — neon pill row ── */
+/* ── Social Footer ── */
 .app-footer {
   display: flex;
   gap: 10px;
@@ -268,7 +257,7 @@ ul     { list-style: none; }
 .social-link {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   padding: 9px 18px;
   border-radius: var(--r-f);
   border: 1px solid var(--border-mid);
@@ -291,7 +280,26 @@ ul     { list-style: none; }
   background: rgba(148,130,255,0.10);
   box-shadow: 0 0 16px rgba(148,128,224,0.18);
 }
-.social-link svg { width: 16px; height: 16px; fill: currentColor; }
+/* SVG 아이콘 */
+.social-link svg {
+  width: 16px; height: 16px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+/* ✅ Fix 3 — 치지직 img 아이콘 (비율/크기 통일) */
+.social-link .chzzk-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  object-fit: contain;
+  flex-shrink: 0;
+  /* 어두운 배경에서 가시성 확보 */
+  filter: brightness(0) invert(1);
+  opacity: 0.65;
+  transition: opacity var(--t2);
+}
+.social-link:hover .chzzk-icon,
+.social-link:active .chzzk-icon { opacity: 1; }
 
 /* ════════════════════════════════════════
    Loader
@@ -302,7 +310,6 @@ ul     { list-style: none; }
   padding: 80px 24px; color: var(--t-mid); font-size: 14px;
 }
 #loader.active { display: flex; }
-
 .loader-ring {
   width: 34px; height: 34px;
   border: 2px solid rgba(148,128,255,0.12);
@@ -319,15 +326,19 @@ ul     { list-style: none; }
 #resultsSection { position: relative; z-index: 1; display: none; }
 #resultsSection.active { display: block; }
 
+/* ✅ Fix 2 — 레이아웃 기준점 통일 */
 .results-header {
-  display: flex; align-items: center;
+  display: flex;
+  align-items: center;
+  /* trackList padding(12px) + row padding(12px) = 24px → 썸네일 좌측과 정렬 */
   padding: 16px 24px 8px;
 }
 .results-count {
-  font-size: 12px; font-weight: 700;
-  color: var(--uv-neon); letter-spacing: 0.5px;
-  text-transform: uppercase;
-  text-shadow: 0 0 14px rgba(180,164,255,0.45);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--uv-neon);
+  letter-spacing: 0.3px;
+  text-shadow: 0 0 12px rgba(180,164,255,0.35);
 }
 
 #trackList { padding: 0 12px 28px; }
@@ -346,7 +357,6 @@ ul     { list-style: none; }
 }
 .track-item:nth-child(odd)  { animation-delay: 20ms; }
 .track-item:nth-child(even) { animation-delay: 45ms; }
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0);    }
@@ -354,7 +364,6 @@ ul     { list-style: none; }
 
 body.has-selection .track-item:not(.selected) { opacity: 0.22; }
 
-/* selected card: glow border + elevation */
 .track-item.selected {
   position: relative; z-index: 10;
   background: var(--surf-2);
@@ -365,7 +374,6 @@ body.has-selection .track-item:not(.selected) { opacity: 0.22; }
   margin: 8px 0;
 }
 
-/* Row */
 .track-row {
   display: flex; align-items: center; gap: 14px; padding: 10px 12px;
   background: transparent; cursor: pointer;
@@ -393,7 +401,6 @@ body.has-selection .track-item:not(.selected) { opacity: 0.22; }
     0 0 18px rgba(95,75,139,0.50);
 }
 .track-thumb { width: 100%; height: 100%; object-fit: cover; }
-
 .play-overlay {
   position: absolute; inset: 0;
   background: rgba(7,7,26,0.60);
@@ -402,7 +409,6 @@ body.has-selection .track-item:not(.selected) { opacity: 0.22; }
 }
 .thumb-wrap:hover .play-overlay,
 .thumb-wrap.playing .play-overlay { opacity: 1; }
-
 .icon-play, .icon-pause {
   color: var(--uv-neon); width: 20px; height: 20px;
   filter: drop-shadow(0 0 6px var(--uv-glow));
@@ -411,10 +417,10 @@ body.has-selection .track-item:not(.selected) { opacity: 0.22; }
 .thumb-wrap.playing .icon-play  { display: none; }
 .thumb-wrap.playing .icon-pause { display: block; }
 
-/* ── Text ── */
+/* ── Text — ✅ Fix 4 가독성: 폰트 크기 살짝 상향 ── */
 .track-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-.track-title { font-size: 15px; font-weight: 600; color: var(--t-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }
-.track-sub   { font-size: 13px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.track-title { font-size: 16px; font-weight: 600; color: var(--t-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }
+.track-sub   { font-size: 14px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 .track-item.done .track-title { text-decoration: line-through; }
 
 /* ── Trailing ── */
@@ -445,7 +451,6 @@ body.has-selection .track-item:not(.selected) { opacity: 0.22; }
 }
 .track-item.selected .panel-wrap { grid-template-rows: 1fr; }
 .panel-inner { overflow: hidden; }
-
 .panel {
   background: transparent;
   padding: 4px 12px 18px;
@@ -472,7 +477,7 @@ body.has-selection .track-item:not(.selected) { opacity: 0.22; }
 .nick-counter { font-size: 12px; color: var(--t-lo); margin-left: 10px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .nick-counter.near { color: #E2A03F; }
 
-/* Submit — cosmic gradient + glow */
+/* Submit */
 .submit-btn {
   width: 100%; height: 50px; border-radius: var(--r-md);
   background: var(--uv-grad);
@@ -541,23 +546,28 @@ body.has-selection .track-item:not(.selected) { opacity: 0.22; }
 
 input[type=search]::-webkit-search-cancel-button { display: none; }
 
+/* ✅ Fix 2 — media query에 results-header 추가해 데스크탑 레이아웃 통일 */
 @media (min-width: 600px) {
-  .header-wrap, #trackList { max-width: 600px; margin: 0 auto; }
+  .header-wrap,
+  .results-header,
+  #trackList { max-width: 600px; margin: 0 auto; }
 }
 </style>
 </head>
 <body>
 
-<!-- ① Nebula / star-dust fixed layer -->
 <div class="cosmic-bg" aria-hidden="true"></div>
 
-<!-- ② Header -->
 <header class="header-wrap" id="headerWrap">
   <div class="header-brand" id="headerHomeLink" role="button" aria-label="메인으로 가기">
-    <img class="header-logo" src="https://miwig-songs.github.io/request/logo.jpg" alt="로고">
+    <!-- ✅ Fix 1 — 로고 img: 높이만 고정, width:auto로 비율 유지 -->
+    <img class="header-logo"
+         src="https://miwig-songs.github.io/request/logo.jpg"
+         alt="로고">
     <div class="header-text">
       <span class="header-title">Any Requests?</span>
-      <span class="header-sub">미위구 스트리밍 신청곡</span>
+      <!-- ✅ Fix 5 — 서브타이틀 변경 -->
+      <span class="header-sub">미위구 스트리밍 신청곡 페이지</span>
     </div>
   </div>
 
@@ -579,7 +589,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   </div>
 </header>
 
-<!-- ③ Home -->
 <section id="homeState" aria-live="polite">
   <img class="home-logo" src="https://miwig-songs.github.io/request/main.jpg" alt="" aria-hidden="true">
   <h1 class="home-brand">미위구 스트리밍 신청곡 페이지</h1>
@@ -600,22 +609,21 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
       </svg>
       Instagram
     </a>
+    <!-- ✅ Fix 3 — 치지직: 공식 favicon 이미지 사용 (simpleicons 미등록 상태) -->
     <a href="https://chzzk.naver.com/d17bed9f876d6a17be54e4f23c3c30d2" target="_blank" rel="noopener"
        class="social-link" aria-label="치지직">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M16 4H8v4H4v8h4v4h8v-4h-4v-8h4V4z"/>
-      </svg>
+      <img class="chzzk-icon"
+           src="https://chzzk.naver.com/favicon.ico"
+           alt="치지직 아이콘">
       Chzzk
     </a>
   </footer>
 </section>
 
-<!-- ④ Loader -->
 <div id="loader" role="status" aria-label="검색 중">
   <div class="loader-ring"></div>
 </div>
 
-<!-- ⑤ Results -->
 <section id="resultsSection" aria-label="검색 결과">
   <div class="results-header">
     <span class="results-count" id="resultsCount"></span>
@@ -624,15 +632,20 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   <div id="scrollSentinel" style="height:10px;margin-top:20px;"></div>
 </section>
 
-<!-- ⑥ Toast -->
 <div id="toast" role="alert" aria-live="assertive"></div>
 
 <script>
+/* ════════════════════════════════════════
+   ✅ Fix 6 — GAS URL 최상위 노출
+   ▼ 아래 URL을 실제 웹앱 URL로 교체하세요
+════════════════════════════════════════ */
+const GAS_URL = '여기에_웹앱_URL_넣기';
+
+/* ─────────────────────────────────────── */
+
 (function() {
   if (window._mWG_initialized) return;
   window._mWG_initialized = true;
-
-  const GAS_URL = '여기에_웹앱_URL_넣기';
 
   let selItem  = null, selTrack  = null;
   let currentAudio = null, currentThumb = null;
@@ -640,16 +653,16 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   const CHUNK_SIZE = 50;
   const savedNickname = localStorage.getItem('mwg_nickname') || '';
 
-  const $headerWrap    = document.getElementById('headerWrap');
+  const $headerWrap     = document.getElementById('headerWrap');
   const $headerHomeLink = document.getElementById('headerHomeLink');
-  const $search        = document.getElementById('searchInput');
-  const $clear         = document.getElementById('clearBtn');
-  const $home          = document.getElementById('homeState');
-  const $loader        = document.getElementById('loader');
-  const $results       = document.getElementById('resultsSection');
-  const $list          = document.getElementById('trackList');
-  const $count         = document.getElementById('resultsCount');
-  const $toast         = document.getElementById('toast');
+  const $search         = document.getElementById('searchInput');
+  const $clear          = document.getElementById('clearBtn');
+  const $home           = document.getElementById('homeState');
+  const $loader         = document.getElementById('loader');
+  const $results        = document.getElementById('resultsSection');
+  const $list           = document.getElementById('trackList');
+  const $count          = document.getElementById('resultsCount');
+  const $toast          = document.getElementById('toast');
 
   /* ── scroll header border ── */
   let isScrolling = false;
@@ -669,13 +682,11 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     showHome();
   });
 
-  /* ── audio ── */
   function stopAudio() {
     if (currentAudio) { currentAudio.pause(); currentAudio = null; }
     if (currentThumb) { currentThumb.classList.remove('playing'); currentThumb = null; }
   }
 
-  /* ── search ── */
   function doSearch(q) {
     q = q.trim();
     if (!q) { showHome(); return; }
@@ -706,7 +717,7 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   function loadMore() {
     const chunk = allResults.slice(renderCount, renderCount + CHUNK_SIZE);
     if (!chunk.length) return;
-    renderList(chunk, renderCount);
+    renderList(chunk);
     renderCount += chunk.length;
   }
 
@@ -715,7 +726,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   }, { rootMargin: '200px' });
   observer.observe(document.getElementById('scrollSentinel'));
 
-  /* ── render ── */
   function renderList(tracks) {
     tracks.forEach(t => {
       const thumb   = (t.artworkUrl100 || '').replace('100x100','300x300');
@@ -782,7 +792,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 
       if (savedNickname.length >= 13) ctr.classList.add('near');
 
-      /* preview */
       thumbWrap.addEventListener('click', e => {
         e.stopPropagation(); e.preventDefault();
         if (!preview) { toast('미리듣기를 지원하지 않는 곡입니다.'); return; }
@@ -796,16 +805,22 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
         currentThumb = thumbWrap;
         thumbWrap.classList.add('playing');
         currentAudio.play();
-        currentAudio.addEventListener('ended', () => { thumbWrap.classList.remove('playing'); currentAudio = null; });
-        currentAudio.addEventListener('error', () => { toast('미리듣기를 재생할 수 없습니다.'); stopAudio(); });
+        currentAudio.addEventListener('ended', () => {
+          thumbWrap.classList.remove('playing'); currentAudio = null;
+        });
+        currentAudio.addEventListener('error', () => {
+          toast('미리듣기를 재생할 수 없습니다.'); stopAudio();
+        });
       });
 
-      /* select */
       function select() {
         if (li.classList.contains('done')) return;
         const already = li.classList.contains('selected');
         document.querySelectorAll('.track-item.selected').forEach(el => {
-          if (el !== li) { el.classList.remove('selected'); el.querySelector('.track-row').setAttribute('aria-expanded','false'); }
+          if (el !== li) {
+            el.classList.remove('selected');
+            el.querySelector('.track-row').setAttribute('aria-expanded','false');
+          }
         });
         if (already) { deselect(); return; }
         selItem = li; selTrack = tdata;
@@ -819,7 +834,9 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
         }, 200);
       }
       row.addEventListener('click', select);
-      row.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); select(); } });
+      row.addEventListener('keydown', e => {
+        if (e.key==='Enter'||e.key===' ') { e.preventDefault(); select(); }
+      });
 
       nick.addEventListener('input', () => {
         const n = nick.value.length;
@@ -840,7 +857,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     });
   }
 
-  /* ── send ── */
   async function send(payload, item, btn, checkIcon) {
     try {
       if (GAS_URL === '여기에_웹앱_URL_넣기') {
@@ -883,7 +899,6 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
   }
   function resetSel() { selItem = selTrack = null; }
 
-  /* ── state helpers ── */
   function hideAllStates() {
     $home.style.display = 'none';
     $loader.classList.remove('active');
@@ -902,14 +917,12 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     $results.classList.add('active');
   }
 
-  /* ── toast ── */
   let _tt = null;
   function toast(msg) {
     $toast.textContent = msg; $toast.classList.add('show');
     clearTimeout(_tt); _tt = setTimeout(() => $toast.classList.remove('show'), 2600);
   }
 
-  /* ── shake ── */
   function shake(el) {
     el.animate([
       {transform:'translateX(0)'},{transform:'translateX(-7px)'},
@@ -918,14 +931,12 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
     ], {duration:360, easing:'ease'});
   }
 
-  /* ── esc ── */
   function esc(s) {
     return String(s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;')
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  /* ── search input events ── */
   $search.addEventListener('input', () => {
     $clear.classList.toggle('visible', $search.value.length > 0);
   });
