@@ -1,236 +1,399 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>My Music App</title>
-    <link rel="manifest" href="application/manifest+json,{
-        'name': 'My Music',
-        'short_name': 'Music',
-        'start_url': '/',
-        'display': 'standalone',
-        'background_color': '#000000',
-        'theme_color': '#FC3B30',
-        'icons': [{'src': 'image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...','sizes': '192x192','type': 'image/png'}]
-    }">
-    <style>
-        :root {
-            --bg-primary: #000000;
-            --bg-secondary: rgba(28, 28, 30, 0.92);
-            --glass-blur: blur(50px);
-            --header-red: #FC3B30;
-            --text-primary: #F2F2F7;
-            --text-secondary: #8E8E93;
-            --text-meta: #A9A9AF;
-            --blue-accent: #007AFF;
-            --border-glass: rgba(84, 84, 88, 0.65);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Midnight With Groove — 신청곡</title>
+  <style>
+    :root {
+      /* Material 3 Base (dark) */
+      --md-sys-color-background: #121212;
+      --md-sys-color-surface: #1e1e1e;
+      --md-sys-color-on-surface: #ffffff;
+      --md-sys-color-on-surface-variant: #b3b3b3;
+      --md-sys-color-primary: #5F4B8B;
+      --md-sys-color-on-primary: #ffffff;
 
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        html, body { 
-            height: 100%; overflow: hidden;
-            background: var(--bg-primary); 
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
-            font-size: 17px; line-height: 1.294118;
-            scroll-behavior: smooth;
-        }
-        
-        /* Status Bar 흉내 */
-        @supports (padding-top: env(safe-area-inset-top)) {
-            body { padding-top: env(safe-area-inset-top); }
-        }
-        
-        /* 헤더: 왼쪽 로고 + 오른쪽 검색 */
-        .header { 
-            position: fixed; top: 0; left: 0; right: 0;
-            height: 44px; background: var(--header-red);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; z-index: 200;
-            box-shadow: 0 1px 0 rgba(0,0,0,0.1);
-        }
-        .logo-placeholder { 
-            width: 32px; height: 32px; 
-            background: rgba(255,255,255,0.25);
-            border-radius: 6px; border: 1px solid rgba(255,255,255,0.3);
-            position: relative;
-        }
-        .logo-placeholder::before {
-            content: 'M'; /* 당신 이니셜 임시 */
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 16px; font-weight: 700; color: #fff;
-        }
-        .header-search { 
-            font-size: 17px; font-weight: 600; 
-            color: #fff; letter-spacing: -0.2px;
-        }
-        
-        /* 메인 컨텐츠 */
-        .main { padding: 64px 16px 110px 16px; }
-        .playlist-card {
-            background: rgba(255,255,255,0.02);
-            backdrop-filter: blur(20px);
-            border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);
-            padding: 24px 20px; margin-bottom: 24px;
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .playlist-card:hover {
-            transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        .playlist-title { 
-            font-size: 28px; font-weight: 700; 
-            margin-bottom: 4px; letter-spacing: -0.5px;
-        }
-        .playlist-meta { 
-            color: var(--text-meta); font-size: 16px; 
-            font-weight: 400; margin-bottom: 24px;
-        }
-        .action-buttons { display: flex; gap: 12px; align-items: center; }
-        .btn-play { 
-            width: 56px; height: 56px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--blue-accent), #005BB5);
-            border: none; position: relative; cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,122,255,0.4);
-            transition: all 0.2s;
-        }
-        .btn-play:hover { transform: scale(1.05); }
-        .btn-play::after { 
-            content: ''; position: absolute;
-            border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-            width: 0; height: 0; top: 18px; left: 22px;
-            transform: rotate(45deg) translateX(2px);
-        }
-        .btn-download { 
-            background: transparent; color: var(--text-meta);
-            border: 1px solid var(--border-glass); padding: 10px 22px;
-            border-radius: 25px; font-size: 16px; font-weight: 400;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .btn-download:hover { background: rgba(255,255,255,0.1); }
-        
-        /* 더 작은 카드들 */
-        .mini-card { 
-            padding: 16px 20px; margin-bottom: 16px;
-            background: rgba(255,255,255,0.02); border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        /* iOS 앱 같은 플로팅 네비게이션 */
-        .nav-bar { 
-            position: fixed; bottom: 0; left: 0; right: 0;
-            height: 83px; background: var(--bg-secondary);
-            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border-top: 0.5px solid var(--border-glass);
-            display: flex; align-items: flex-end; padding: 8px 32px 12px;
-            gap: 8px; justify-content: center; z-index: 100;
-        }
-        .nav-item { 
-            display: flex; flex-direction: column; align-items: center;
-            color: var(--text-secondary); padding: 4px 8px; min-width: 44px;
-            font-size: 10px; font-weight: 500; cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .nav-item.active { color: var(--text-primary); }
-        .nav-item:active { transform: scale(0.96); }
-        .nav-icon { 
-            font-size: 26px; margin-bottom: 2px; 
-            display: block; line-height: 1;
-        }
-        .nav-home .nav-icon::before { content: "⌂"; }
-        .nav-search .nav-icon::before { content: "🔍"; }
-        .nav-library .nav-icon::before { content: "⟟"; }
-        
-        /* 스크롤바 숨김 */
-        ::-webkit-scrollbar { display: none; }
-        * { scrollbar-width: none; -ms-overflow-style: none; }
-        
-        /* PWA 오프라인 지원 */
-        @media (display-mode: standalone) { .header { top: env(safe-area-inset-top); } }
-    </style>
+      /* Spacing */
+      --md-ref-typeface: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      --md-ref-type-size: 16px;
+
+      /* Shape & shadow */
+      --md-shape-corner-extra-small: 4px;
+      --md-shape-corner-small: 8px;
+      --md-shape-corner-medium: 12px;
+      --md-shape-corner-large: 16px;
+      --md-elevation-low: 0 1px 3px rgba(0,0,0,0.12);
+      --md-elevation-medium: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: var(--md-ref-typeface);
+      font-size: var(--md-ref-type-size);
+    }
+
+    body {
+      background-color: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-surface);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background-color: var(--md-sys-color-background);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 16px 20px;
+      box-shadow: var(--md-elevation-low);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-container img {
+      height: 24px;
+      cursor: pointer;
+    }
+
+    main {
+      flex: 1;
+      padding: 24px 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .search-header {
+      font-size: 20px;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .search-card {
+      border-radius: 8px;
+      background-color: var(--md-sys-color-surface);
+      padding: 12px 16px;
+      box-shadow: var(--md-elevation-low);
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--md-shape-corner-medium);
+      background-color: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      font-size: 16px;
+    }
+
+    .search-input:focus {
+      border-color: var(--md-sys-color-primary);
+      outline: 2px solid rgba(95,75,139,0.25);
+    }
+
+    .search-btn {
+      margin-top: 12px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .track-list {
+      margin-bottom: 16px;
+    }
+
+    .track-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 8px 8px 8px;
+      border-radius: 8px;
+      background-color: var(--md-sys-color-surface);
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .track-item:hover,
+    .track-item:focus-within {
+      background-color: #2a2a2a;
+    }
+
+    .track-item img {
+      width: 56px;
+      height: 56px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .track-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .track-title {
+      font-size: 15px;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-artist {
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 24px 16px;
+      background-color: var(--md-sys-color-surface);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 14px;
+    }
+
+    .request-card {
+      border-radius: 12px;
+      background-color: var(--md-sys-color-surface);
+      padding: 16px;
+      box-shadow: var(--md-elevation-low);
+      margin-bottom: 16px;
+    }
+
+    .request-card img {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-bottom: 12px;
+    }
+
+    .request-card h3 {
+      font-size: 17px;
+      margin-bottom: 4px;
+    }
+
+    .request-card .track-meta {
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+      margin-bottom: 16px;
+    }
+
+    .nickname-input {
+      margin-bottom: 16px;
+    }
+
+    .nickname-input input {
+      width: 100%;
+      padding: 14px 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      background-color: rgba(255,255,255,0.03);
+      color: var(--md-sys-color-on-surface);
+      text-align: center;
+    }
+
+    .nickname-input input:focus {
+      border-color: var(--md-sys-color-primary);
+      background-color: rgba(95,75,139,0.05);
+    }
+
+    .request-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .request-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    footer {
+      padding: 24px 20px;
+      background-color: var(--md-sys-color-background);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+
+    footer p {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .loader {
+      text-align: center;
+      padding: 24px;
+      color: var(--md-sys-color-primary);
+      font-size: 15px;
+    }
+  </style>
 </head>
 <body>
-    <!-- 고정 헤더 -->
-    <header class="header">
-        <div class="logo-placeholder"></div>
-        <div class="header-search">검색</div>
-    </header>
-    
-    <!-- 스크롤 컨텐츠 -->
-    <main class="main">
-        <!-- 메인 플레이리스트 -->
-        <article class="playlist-card">
-            <h1 class="playlist-title">1월 7일 ~ 3월 4일</h1>
-            <p class="playlist-meta">1,234곡 • 89시간 30분</p>
-            <div class="action-buttons">
-                <button class="btn-play" onclick="playPlaylist()" aria-label="재생"></button>
-                <button class="btn-download" onclick="downloadPlaylist()">다운로드</button>
-            </div>
-        </article>
-        
-        <!-- 보조 카드들 -->
-        <article class="mini-card">
-            <h2 class="playlist-title">아이폰을 위한 Apple Music 1</h2>
-            <p class="playlist-meta">라디오 스테이션</p>
-        </article>
-        
-        <article class="mini-card">
-            <h2 class="playlist-title">Apple Music 라이브</h2>
-            <p class="playlist-meta">라이브 이벤트</p>
-        </article>
-        
-        <!-- 추가 공간 -->
-        <div style="height: 200vh; opacity: 0.5;">
-            <p>스크롤 테스트...</p>
-        </div>
-    </main>
-    
-    <!-- iOS 앱 완전 동일 플로팅 네비 -->
-    <nav class="nav-bar">
-        <a href="#home" class="nav-item active nav-home">
-            <span class="nav-icon"></span>
-            <span>홈</span>
-        </a>
-        <a href="#search" class="nav-item nav-search">
-            <span class="nav-icon"></span>
-            <span>검색</span>
-        </a>
-        <a href="#library" class="nav-item nav-library">
-            <span class="nav-icon"></span>
-            <span>라이브러리</span>
-        </a>
-    </nav>
 
-    <script>
-        // 실제 동작 JS
-        function playPlaylist() {
-            const audio = new Audio('audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEA...');
-            audio.play().then(() => {
-                document.querySelector('.btn-play').style.background = '#34C759';
-            });
-        }
-        
-        function downloadPlaylist() {
-            alert('다운로드 시작! (데모)');
-        }
-        
-        // 네비 액티브 상태
-        document.querySelectorAll('.nav-item').forEach((item, i) => {
-            item.addEventListener('click', () => {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                item.classList.add('active');
-            });
+  <header>
+    <div class="logo-container" onclick="location.href='.'">
+      <img src="logo.jpg" alt="Midnight With Groove">
+    </div>
+  </header>
+
+  <main>
+    <div class="search-header">곡 검색</div>
+
+    <div class="search-card">
+      <input type="text" id="searchInput" placeholder="곡명 또는 아티스트" class="search-input" />
+      <button class="search-btn" onclick="searchMusic()">검색</button>
+    </div>
+
+    <div id="loader" class="loader" style="display:none;">로딩</div>
+    <div class="track-list" id="trackList"></div>
+
+    <div class="request-card" id="requestArea" style="display:none;">
+      <img id="selImage" src="" alt="앨범" />
+      <h3 id="selTitle"></h3>
+      <p id="selArtist"></p>
+      <p class="track-meta" id="selMeta"></p>
+      <div class="nickname-input">
+        <input type="text" id="nickname" placeholder="닉네임" />
+      </div>
+      <button class="request-btn" onclick="submitRequest()">신청하기</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>Midnight With Groove</p>
+    <p id="currentDate"></p>
+  </footer>
+
+  <script>
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('ko-KR');
+
+    const GOOGLE_SCRIPT_URL = '여기에_웹앱_URL을_넣으세요';
+
+    let currentTrack = null;
+
+    function searchMusic() {
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) return;
+
+      document.getElementById('trackList').innerHTML = '';
+      document.getElementById('requestArea').style.display = 'none';
+      document.getElementById('loader').style.display = 'block';
+
+      const script = document.createElement('script');
+      script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&country=KR&limit=10&callback=handleTracks`;
+      document.body.appendChild(script);
+    }
+
+    function handleTracks(data) {
+      const loader = document.getElementById('loader');
+      loader.style.display = 'none';
+
+      const trackList = document.getElementById('trackList');
+      trackList.innerHTML = '';
+
+      if (data.results.length === 0) {
+        trackList.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
+        return;
+      }
+
+      data.results.forEach(track => {
+        const thumb = track.artworkUrl100.replace('100x100bb', '150x150bb');
+        const item = document.createElement('div');
+        item.className = 'track-item';
+        item.onclick = () => selectTrack(track, thumb);
+        item.innerHTML = `
+          <img src="${thumb}" />
+          <div class="track-info">
+            <div class="track-title">${track.trackName}</div>
+            <div class="track-artist">${track.artistName}</div>
+          </div>
+        `;
+        trackList.appendChild(item);
+      });
+    }
+
+    function selectTrack(track, thumb) {
+      const searchString = `${track.artistName} ${track.trackName} official audio`;
+      const ytMusicUrl = `https://music.youtube.com/search?q=${encodeURIComponent(searchString)}`;
+
+      currentTrack = {
+        song: track.trackName,
+        artist: track.artistName,
+        album: track.collectionName,
+        thumbnail: thumb.replace('150x150bb', '300x300bb'),
+        link: ytMusicUrl
+      };
+
+      document.getElementById('trackList').innerHTML = '';
+      document.getElementById('requestArea').style.display = 'block';
+
+      document.getElementById('selImage').src = currentTrack.thumbnail;
+      document.getElementById('selTitle').innerText = currentTrack.song;
+      document.getElementById('selArtist').innerText = currentTrack.artist;
+      document.getElementById('selMeta').innerText = currentTrack.album;
+    }
+
+    async function submitRequest() {
+      const nickname = document.getElementById('nickname').value.trim();
+      if (!nickname) {
+        alert('닉네임을 입력해주세요.');
+        return;
+      }
+
+      if (!currentTrack) {
+        alert('곡을 먼저 선택해주세요.');
+        return;
+      }
+
+      const btn = document.getElementById('requestBtn');
+      btn.disabled = true;
+      btn.innerText = '전송 중...';
+
+      const payload = { ...currentTrack, nickname };
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'application/json' }
         });
-        
-        // PWA 설치 프롬프트
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            deferredPrompt = e;
-        });
-    </script>
+        if (res.ok) {
+          alert('신청 완료');
+          location.reload();
+        } else {
+          alert('전송 실패');
+        }
+      } catch (err) {
+        alert('오류');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '신청하기';
+      }
+    }
+  </script>
 </body>
 </html>
