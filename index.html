@@ -607,13 +607,8 @@ input[type=search]::-webkit-search-cancel-button { display: none; }
 <div id="toast" role="alert" aria-live="assertive"></div>
 
 <script>
-/* ════════════════════════════════════════
-   ✅ Fix 6 — GAS URL 최상위 노출
-   ▼ 아래 URL을 실제 웹앱 URL로 교체하세요
-════════════════════════════════════════ */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyBrXSJsorBcEj6hqb1C3lGKppnFOGwtfw_J_2DDOFsliZ6M9oUJuFryswd6jXM8_TAXA/exec';
-
-/* ─────────────────────────────────────── */
+// ★ 방금 복사한 구글 Apps Script '웹 앱 URL'로 교체하세요!
+const GAS_URL = 'AKfycbxCoXI5mxQuRmDGCfhSlDPXoZ5sw6m0zKeuEuCvZ_FetzKUDY6CriVhQ41qzLlCjAi_pA';
 
 (function() {
   if (window._mWG_initialized) return;
@@ -705,8 +700,9 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyBrXSJsorBcEj6hqb1C3lG
       const artist  = t.artistName     || '';
       const album   = t.collectionName || '';
       const preview = t.previewUrl     || '';
+      const appleLink = t.trackViewUrl || '';
       const ytLink  = `https://music.youtube.com/search?q=${encodeURIComponent(artist+' '+song)}`;
-      const tdata   = { song, artist, album, thumb, link: ytLink, previewUrl: preview };
+      const tdata   = { song, artist, album, thumb, appleLink, ytLink, previewUrl: preview };
 
       const li = document.createElement('li');
       li.className = 'track-item';
@@ -816,12 +812,44 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyBrXSJsorBcEj6hqb1C3lG
         ctr.classList.toggle('near', n >= 13);
       });
 
-      sbtn.addEventListener('click', () => {
+      // ✅ 신청 버튼 클릭 이벤트 (Odesli API + 전송)
+      sbtn.addEventListener('click', async () => {
         const u = nick.value.trim();
         if (!u) { nick.focus(); shake(nick.closest('.nick-wrap')); return; }
         sbtn.classList.add('loading'); sbtn.disabled = true;
         localStorage.setItem('mwg_nickname', u);
-        send({ ...selTrack, user: u }, li, sbtn, checkIcon);
+
+        let youtubeId = '';
+        
+        // 1. 유튜브 ID 추출 로직 (3초 타임아웃 안전망 적용 - 검증 4번 해결)
+        try {
+          if (selTrack.appleLink) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000); // 3초 제한
+            
+            const res = await fetch(`https://api.song.link/v1-alpha.1/links?url=${encodeURIComponent(selTrack.appleLink)}`, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            
+            if (res.ok) {
+              const data = await res.json();
+              const platforms = ['youtube', 'youtubeMusic'];
+              for (let p of platforms) {
+                if (data.linksByPlatform && data.linksByPlatform[p]) {
+                  const uniqueId = data.linksByPlatform[p].entityUniqueId;
+                  if (data.entitiesByUniqueId[uniqueId]) {
+                    youtubeId = data.entitiesByUniqueId[uniqueId].id;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.warn('YouTube ID fetch timeout or error:', error); // 실패해도 전송은 계속되도록 처리
+        }
+
+        // 2. 완성된 데이터 전송
+        send({ ...selTrack, user: u, youtubeId: youtubeId }, li, sbtn, checkIcon);
       });
 
       cbtn.addEventListener('click', () => deselect());
@@ -831,19 +859,25 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyBrXSJsorBcEj6hqb1C3lG
 
   async function send(payload, item, btn, checkIcon) {
     try {
-      if (GAS_URL === '여기에_웹앱_URL_넣기') {
+      if (GAS_URL === '여기에_웹앱_URL_넣기' || GAS_URL.includes('AKfycb')) {
+        // 배포된 주소가 없으면 시뮬레이션
         await new Promise(r => setTimeout(r, 800));
         triggerSuccess(item, btn, checkIcon); return;
       }
+      
+      // ✅ CORS 에러 방지 - text/plain 처리 및 action 속성 래핑 (검증 1번 해결)
       const r = await fetch(GAS_URL, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'add', data: payload })
       });
+      
       if (!r.ok) throw new Error(r.statusText);
       triggerSuccess(item, btn, checkIcon);
-    } catch {
+    } catch (err) {
+      console.error(err);
       btn.classList.remove('loading'); btn.disabled = false;
-      toast('신청에 실패했습니다. 다시 시도해주세요.');
+      toast('신청에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   }
 
@@ -922,5 +956,3 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyBrXSJsorBcEj6hqb1C3lG
   showHome();
 })();
 </script>
-</body>
-</html>
