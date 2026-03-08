@@ -8,75 +8,95 @@
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec"; 
         const POLL_INTERVAL = 5000; 
     </script>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root { 
             --bg-body: #0a0a0a;
+            --bg-header: #0a0a0a;
             --uv-main: #5f4b8b; 
             --border-color: #222;
             --t-hi: #fff;
             --t-mid: #888;
-            --font-main: 'Pretendard', sans-serif;
+            --font-main: 'Pretendard', 'Noto Sans JP', sans-serif;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { background-color: var(--bg-body); font-family: var(--font-main); color: var(--t-hi); -webkit-font-smoothing: antialiased; }
+        body { 
+            background-color: var(--bg-body); 
+            font-family: var(--font-main); 
+            color: var(--t-hi); 
+            -webkit-font-smoothing: antialiased;
+        }
 
         /* [Header] */
         nav {
             position: sticky; top: 0; z-index: 100;
-            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color); height: 60px;
-            display: flex; align-items: center; justify-content: center; padding: 0 20px;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            height: 64px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 20px;
         }
         .nav-inner { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; }
-        .nav-logo { font-size: 18px; font-weight: 800; text-decoration: none; color: inherit; }
+        .nav-logo { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; cursor: pointer; }
         .nav-logo span { color: var(--uv-main); }
-        .live-status { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #555; }
-        .status-dot { width: 6px; height: 6px; background: #ff4b4b; border-radius: 50%; box-shadow: 0 0 10px #ff4b4b; animation: blink 1.5s infinite; }
+        .live-status { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--t-mid); }
+        .status-dot { width: 8px; height: 8px; background: #ff4b4b; border-radius: 50%; box-shadow: 0 0 10px rgba(255, 75, 75, 0.5); animation: blink 1.5s infinite; }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 24px 20px; }
-        .section-title { font-size: 12px; font-weight: 800; color: var(--uv-main); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; display: block; }
+        .container { max-width: 800px; margin: 0 auto; padding: 32px 20px; }
+        .section-title { font-size: 14px; font-weight: 800; color: var(--uv-main); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: block; }
 
-        /* [NOW PLAYING - Pure Info] */
+        /* [NOW PLAYING Card] */
         .on-air-card { 
-            background: #111; border: 1px solid var(--border-color); border-radius: 20px; padding: 20px;
-            display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;
+            background: #111;
+            border: 1px solid var(--uv-main);
+            border-radius: 16px; padding: 24px; margin-bottom: 40px;
+            display: flex; flex-direction: column; gap: 20px;
         }
-        .oa-art { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; background: #000; }
+        .oa-art { width: 100%; aspect-ratio: 1/1; border-radius: 10px; overflow: hidden; background: #1a1a1a; }
         .oa-art img { width: 100%; height: 100%; object-fit: cover; }
         .oa-info { display: flex; flex-direction: column; gap: 4px; }
-        .oa-title { font-size: 26px; font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
-        .oa-artist { font-size: 16px; color: var(--t-mid); margin-bottom: 8px; }
-        .oa-req { align-self: flex-start; background: #1a1a1a; color: var(--uv-main); border: 1px solid var(--uv-main); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; }
+        .oa-title { font-size: 28px; font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; }
+        .oa-artist { font-size: 18px; color: var(--t-mid); font-weight: 500; margin-bottom: 12px; }
+        .oa-requester { align-self: flex-start; background: var(--uv-main); color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 800; }
 
-        /* [WAITLIST - Actionable] */
-        .queue-container { display: flex; flex-direction: column; gap: 10px; }
+        /* [WAITLIST Cards - Clickable] */
+        .queue-container { display: flex; flex-direction: column; gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+        
+        /* 🚨 클릭 유도를 위한 링크 스타일 */
         .queue-link { text-decoration: none; color: inherit; display: block; }
-        .queue-card { 
-            background: #111; border: 1px solid var(--border-color); border-radius: 14px;
-            padding: 14px; display: flex; align-items: center; gap: 14px; transition: 0.2s;
-        }
-        .queue-link:active .queue-card { background: #1a1a1a; border-color: var(--uv-main); }
+        .queue-link:active .queue-card { background: #161616; }
 
-        .q-art { width: 52px; height: 52px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+        .queue-card { 
+            background: var(--bg-body);
+            padding: 16px; 
+            display: flex; align-items: center; gap: 16px;
+        }
+        .q-art { width: 50px; height: 50px; border-radius: 4px; overflow: hidden; flex-shrink: 0; background: #1a1a1a; }
         .q-art img { width: 100%; height: 100%; object-fit: cover; }
         .q-info { flex: 1; min-width: 0; }
-        .q-title { font-size: 15px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .q-artist { font-size: 13px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .q-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .q-artist { font-size: 14px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .q-play-btn { 
-            width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--uv-main);
+        /* 🚨 재생 아이콘 추가 */
+        .q-play-icon { 
+            width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--uv-main);
             display: flex; align-items: center; justify-content: center; color: var(--uv-main);
-            box-shadow: 0 0 10px rgba(95, 75, 139, 0.2);
+            margin-left: auto; flex-shrink: 0;
         }
 
-        #empty { text-align: center; padding: 100px 0; color: var(--t-mid); font-size: 14px; }
+        .q-user { font-size: 11px; font-weight: 800; color: var(--uv-main); margin-top: 4px; display: block; }
+
+        #emptyState { text-align: center; padding: 60px 0; color: var(--t-mid); font-size: 15px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         @media (min-width: 480px) {
-            .on-air-card { flex-direction: row; align-items: center; gap: 28px; padding: 28px; }
+            .on-air-card { flex-direction: row; align-items: center; padding: 32px; gap: 32px; }
             .oa-art { width: 200px; }
+            .oa-title { font-size: 32px; }
         }
     </style>
 </head>
@@ -84,8 +104,8 @@
 
 <nav>
     <div class="nav-inner">
-        <a href="#" class="nav-logo">MIWIG <span>SONGS</span></a>
-        <div class="live-status"><div class="status-dot"></div>LIVE</div>
+        <div class="nav-logo" onclick="location.reload()">MIWIG <span>SONGS</span></div>
+        <div class="live-status"><span class="status-dot"></span>LIVE STATUS</div>
     </div>
 </nav>
 
@@ -97,7 +117,9 @@
             <div class="oa-info">
                 <div class="oa-title" id="onAirTitle">Title</div>
                 <div class="oa-artist" id="onAirArtist">Artist</div>
-                <div class="oa-req">REQ: <span id="onAirUser">GUEST</span></div>
+                <div class="oa-requester">
+                    Requested by <span id="onAirUser">Guest</span>
+                </div>
             </div>
         </div>
     </div>
@@ -108,11 +130,13 @@
             </div>
     </div>
 
-    <div id="empty" style="display:none;">현재 대기 목록이 비어 있습니다.</div>
+    <div id="emptyState" style="display:none;">
+        <p>현재 대기 중인 신청곡이 없습니다.</p>
+    </div>
 </div>
 
 <script>
-    async function updateWaitlist() {
+    async function fetchWaitlist() {
         try {
             const res = await fetch(GAS_URL);
             const data = await res.json();
@@ -122,37 +146,39 @@
             if (q.length === 0) {
                 document.getElementById('onAirSection').style.display = 'none';
                 document.getElementById('queueSection').style.display = 'none';
-                document.getElementById('empty').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'block';
                 return;
             }
 
-            document.getElementById('empty').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
 
-            // Now Playing (정보 노출 전용)
-            const cur = q[0];
+            // 1. Now Playing
+            const current = q[0];
             document.getElementById('onAirSection').style.display = 'block';
-            document.getElementById('onAirTitle').textContent = cur.title;
-            document.getElementById('onAirArtist').textContent = cur.artist;
-            document.getElementById('onAirArt').src = cur.thumbUrl || '';
-            document.getElementById('onAirUser').textContent = (cur.nickname || 'GUEST').toUpperCase();
+            document.getElementById('onAirTitle').textContent = current.title;
+            document.getElementById('onAirArtist').textContent = current.artist;
+            document.getElementById('onAirArt').src = current.thumbUrl || '';
+            document.getElementById('onAirUser').textContent = current.nickname || 'GUEST';
 
-            // Waitlist (클릭 가능)
-            const next = q.slice(1);
+            // 2. Waitlist
+            const nextList = q.slice(1);
             const container = document.getElementById('queueContainer');
-            if (next.length === 0) {
+            
+            if (nextList.length === 0) {
                 document.getElementById('queueSection').style.display = 'none';
             } else {
                 document.getElementById('queueSection').style.display = 'block';
-                container.innerHTML = next.map((song) => `
+                container.innerHTML = nextList.map((song) => `
                     <a href="https://music.youtube.com/watch?v=${song.youtubeId}" target="_blank" class="queue-link">
                         <div class="queue-card">
                             <div class="q-art"><img src="${song.thumbUrl || ''}" alt=""></div>
                             <div class="q-info">
                                 <div class="q-title">${song.title}</div>
                                 <div class="q-artist">${song.artist}</div>
+                                <span class="q-user">REQ: ${song.nickname || 'GUEST'}</span>
                             </div>
-                            <div class="q-play-btn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            <div class="q-play-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                             </div>
                         </div>
                     </a>
@@ -160,8 +186,8 @@
             }
         } catch (e) { console.error(e); }
     }
-    updateWaitlist();
-    setInterval(updateWaitlist, POLL_INTERVAL);
+    fetchWaitlist();
+    setInterval(fetchWaitlist, POLL_INTERVAL);
 </script>
 
 </body>
