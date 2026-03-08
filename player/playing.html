@@ -8,7 +8,7 @@
         /* [설정] 최상단 */
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec"; 
         const POLL_INTERVAL = 10000;
-        const ADMIN_PASSWORD = "1234"; // 🚨 여기에 원하시는 비밀번호를 설정하세요!
+        const ADMIN_PASSWORD = "1234"; // 🚨 비밀번호 설정
     </script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -35,17 +35,29 @@
         }
         .auth-btn:active { transform: scale(0.95); }
 
+        /* ▶️ [자동재생 방지 우회용 클릭 화면] */
+        #startScreen {
+            position: fixed; inset: 0; z-index: 9999998;
+            background: rgba(7, 7, 26, 0.8); backdrop-filter: blur(5px);
+            display: none; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;
+        }
+        .start-msg { color: var(--uv-neon); font-size: 24px; font-weight: 800; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
         /* [유튜브 세션 복구 버튼] */
         #loginOverlay {
             position: fixed; top: 10px; left: 10px; z-index: 99999;
             background: #FF0000; color: white; padding: 12px 20px;
-            border-radius: 8px; font-weight: 800; cursor: pointer;
+            border-radius: 8px; font-weight: 800; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-size: 13px;
+            display: flex; align-items: center; gap: 15px;
             transition: opacity 0.3s;
         }
-        /* 마우스 안 올리면 화면에서 거슬리지 않게 투명도 낮춤 */
         #loginOverlay:not(:hover) { opacity: 0.3; }
         #loginOverlay:hover { opacity: 1; }
+        .yt-link { cursor: pointer; }
+        .yt-close { cursor: pointer; opacity: 0.7; font-size: 16px; transition: 0.2s; }
+        .yt-close:hover { opacity: 1; transform: scale(1.2); }
 
         /* [플레이어 바] */
         #playerBar {
@@ -67,7 +79,7 @@
         .progress-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 0 0 20px 20px; overflow: hidden; }
         #progress-bar { height: 100%; background: var(--uv-neon); width: 0%; }
         
-        /* 유튜브 실제 영역 (작게 숨김) */
+        /* 유튜브 실제 영역 */
         #yt-wrapper { position: fixed; top: -10px; right: -10px; width: 100px; height: 60px; opacity: 0.01; }
     </style>
 </head>
@@ -79,8 +91,13 @@
         <button class="auth-btn" onclick="handleLogin()">입장하기</button>
     </div>
 
-    <div id="loginOverlay" onclick="window.open('https://www.youtube.com', '_blank')">
-        ⚠️ 세션 오류 해결 (클릭하여 새 탭에서 로그인)
+    <div id="startScreen" onclick="startPlayer()">
+        <div class="start-msg">▶ 화면을 클릭하여 플레이어 시작</div>
+    </div>
+
+    <div id="loginOverlay">
+        <span class="yt-link" onclick="window.open('https://www.youtube.com', '_blank')">⚠️ 연령제한/광고 제거 (유튜브 로그인)</span>
+        <span class="yt-close" onclick="document.getElementById('loginOverlay').style.display='none'">✖</span>
     </div>
 
     <div id="yt-wrapper"><div id="player"></div></div>
@@ -97,23 +114,24 @@
     <script>
         let player, currentId = null, isPlaying = false;
 
-        // 🟢 페이지 요소가 전부 준비되면 로그인 상태 체크
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('player_logged_in') === 'true') {
-                initPlayer(); // 이미 로그인되어 있으면 바로 플레이어 띄움
+                // 이미 로그인(비밀번호 통과) 상태라면 자동재생 우회용 클릭 창을 띄움
+                document.getElementById('startScreen').style.display = 'flex';
             } else {
-                document.getElementById('authScreen').style.display = 'flex'; // 아니면 로그인 창 띄움
-                document.getElementById('pwInput').focus(); // 바로 칠 수 있게 커서 놔줌
+                // 로그인 전이면 비밀번호 창 띄움
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('pwInput').focus();
             }
         });
 
-        // 🟢 로그인 처리 함수
+        // [비밀번호 확인]
         function handleLogin() {
             const pw = document.getElementById('pwInput').value;
             if (pw === ADMIN_PASSWORD) {
                 localStorage.setItem('player_logged_in', 'true');
-                document.getElementById('authScreen').style.display = 'none'; // 창 걷어내기
-                initPlayer(); // 플레이어 로직 가동!
+                document.getElementById('authScreen').style.display = 'none';
+                initPlayer(); // 비번 입력('클릭/엔터') 자체가 상호작용이므로 바로 시작!
             } else {
                 alert('비밀번호가 일치하지 않습니다.');
                 document.getElementById('pwInput').value = '';
@@ -121,21 +139,26 @@
             }
         }
 
-        // 🟢 유튜브 API 불러오기 (로그인 성공 시에만 작동)
+        // [새로고침 시 클릭으로 시작]
+        function startPlayer() {
+            document.getElementById('startScreen').style.display = 'none';
+            initPlayer();
+        }
+
+        // [유튜브 API 로드]
         function initPlayer() {
-            if (document.getElementById('yt-script')) return; // 중복 로드 방지
+            if (document.getElementById('yt-script')) return; 
             const tag = document.createElement('script');
             tag.id = 'yt-script';
             tag.src = "https://www.youtube.com/iframe_api";
             document.head.appendChild(tag);
         }
 
-        // 유튜브 API 준비 완료
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 height: '60',
                 width: '100',
-                host: 'https://www.youtube-nocookie.com',
+                // 🚨 nocookie 호스트 삭제 -> 이제 구글 로그인 세션을 정상적으로 인식합니다!
                 playerVars: { 
                     'autoplay': 1, 
                     'controls': 0,
