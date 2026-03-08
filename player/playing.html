@@ -2,10 +2,10 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>MIWIG PLAYER - MIDNIGHT WITH GROOVE</title>
+    <title>MIWIG PLAYER</title>
     
     <script>
-        /* [설정] */
+        /* [핵심 설정] */
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec"; 
         const POLL_INTERVAL = 5000; 
         const ADMIN_PASSWORD = "1234"; 
@@ -13,34 +13,19 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
-        :root { 
-            --bg-panel: rgba(7, 7, 26, 0.96); 
-            --uv-neon: #B4A4FF; 
-            --t-hi: #F5F2FF; 
-            --t-mid: #A89DC8; 
-        }
+        :root { --bg-panel: rgba(7, 7, 26, 0.96); --uv-neon: #B4A4FF; --t-hi: #F5F2FF; --t-mid: #A89DC8; }
         body { margin: 0; padding: 0; overflow: hidden; font-family: 'Pretendard', sans-serif; background: transparent; -webkit-font-smoothing: antialiased; }
 
         /* [로그인/시작 화면] */
         #authScreen, #startScreen { position: fixed; inset: 0; z-index: 9999999; background: rgba(7, 7, 26, 0.98); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
         .auth-title { color: var(--t-hi); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; }
-        #pwInput { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); padding: 16px 25px; border-radius: 16px; color: white; font-size: 18px; text-align: center; outline: none; width: 300px; transition: 0.3s; }
-        #pwInput:focus { border-color: var(--uv-neon); background: rgba(255, 255, 255, 0.08); }
+        #pwInput { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); padding: 16px 25px; border-radius: 16px; color: white; font-size: 18px; text-align: center; outline: none; width: 300px; }
         .auth-btn { background: var(--uv-neon); color: #000; font-weight: 800; padding: 16px 45px; border: none; border-radius: 16px; cursor: pointer; font-size: 18px; transition: 0.2s; }
-        .auth-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(180, 164, 255, 0.4); }
-        .start-msg { color: var(--uv-neon); font-size: 32px; font-weight: 900; animation: pulse 1.5s infinite; cursor: pointer; text-align: center; line-height: 1.4; letter-spacing: -0.04em; }
+        .start-msg { color: var(--uv-neon); font-size: 32px; font-weight: 900; animation: pulse 1.5s infinite; cursor: pointer; text-align: center; line-height: 1.4; }
         @keyframes pulse { 0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px var(--uv-neon)); } 50% { opacity: 0.7; } }
 
         /* [메인 플레이어 바] */
-        #playerBar { 
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); 
-            width: 1000px; background: var(--bg-panel); backdrop-filter: blur(25px); 
-            border: 1px solid rgba(148, 130, 255, 0.2); border-radius: 32px; 
-            padding: 28px 38px; display: flex; align-items: stretch; gap: 40px; 
-            box-shadow: 0 30px 80px rgba(0,0,0,0.8); 
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s; 
-            opacity: 1;
-        }
+        #playerBar { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); width: 1000px; background: var(--bg-panel); backdrop-filter: blur(25px); border: 1px solid rgba(148, 130, 255, 0.2); border-radius: 32px; padding: 28px 38px; display: flex; align-items: stretch; gap: 40px; box-shadow: 0 30px 80px rgba(0,0,0,0.8); transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s; opacity: 1; }
         #playerBar.hidden { transform: translateX(-50%) translateY(120px); opacity: 0; }
 
         .track-section { flex: 1; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
@@ -48,7 +33,6 @@
         .now-playing .section-header { color: var(--uv-neon); text-shadow: 0 0 15px rgba(180, 164, 255, 0.6); }
         
         .track-content { display: flex; align-items: center; gap: 24px; min-width: 0; position: relative; }
-        
         .album-art-wrap { width: 110px; height: 110px; border-radius: 18px; overflow: hidden; flex-shrink: 0; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .album-art { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; transition: opacity 0.6s ease, transform 0.6s ease; }
         .album-art.new { opacity: 0; transform: scale(1.1); }
@@ -60,28 +44,19 @@
         
         .track-title { color: var(--t-hi); font-size: 22px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
         .track-artist { color: var(--t-hi); font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.85; }
-        
-        .track-meta { display: flex; align-items: center; gap: 10px; min-width: 0; margin-top: 2px; }
-        .album-text { color: var(--t-mid); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-        
-        .user-badge { 
-            background: rgba(180, 164, 255, 0.2); border: 1px solid rgba(180, 164, 255, 0.4); 
-            color: var(--uv-neon); padding: 4px 10px; border-radius: 8px; 
-            font-size: 11px; font-weight: 800; white-space: nowrap; 
-            animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .user-badge { background: rgba(180, 164, 255, 0.2); border: 1px solid rgba(180, 164, 255, 0.4); color: var(--uv-neon); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+        .now-playing .user-badge { animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes badgePop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* 컨트롤러 */
         .controls-row { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
         .play-pause-btn { background: var(--uv-neon); color: #000; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 0 15px rgba(180, 164, 255, 0.3); transition: 0.2s; }
+        .play-pause-btn:hover { transform: scale(1.1); }
         
         .mini-progress-bg { flex: 1; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; cursor: pointer; overflow: hidden; position: relative; z-index: 10; }
         .mini-progress-fill { height: 100%; background: var(--uv-neon); width: 0%; box-shadow: 0 0 15px var(--uv-neon); transition: width 0.1s linear; }
-        
-        .time-display { color: var(--t-hi); font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; width: 105px; text-align: right; text-shadow: 0 0 10px rgba(180, 164, 255, 0.3); flex-shrink: 0; }
+        .time-display { color: var(--t-hi); font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; width: 105px; text-align: right; flex-shrink: 0; text-shadow: 0 0 10px rgba(180, 164, 255, 0.3); }
 
-        .next-playing { opacity: 0.4; }
+        .next-playing { opacity: 0.35; transition: opacity 0.5s; }
         .divider { width: 1px; background: rgba(255,255,255,0.1); margin: 5px 0; flex-shrink: 0; }
 
         #yt-wrapper { position: fixed; top: -10px; right: -10px; width: 100px; height: 60px; opacity: 0.01; }
@@ -89,16 +64,8 @@
 </head>
 <body>
 
-    <div id="authScreen">
-        <div class="auth-title">MIWIG PLAYER</div>
-        <input type="password" id="pwInput" placeholder="PASSWORD" onkeydown="if(event.key==='Enter') handleLogin()">
-        <button class="auth-btn" onclick="handleLogin()">ACCESS</button>
-    </div>
-    
-    <div id="startScreen" onclick="startPlayer()">
-        <div class="start-msg">MIWIG SYSTEM<br>CLICK TO START GROOVE</div>
-    </div>
-    
+    <div id="authScreen"><div class="auth-title">MIWIG PLAYER</div><input type="password" id="pwInput" placeholder="PASSWORD" onkeydown="if(event.key==='Enter') handleLogin()"><button class="auth-btn" onclick="handleLogin()">ACCESS</button></div>
+    <div id="startScreen" onclick="startPlayer()"><div class="start-msg">MIWIG SYSTEM<br>CLICK TO INITIATE</div></div>
     <div id="yt-wrapper"><div id="player"></div></div>
 
     <div id="playerBar" class="hidden">
@@ -111,36 +78,28 @@
                 </div>
                 <div class="track-info">
                     <div id="npTextWrap" class="text-animate-wrap">
-                        <div id="npTitle" class="track-title">MIWIG SYSTEM</div>
+                        <div id="npTitle" class="track-title">MIWIG</div>
                         <div id="npArtist" class="track-artist">Connecting...</div>
-                        <div class="track-meta"><span id="npAlbum" class="album-text"></span><span id="npUser" class="user-badge" style="display:none"></span></div>
+                        <div class="track-meta"><span id="npAlbum" style="color:var(--t-mid); font-size:13px"></span> <span id="npUser" class="user-badge" style="display:none"></span></div>
                     </div>
                     <div class="controls-row">
-                        <button id="playPauseBtn" class="play-pause-btn" onclick="togglePlayPause()">
-                            <svg id="icon-pause" viewBox="0 0 24 24" width="18"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                            <svg id="icon-play" viewBox="0 0 24 24" width="18" style="display:none; margin-left:2px;"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
+                        <button id="playPauseBtn" class="play-pause-btn" onclick="togglePlayPause()"><svg id="icon-pause" viewBox="0 0 24 24" width="18"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg><svg id="icon-play" viewBox="0 0 24 24" width="18" style="display:none; margin-left:2px;"><path d="M8 5v14l11-7z"/></svg></button>
                         <div class="mini-progress-bg" onclick="seekVideo(event)"><div id="mini-progress-bar" class="mini-progress-fill"></div></div>
                         <div id="timeDisplay" class="time-display">0:00 / -0:00</div>
                     </div>
                 </div>
             </div>
         </div>
-        
         <div class="divider"></div>
-
         <div class="track-section next-playing">
             <div class="section-header">Next Playing</div>
             <div class="track-content">
-                <div class="album-art-wrap" style="width:90px; height:90px; border-radius:15px;">
-                    <img id="nxArt-old" class="album-art old" src="">
-                    <img id="nxArt-new" class="album-art new" src="">
-                </div>
+                <div class="album-art-wrap" style="width:90px; height:90px; border-radius:15px;"><img id="nxArt-old" class="album-art old" src=""><img id="nxArt-new" class="album-art new" src=""></div>
                 <div class="track-info">
                     <div id="nxTextWrap" class="text-animate-wrap">
                         <div id="nxTitle" class="track-title" style="font-size:19px">EMPTY</div>
                         <div id="nxArtist" class="track-artist" style="font-size:14px">-</div>
-                        <div class="track-meta"><span id="nxAlbum" class="album-text"></span><span id="nxUser" class="user-badge" style="display:none"></span></div>
+                        <div class="track-meta"><span id="nxAlbum" style="color:var(--t-mid); font-size:12px"></span> <span id="nxUser" class="user-badge" style="display:none"></span></div>
                     </div>
                 </div>
             </div>
@@ -192,17 +151,17 @@
             currentData = song; nextData = next; lastPlayedRowIndex = song.rowIndex;
             isPlaying = true; isProcessingNext = false;
             document.getElementById('playerBar').classList.remove('hidden');
-            animateUpdateUI('np', song);
-            animateUpdateUI('nx', next);
+            animateUpdateUI('np', song); animateUpdateUI('nx', next);
             player.loadVideoById(song.youtubeId);
             player.unMute(); player.setVolume(100);
+            setTimeout(updateProgress, 500); 
         }
 
         function animateUpdateUI(prefix, songData) {
             const wrap = document.getElementById(`${prefix}TextWrap`), artOld = document.getElementById(`${prefix}Art-old`), artNew = document.getElementById(`${prefix}Art-new`);
             wrap.classList.add('changing');
             artNew.src = songData ? (songData.thumbUrl || DEFAULT_COVER) : DEFAULT_COVER;
-            artNew.style.opacity = '1'; artNew.style.transform = 'scale(1)'; artOld.style.opacity = '0';
+            artNew.style.opacity = '1'; artOld.style.opacity = '0';
             setTimeout(() => {
                 const title = document.getElementById(`${prefix}Title`), artist = document.getElementById(`${prefix}Artist`), 
                       album = document.getElementById(`${prefix}Album`), badge = document.getElementById(`${prefix}User`);
@@ -211,11 +170,11 @@
                     if (songData.nickname) { badge.textContent = `MIWIG · ${songData.nickname}`; badge.style.display = 'inline-block'; } else { badge.style.display = 'none'; }
                 } else {
                     title.textContent = prefix === 'np' ? "MIWIG SYSTEM" : "WAITING NEXT SONG";
-                    artist.textContent = prefix === 'np' ? "Midnight With Groove" : "-";
+                    artist.textContent = prefix === 'np' ? "Idle" : "-";
                     album.textContent = ""; badge.style.display = 'none';
                 }
                 wrap.classList.remove('changing');
-                setTimeout(() => { artOld.src = artNew.src; artOld.style.opacity = '1'; artNew.style.opacity = '0'; artNew.style.transform = 'scale(1.1)'; }, 200);
+                setTimeout(() => { artOld.src = artNew.src; artOld.style.opacity = '1'; artNew.style.opacity = '0'; }, 200);
             }, 400);
         }
 
@@ -228,6 +187,7 @@
 
         function togglePlayPause() { const s = player.getPlayerState(); if (s === 1) player.pauseVideo(); else player.playVideo(); }
         function seekVideo(e) { if (!player || !player.getDuration) return; const rect = e.currentTarget.getBoundingClientRect(); const perc = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)); player.seekTo(perc * player.getDuration(), true); }
+        
         function onStateChange(e) {
             const p = document.getElementById('icon-play'), s = document.getElementById('icon-pause');
             if (e.data === 0) nextSong();
@@ -244,14 +204,27 @@
         }
 
         function updateProgress() {
-            if (player && player.getDuration) {
-                const cur = player.getCurrentTime(), tot = player.getDuration();
-                if (tot > 0) { document.getElementById('mini-progress-bar').style.width = (cur/tot*100) + '%'; const rem = Math.max(0, tot - cur); document.getElementById('timeDisplay').textContent = `${formatTime(cur)} / -${formatTime(rem)}`; }
+            if (player && typeof player.getDuration === "function") {
+                const cur = player.getCurrentTime() || 0;
+                const tot = player.getDuration() || 0;
+                if (tot > 0) {
+                    document.getElementById('mini-progress-bar').style.width = (cur/tot*100) + '%';
+                    const rem = Math.max(0, tot - cur);
+                    document.getElementById('timeDisplay').textContent = `${formatTime(cur)} / -${formatTime(rem)}`;
+                } else if (isPlaying) {
+                    setTimeout(updateProgress, 200);
+                    return;
+                }
             }
             if (player.getPlayerState() === 1) progressUpdater = requestAnimationFrame(updateProgress);
         }
 
-        function formatTime(sec) { const m = Math.floor(sec / 60), s = Math.floor(sec % 60).toString().padStart(2, '0'); return `${m}:${s}`; }
+        function formatTime(sec) {
+            if (!sec || isNaN(sec)) return "0:00";
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
     </script>
 </body>
 </html>
