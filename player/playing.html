@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>미위구 플레이어 - 듀얼 레이아웃 버전 (컨트롤러 추가)</title>
+    <title>미위구 플레이어 - 듀얼 레이아웃 버전 (UI/UX 개선)</title>
     
     <script>
         /* [설정] 최상단 */
@@ -18,7 +18,6 @@
             --uv-neon: #B4A4FF; 
             --t-hi: #F5F2FF; 
             --t-mid: #A89DC8; 
-            --t-low: rgba(255, 255, 255, 0.4);
         }
         body { margin: 0; padding: 0; overflow: hidden; font-family: 'Pretendard', sans-serif; background: transparent; }
 
@@ -81,27 +80,39 @@
         }
         #playerBar.hidden { transform: translateX(-50%) translateY(150%); opacity: 0; }
 
-        .track-section { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-        .section-header { font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; }
+        /* 🚨 말줄임표(...) 적용을 위한 min-width: 0 필수 세팅 */
+        .track-section { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; overflow: hidden; }
+        .section-header { font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; flex-shrink: 0; }
         .now-playing .section-header { color: var(--uv-neon); }
         .next-playing .section-header { color: var(--t-mid); }
 
-        .track-content { display: flex; align-items: center; gap: 16px; height: 100%; }
+        .track-content { display: flex; align-items: center; gap: 16px; height: 100%; min-width: 0; }
         
         .album-art { 
             width: 80px; height: 80px; border-radius: 12px; background: #1a1a1a; 
             object-fit: cover; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         
-        .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 2px; }
+        .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 4px; overflow: hidden; }
         
-        .track-title { color: var(--t-hi); font-size: 17px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
-        .track-artist { color: var(--t-hi); font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-meta { color: var(--t-mid); font-size: 11px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-user { color: var(--uv-neon); font-weight: 600; }
+        /* 텍스트 완벽 말줄임 처리 */
+        .track-title { color: var(--t-hi); font-size: 17px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; line-height: 1.2; }
+        .track-artist { color: var(--t-hi); font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        
+        /* 메타 영역 (앨범명 + 뱃지) */
+        .track-meta { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; }
+        .album-text { color: var(--t-mid); font-size: 12px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+        
+        /* ✨ 신청자 시인성 강화 (네온 뱃지 스타일) */
+        .user-badge { 
+            background: rgba(180, 164, 255, 0.15); border: 1px solid rgba(180, 164, 255, 0.3);
+            color: var(--uv-neon); padding: 3px 8px; border-radius: 6px; 
+            font-size: 11px; font-weight: 700; white-space: nowrap; flex-shrink: 0;
+            max-width: 120px; overflow: hidden; text-overflow: ellipsis;
+        }
 
         /* 🎛️ [Now Playing 컨트롤러 영역] */
-        .controls-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+        .controls-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; flex-shrink: 0; }
         
         .play-pause-btn {
             background: var(--uv-neon); color: #000; border: none; border-radius: 50%;
@@ -126,7 +137,7 @@
         }
 
         .next-playing { opacity: 0.45; transition: opacity 0.3s; }
-        .divider { width: 1px; background: rgba(255,255,255,0.08); margin: 0 5px; }
+        .divider { width: 1px; background: rgba(255,255,255,0.08); margin: 0 5px; flex-shrink: 0; }
 
         #yt-wrapper { position: fixed; top: -10px; right: -10px; width: 100px; height: 60px; opacity: 0.01; }
     </style>
@@ -159,7 +170,8 @@
                     <div id="npTitle" class="track-title"></div>
                     <div id="npArtist" class="track-artist"></div>
                     <div class="track-meta">
-                        <span id="npAlbum"></span> <span id="npUser" class="track-user"></span>
+                        <span id="npAlbum" class="album-text"></span>
+                        <span id="npUser" class="user-badge" style="display: none;"></span>
                     </div>
                     
                     <div class="controls-row">
@@ -187,7 +199,8 @@
                     <div id="nxTitle" class="track-title"></div>
                     <div id="nxArtist" class="track-artist"></div>
                     <div class="track-meta">
-                        <span id="nxAlbum"></span> <span id="nxUser" class="track-user"></span>
+                        <span id="nxAlbum" class="album-text"></span>
+                        <span id="nxUser" class="user-badge" style="display: none;"></span>
                     </div>
                 </div>
             </div>
@@ -286,13 +299,13 @@
             document.getElementById('npTitle').textContent = "신청곡을 기다리는 중...";
             document.getElementById('npArtist').textContent = "Stylus Seoul";
             document.getElementById('npAlbum').textContent = "";
-            document.getElementById('npUser').textContent = "";
+            document.getElementById('npUser').style.display = 'none';
             document.getElementById('npArt').src = DEFAULT_COVER;
             
             document.getElementById('nxTitle').textContent = "대기열이 비어있습니다";
             document.getElementById('nxArtist').textContent = "-";
             document.getElementById('nxAlbum').textContent = "";
-            document.getElementById('nxUser').textContent = "";
+            document.getElementById('nxUser').style.display = 'none';
             document.getElementById('nxArt').src = DEFAULT_COVER;
 
             document.getElementById('mini-progress-bar').style.width = '0%';
@@ -307,22 +320,34 @@
             // Now Playing
             document.getElementById('npTitle').textContent = song.title || "-";
             document.getElementById('npArtist').textContent = song.artist || "-";
-            document.getElementById('npAlbum').textContent = song.album ? song.album + " · " : "";
-            document.getElementById('npUser').textContent = song.nickname ? `Req by. ${song.nickname}` : "";
+            document.getElementById('npAlbum').textContent = song.album || "";
             document.getElementById('npArt').src = song.thumbUrl || DEFAULT_COVER;
+            
+            if (song.nickname) {
+                document.getElementById('npUser').textContent = `Req. ${song.nickname}`;
+                document.getElementById('npUser').style.display = 'inline-block';
+            } else {
+                document.getElementById('npUser').style.display = 'none';
+            }
 
             // Next Playing
             if (nextSong) {
                 document.getElementById('nxTitle').textContent = nextSong.title || "-";
                 document.getElementById('nxArtist').textContent = nextSong.artist || "-";
-                document.getElementById('nxAlbum').textContent = nextSong.album ? nextSong.album + " · " : "";
-                document.getElementById('nxUser').textContent = nextSong.nickname ? `Req by. ${nextSong.nickname}` : "";
+                document.getElementById('nxAlbum').textContent = nextSong.album || "";
                 document.getElementById('nxArt').src = nextSong.thumbUrl || DEFAULT_COVER;
+                
+                if (nextSong.nickname) {
+                    document.getElementById('nxUser').textContent = `Req. ${nextSong.nickname}`;
+                    document.getElementById('nxUser').style.display = 'inline-block';
+                } else {
+                    document.getElementById('nxUser').style.display = 'none';
+                }
             } else {
                 document.getElementById('nxTitle').textContent = "다음 대기 곡이 없습니다";
                 document.getElementById('nxArtist').textContent = "-";
                 document.getElementById('nxAlbum').textContent = "";
-                document.getElementById('nxUser').textContent = "";
+                document.getElementById('nxUser').style.display = 'none';
                 document.getElementById('nxArt').src = DEFAULT_COVER;
             }
             
