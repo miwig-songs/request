@@ -2,8 +2,10 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>MIWIG PLAYER</title> <script>
-        /* [1. SERVICE CONFIG] */
+    <title>MIWIG PLAYER</title>
+    
+    <script>
+        /* [설정] */
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec"; 
         const POLL_INTERVAL = 5000; 
         const ADMIN_PASSWORD = "1234"; 
@@ -12,7 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
         :root { 
-            --bg-panel: rgba(7, 7, 26, 0.96); 
+            --bg-panel: rgba(7, 7, 26, 0.98); 
             --uv-neon: #B4A4FF; 
             --t-hi: #F5F2FF; 
             --t-mid: #A89DC8; 
@@ -21,104 +23,97 @@
         
         /* [SCREENS] */
         #authScreen, #startScreen { position: fixed; inset: 0; z-index: 9999999; background: rgba(7, 7, 26, 0.98); backdrop-filter: blur(20px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 30px; }
-        .auth-title { color: var(--t-hi); font-size: 36px; font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; }
-        #pwInput { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); padding: 20px 30px; border-radius: 20px; color: white; font-size: 26px; text-align: center; width: 420px; outline: none; transition: 0.3s; }
-        #pwInput:focus { border-color: var(--uv-neon); background: rgba(255, 255, 255, 0.08); }
+        .auth-title { color: var(--t-hi); font-size: 36px; font-weight: 800; text-transform: uppercase; }
+        #pwInput { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; color: white; font-size: 26px; text-align: center; width: 420px; outline: none; }
         .auth-btn { background: var(--uv-neon); color: #000; font-weight: 800; padding: 22px 70px; border: none; border-radius: 20px; cursor: pointer; font-size: 24px; }
-        .start-msg { color: var(--uv-neon); font-size: 48px; font-weight: 900; animation: pulse 1.5s infinite; cursor: pointer; text-align: center; line-height: 1.4; letter-spacing: -0.04em; }
+        .start-msg { color: var(--uv-neon); font-size: 48px; font-weight: 900; animation: pulse 1.5s infinite; cursor: pointer; text-align: center; line-height: 1.4; }
         @keyframes pulse { 0%, 100% { opacity: 1; filter: drop-shadow(0 0 15px var(--uv-neon)); } 50% { opacity: 0.6; } }
 
-        /* [PREMIUM LOGIN HELPER] */
-        #sessionHelper { position: fixed; top: 25px; left: 25px; z-index: 99999; display: flex; gap: 12px; opacity: 0.05; transition: 0.4s; }
+        /* [SESSION HELPER - Fixed Login Path] */
+        #sessionHelper { position: fixed; top: 30px; left: 30px; z-index: 99999; display: flex; gap: 15px; opacity: 0.1; transition: 0.4s; }
         #sessionHelper:hover { opacity: 1; }
-        .session-btn { background: #FF0000; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .session-btn { background: #FF0000; color: white; padding: 14px 24px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
 
         /* [MAIN PLAYER BAR] */
         #playerBar { 
-            position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%) translateY(0); 
-            width: 1350px; background: var(--bg-panel); backdrop-filter: blur(35px); 
-            border: 1px solid rgba(148, 130, 255, 0.2); border-radius: 45px; 
-            padding: 40px 55px; display: flex; align-items: stretch; gap: 0; 
-            box-shadow: 0 45px 110px rgba(0,0,0,0.85); 
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(0); 
+            width: 1500px; background: var(--bg-panel); backdrop-filter: blur(40px); 
+            border: 2px solid rgba(148, 130, 255, 0.3); border-radius: 55px; 
+            padding: 50px 70px; display: flex; align-items: stretch; gap: 0; 
+            box-shadow: 0 50px 130px rgba(0,0,0,0.9); 
             transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s; 
-            opacity: 1; pointer-events: auto;
+            opacity: 1;
         }
-        #playerBar.hidden { transform: translateX(-50%) translateY(350px); opacity: 0; pointer-events: none; }
+        #playerBar.hidden { transform: translateX(-50%) translateY(450px); opacity: 0; pointer-events: none; }
         
-        /* 🚨 Gesture Areas */
-        .track-section { flex: 1.2; display: flex; flex-direction: column; gap: 15px; min-width: 0; padding: 15px 30px; border-radius: 35px; cursor: pointer; transition: background 0.3s; }
-        .next-playing { flex: 0.8; padding-left: 50px; opacity: 0.35; transition: 0.3s; }
-        .now-playing:hover { background: rgba(180, 164, 255, 0.08); }
-        .next-playing:hover { background: rgba(255, 255, 255, 0.04); opacity: 0.8 !important; }
+        /* Clickable Areas */
+        .track-section { flex: 1.3; display: flex; flex-direction: column; gap: 20px; min-width: 0; padding: 20px 40px; border-radius: 45px; cursor: pointer; transition: background 0.3s; }
+        .next-playing { flex: 0.7; padding-left: 70px; opacity: 0.25; }
+        .now-playing:hover { background: rgba(180, 164, 255, 0.1); }
+        .next-playing:hover { background: rgba(255, 255, 255, 0.05); opacity: 0.8 !important; }
 
-        .section-header { font-size: 14px; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: var(--t-mid); opacity: 0.5; margin-bottom: 5px; }
-        .now-playing .section-header { color: var(--uv-neon); opacity: 1; text-shadow: 0 0 15px rgba(180, 164, 255, 0.5); }
-        .track-content { display: flex; align-items: center; gap: 35px; min-width: 0; pointer-events: none; } 
+        .section-header { font-size: 20px; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: var(--t-mid); opacity: 0.5; margin-bottom: 10px; }
+        .now-playing .section-header { color: var(--uv-neon); opacity: 1; text-shadow: 0 0 20px rgba(180, 164, 255, 0.6); }
+        .track-content { display: flex; align-items: center; gap: 45px; min-width: 0; pointer-events: none; } 
         
-        /* Album Art */
-        .album-art-wrap { width: 140px; height: 140px; border-radius: 28px; overflow: hidden; flex-shrink: 0; position: relative; box-shadow: 0 12px 35px rgba(0,0,0,0.5); }
-        .next-playing .album-art-wrap { width: 105px; height: 105px; border-radius: 20px; }
+        .album-art-wrap { width: 180px; height: 180px; border-radius: 35px; overflow: hidden; flex-shrink: 0; position: relative; box-shadow: 0 15px 50px rgba(0,0,0,0.7); }
+        .next-playing .album-art-wrap { width: 130px; height: 130px; border-radius: 25px; }
         .album-art { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; transition: opacity 0.6s ease; }
         .album-art.new { opacity: 0; }
         .album-art.old { opacity: 1; z-index: 1; }
 
-        /* Track Info */
-        .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 6px; }
+        .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 10px; }
         .text-animate-wrap { transition: opacity 0.4s, transform 0.4s; width: 100%; }
-        .now-playing .text-animate-wrap.changing { opacity: 0; transform: translateY(-10px); }
-        /* Next는 애니메이션 삭제 (Cross-fade만 적용) */
+        .now-playing .text-animate-wrap.changing { opacity: 0; transform: translateY(-15px); }
         
-        .track-title { color: var(--t-hi); font-size: 32px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; letter-spacing: -0.01em; }
-        .track-artist { color: var(--t-hi); font-size: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; }
+        /* 🚨 Giant Scale Fonts */
+        .track-title { color: var(--t-hi); font-size: 48px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1; letter-spacing: -0.02em; }
+        .track-artist { color: var(--t-hi); font-size: 28px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.85; }
         
-        /* 🚨 Meta & Badge (Ellipsis Fixed) */
-        .track-meta { display: flex; align-items: center; justify-content: space-between; gap: 15px; width: 100%; min-width: 0; margin-top: 6px; }
-        .album-text { color: var(--t-mid); font-size: 16px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+        .track-meta { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: 100%; min-width: 0; margin-top: 10px; }
+        .album-text { color: var(--t-mid); font-size: 20px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+        
         .user-badge { 
-            background: rgba(180, 164, 255, 0.15); border: 1px solid rgba(180, 164, 255, 0.3); 
-            color: var(--uv-neon); padding: 6px 16px; border-radius: 12px; 
-            font-size: 14px; font-weight: 800; flex-shrink: 0;
-            max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            text-align: center;
+            background: rgba(180, 164, 255, 0.2); border: 2px solid rgba(180, 164, 255, 0.4); 
+            color: var(--uv-neon); padding: 10px 25px; border-radius: 18px; 
+            font-size: 18px; font-weight: 900; flex-shrink: 0;
+            max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .now-playing .user-badge { animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes badgePop { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes badgePop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* [PROGRESS & TIMER] */
-        .progress-container { display: flex; align-items: center; gap: 20px; margin-top: 18px; width: 100%; pointer-events: auto; }
-        .mini-progress-bg { flex: 1; height: 10px; background: rgba(255,255,255,0.08); border-radius: 15px; cursor: pointer; overflow: hidden; position: relative; z-index: 10; }
-        .mini-progress-fill { height: 100%; background: var(--uv-neon); width: 0%; box-shadow: 0 0 18px var(--uv-neon); transition: width 0.1s linear; }
-        .time-display { color: var(--t-hi); font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; width: 115px; text-align: right; flex-shrink: 0; opacity: 0.8; }
+        /* Progress Area */
+        .progress-container { display: flex; align-items: center; gap: 30px; margin-top: 35px; width: 100%; pointer-events: auto; }
+        .mini-progress-bg { flex: 1; height: 16px; background: rgba(255,255,255,0.08); border-radius: 25px; cursor: pointer; overflow: hidden; position: relative; }
+        .mini-progress-fill { height: 100%; background: var(--uv-neon); width: 0%; box-shadow: 0 0 25px var(--uv-neon); transition: width 0.1s linear; }
+        .time-display { color: var(--t-hi); font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; width: 150px; text-align: right; flex-shrink: 0; opacity: 0.9; }
 
-        .divider { width: 1px; height: 120px; background: rgba(255,255,255,0.08); align-self: center; flex-shrink: 0; }
+        .divider { width: 2px; height: 200px; background: rgba(255,255,255,0.1); align-self: center; flex-shrink: 0; }
         #yt-wrapper { position: fixed; top: -10px; right: -10px; width: 100px; height: 60px; opacity: 0.01; pointer-events: none; }
     </style>
 </head>
 <body>
     <div id="sessionHelper">
-        <button class="session-btn" onclick="location.href='https://www.youtube.com/login'">🔴 PREMIUM LOGIN (INTERACT ONLY)</button>
-        <button class="session-btn" style="background:#333" onclick="location.reload()">🔄 RELOAD</button>
+        <button class="session-btn" onclick="location.href='https://www.youtube.com'">🔴 GO YOUTUBE (LOGIN HERE)</button>
+        <button class="session-btn" style="background:#333" onclick="location.reload()">🔄 RELOAD PLAYER</button>
         <button class="session-btn" style="background:#111" onclick="this.parentElement.style.display='none'">✖ CLOSE</button>
     </div>
 
     <div id="authScreen"><div class="auth-title">MIWIG PLAYER</div><input type="password" id="pwInput" placeholder="PASSWORD" onkeydown="if(event.key==='Enter') handleLogin()"><button class="auth-btn" onclick="handleLogin()">ACCESS SYSTEM</button></div>
-    <div id="startScreen" onclick="startPlayer()"><div class="start-msg">MIDNIGHT WITH GROOVE<br>CLICK TO INITIATE SYSTEM</div></div>
+    <div id="startScreen" onclick="startPlayer()"><div class="start-msg">MIWIG BROADCAST SYSTEM<br>CLICK TO INITIATE</div></div>
     
     <div id="yt-wrapper"><div id="player"></div></div>
 
     <div id="playerBar" class="hidden">
-        <div class="track-section now-playing" onclick="togglePlayPause()" title="Click to Play/Pause">
+        <div class="track-section now-playing" onclick="togglePlayPause()">
             <div class="section-header" id="statusHeader">Now Playing</div>
             <div class="track-content">
                 <div class="album-art-wrap"><img id="npArt-old" class="album-art old" src=""><img id="npArt-new" class="album-art new" src=""></div>
                 <div class="track-info">
                     <div id="npTextWrap" class="text-animate-wrap">
                         <div id="npTitle" class="track-title">MIWIG SYSTEM</div>
-                        <div id="npArtist" class="track-artist">Waiting for Grooves...</div>
-                        <div class="track-meta">
-                            <span id="npAlbum" class="album-text"></span>
-                            <span id="npUser" class="user-badge" style="display:none"></span>
-                        </div>
+                        <div id="npArtist" class="track-artist">System Initiated...</div>
+                        <div class="track-meta"><span id="npAlbum" class="album-text"></span><span id="npUser" class="user-badge" style="display:none"></span></div>
                     </div>
                     <div class="progress-container" onclick="event.stopPropagation()">
                         <div class="mini-progress-bg" onclick="seekVideo(event)"><div id="mini-progress-bar" class="mini-progress-fill"></div></div>
@@ -130,18 +125,15 @@
         
         <div class="divider"></div>
 
-        <div class="track-section next-playing" onclick="nextSong()" title="Click to Skip Track">
+        <div class="track-section next-playing" onclick="nextSong()">
             <div class="section-header">Next Playing</div>
             <div class="track-content">
                 <div class="album-art-wrap"><img id="nxArt-old" class="album-art old" src=""><img id="nxArt-new" class="album-art new" src=""></div>
                 <div class="track-info">
                     <div id="nxTextWrap" class="text-animate-wrap">
-                        <div id="nxTitle" class="track-title" style="font-size:24px">EMPTY</div>
-                        <div id="nxArtist" class="track-artist" style="font-size:17px">-</div>
-                        <div class="track-meta">
-                            <span id="nxAlbum" class="album-text"></span>
-                            <span id="nxUser" class="user-badge" style="display:none"></span>
-                        </div>
+                        <div id="nxTitle" class="track-title" style="font-size:36px">EMPTY</div>
+                        <div id="nxArtist" class="track-artist" style="font-size:24px">-</div>
+                        <div class="track-meta"><span id="nxAlbum" class="album-text"></span><span id="nxUser" class="user-badge" style="display:none"></span></div>
                     </div>
                 </div>
             </div>
@@ -153,118 +145,70 @@
         let lastPlayedRowIndex = null, isProcessingNext = false; 
         const DEFAULT_COVER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='1'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E";
 
-        window.onload = () => {
-            if (localStorage.getItem('player_logged_in') === 'true') { document.getElementById('startScreen').style.display = 'flex'; }
-            else { document.getElementById('authScreen').style.display = 'flex'; document.getElementById('pwInput').focus(); }
-        };
-
-        function handleLogin() {
-            if (document.getElementById('pwInput').value === ADMIN_PASSWORD) { localStorage.setItem('player_logged_in', 'true'); location.reload(); }
-            else { alert('ACCESS DENIED'); }
-        }
-
+        window.onload = () => { if (localStorage.getItem('player_logged_in') === 'true') { document.getElementById('startScreen').style.display = 'flex'; } else { document.getElementById('authScreen').style.display = 'flex'; document.getElementById('pwInput').focus(); } };
+        function handleLogin() { if (document.getElementById('pwInput').value === ADMIN_PASSWORD) { localStorage.setItem('player_logged_in', 'true'); location.reload(); } else { alert('ACCESS DENIED'); } }
         function startPlayer() { document.getElementById('startScreen').style.display = 'none'; initPlayer(); }
         function initPlayer() { const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(tag); }
+        function onYouTubeIframeAPIReady() { player = new YT.Player('player', { height: '60', width: '100', playerVars: { 'autoplay': 1, 'controls': 0, 'enablejsapi': 1, 'origin': location.origin }, events: { 'onReady': () => { setInterval(checkQueue, POLL_INTERVAL); checkQueue(); }, 'onStateChange': onStateChange, 'onError': nextSong } }); }
 
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', { height: '60', width: '100', playerVars: { 'autoplay': 1, 'controls': 0, 'enablejsapi': 1, 'origin': location.origin },
-                events: { 'onReady': () => { setInterval(checkQueue, POLL_INTERVAL); checkQueue(); }, 'onStateChange': onStateChange, 'onError': nextSong }
-            });
+        async function checkQueue() { 
+            try { 
+                const res = await fetch(GAS_URL); const data = await res.json(); 
+                if (data.result !== "success" || !data.queue) return; 
+                const q = data.queue; 
+                if (!isPlaying && !isProcessingNext && q.length > 0) { 
+                    if (q[0].rowIndex === lastPlayedRowIndex) { showEmptyState(); return; } 
+                    playSong(q[0], q[1] || null); 
+                } else { 
+                    const lNext = q[isPlaying ? 1 : 0] || null; 
+                    if (JSON.stringify(lNext) !== JSON.stringify(nextData)) { nextData = lNext; animateUpdateUI('nx', nextData); } 
+                    if (!isPlaying && q.length === 0) showEmptyState(); 
+                } 
+            } catch (e) { console.error(e); } 
         }
 
-        async function checkQueue() {
-            try {
-                const res = await fetch(GAS_URL);
-                const data = await res.json();
-                if (data.result !== "success" || !data.queue) return;
-                const q = data.queue;
-                
-                if (!isPlaying && !isProcessingNext && q.length > 0) {
-                    if (q[0].rowIndex === lastPlayedRowIndex) { showEmptyState(); return; }
-                    playSong(q[0], q[1] || null);
-                } else {
-                    const lNext = q[isPlaying ? 1 : 0] || null;
-                    if (JSON.stringify(lNext) !== JSON.stringify(nextData)) {
-                        nextData = lNext;
-                        animateUpdateUI('nx', nextData); 
-                    }
-                    if (!isPlaying && q.length === 0) showEmptyState();
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        function playSong(song, next) {
-            currentData = song; nextData = next; lastPlayedRowIndex = song.rowIndex;
-            isPlaying = true; isProcessingNext = false;
-            document.getElementById('playerBar').classList.remove('hidden');
-            animateUpdateUI('np', song); animateUpdateUI('nx', next);
-            player.loadVideoById(song.youtubeId);
-            player.unMute(); player.setVolume(100);
-            setTimeout(updateProgress, 600);
+        function playSong(song, next) { 
+            currentData = song; nextData = next; lastPlayedRowIndex = song.rowIndex; isPlaying = true; isProcessingNext = false; 
+            document.getElementById('playerBar').classList.remove('hidden'); 
+            animateUpdateUI('np', song); animateUpdateUI('nx', next); 
+            player.loadVideoById(song.youtubeId); player.unMute(); player.setVolume(100); 
+            setTimeout(updateProgress, 600); 
         }
 
         function animateUpdateUI(prefix, songData) {
             const wrap = document.getElementById(`${prefix}TextWrap`), artOld = document.getElementById(`${prefix}Art-old`), artNew = document.getElementById(`${prefix}Art-new`);
-            wrap.classList.add('changing'); 
-            artNew.src = songData ? (songData.thumbUrl || DEFAULT_COVER) : DEFAULT_COVER;
-            artNew.style.opacity = '1'; artOld.style.opacity = '0';
-            
+            wrap.classList.add('changing'); artNew.src = songData ? (songData.thumbUrl || DEFAULT_COVER) : DEFAULT_COVER; artNew.style.opacity = '1'; artOld.style.opacity = '0';
             setTimeout(() => {
                 const title = document.getElementById(`${prefix}Title`), artist = document.getElementById(`${prefix}Artist`), album = document.getElementById(`${prefix}Album`), badge = document.getElementById(`${prefix}User`);
-                if (songData) {
-                    title.textContent = songData.title; artist.textContent = songData.artist; album.textContent = songData.album || "";
+                if (songData) { 
+                    title.textContent = songData.title; artist.textContent = songData.artist; album.textContent = songData.album || ""; 
                     if (songData.nickname) { badge.textContent = songData.nickname; badge.style.display = 'inline-block'; } else { badge.style.display = 'none'; }
-                } else {
-                    title.textContent = prefix === 'np' ? "MIWIG SYSTEM" : "EMPTY";
-                    artist.textContent = prefix === 'np' ? "Groove Active" : "-";
-                    album.textContent = ""; badge.style.display = 'none';
+                } else { 
+                    title.textContent = prefix === 'np' ? "MIWIG SYSTEM" : "EMPTY"; artist.textContent = prefix === 'np' ? "IDLE" : "-"; album.textContent = ""; badge.style.display = 'none'; 
                 }
-                wrap.classList.remove('changing');
-                setTimeout(() => { artOld.src = artNew.src; artOld.style.opacity = '1'; artNew.style.opacity = '0'; }, 250);
+                wrap.classList.remove('changing'); setTimeout(() => { artOld.src = artNew.src; artOld.style.opacity = '1'; artNew.style.opacity = '0'; }, 250);
             }, 400);
         }
 
-        function showEmptyState() { if (isPlaying) return; document.getElementById('playerBar').classList.add('hidden'); animateUpdateUI('np', null); }
+        function showEmptyState() { if (isPlaying) return; document.getElementById('playerBar').classList.add('hidden'); }
         function togglePlayPause() { const s = player.getPlayerState(); if (s === 1) player.pauseVideo(); else player.playVideo(); }
         function seekVideo(e) { if (!player || !player.getDuration) return; const rect = e.currentTarget.getBoundingClientRect(); const perc = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)); player.seekTo(perc * player.getDuration(), true); }
-        
-        function onStateChange(e) {
+        function onStateChange(e) { 
             const header = document.getElementById('statusHeader');
-            if (e.data === 0) nextSong();
-            if (e.data === 1) { header.textContent = "Now Playing"; updateProgress(); }
-            if (e.data === 2) { header.textContent = "Paused"; cancelAnimationFrame(progressUpdater); }
+            if (e.data === 0) nextSong(); 
+            if (e.data === 1) { header.textContent = "Now Playing"; updateProgress(); } 
+            if (e.data === 2) { header.textContent = "Paused"; cancelAnimationFrame(progressUpdater); } 
         }
-
-        async function nextSong() {
-            if (isProcessingNext) return;
-            isProcessingNext = true; isPlaying = false;
-            const rid = currentData ? currentData.rowIndex : null;
-            if (nextData && nextData.youtubeId) { const target = nextData; nextData = null; playSong(target, null); }
-            if (rid) { try { await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "complete", rowIndex: rid }) }); } catch(e) {} checkQueue(); }
-            isProcessingNext = false;
-        }
-
+        async function nextSong() { if (isProcessingNext) return; isProcessingNext = true; isPlaying = false; const rid = currentData ? currentData.rowIndex : null; if (nextData && nextData.youtubeId) { const target = nextData; nextData = null; playSong(target, null); } if (rid) { try { await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "complete", rowIndex: rid }) }); } catch(e) {} checkQueue(); } isProcessingNext = false; }
         function updateProgress() {
             if (player && typeof player.getDuration === "function") {
                 const cur = player.getCurrentTime() || 0, tot = player.getDuration() || 0;
-                if (tot > 0) {
-                    document.getElementById('mini-progress-bar').style.width = (cur/tot*100) + '%';
-                    const rem = Math.max(0, tot - cur);
-                    document.getElementById('timeDisplay').textContent = `${formatTime(cur)} / -${formatTime(rem)}`;
-                } else if (isPlaying) {
-                    setTimeout(updateProgress, 300);
-                    return;
-                }
+                if (tot > 0) { document.getElementById('mini-progress-bar').style.width = (cur/tot*100) + '%'; const rem = Math.max(0, tot - cur); document.getElementById('timeDisplay').textContent = `${formatTime(cur)} / -${formatTime(rem)}`; }
+                else if (isPlaying) { setTimeout(updateProgress, 300); return; }
             }
             if (player && player.getPlayerState() === 1) progressUpdater = requestAnimationFrame(updateProgress);
         }
-
-        function formatTime(sec) {
-            if (!sec || isNaN(sec)) return "0:00";
-            const m = Math.floor(sec / 60);
-            const s = Math.floor(sec % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
+        function formatTime(sec) { if (!sec || isNaN(sec)) return "0:00"; const m = Math.floor(sec / 60), s = Math.floor(sec % 60).toString().padStart(2, '0'); return `${m}:${s}`; }
     </script>
 </body>
 </html>
