@@ -710,6 +710,34 @@ body.has-selection .track-item:not(.selected) {
 }
 
 /* ════════════════════════════════════════
+   Floating Button
+════════════════════════════════════════ */
+.floating-btn {
+  position: fixed;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  background: var(--uv-grad);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(95, 75, 139, 0.5);
+  z-index: 2000;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease-spring);
+}
+.floating-btn:active {
+  transform: scale(0.85);
+}
+.floating-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ════════════════════════════════════════
    Toast
 ════════════════════════════════════════ */
 #toast {
@@ -812,6 +840,17 @@ input[type=search]::-webkit-search-cancel-button {
   <ul id="trackList" role="list"></ul>
   <div id="scrollSentinel" style="height:10px;margin-top:20px;"></div>
 </section>
+
+<a href="./player/waiting.html" class="floating-btn" aria-label="Waitlist">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6"></line>
+    <line x1="8" y1="12" x2="21" y2="12"></line>
+    <line x1="8" y1="18" x2="21" y2="18"></line>
+    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+  </svg>
+</a>
 
 <div id="toast" role="alert" aria-live="assertive"></div>
 
