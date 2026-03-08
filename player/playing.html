@@ -2,13 +2,13 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>미위구 플레이어 - 최종 완성본</title>
+    <title>MIWIG PLAYER - MIDNIGHT WITH GROOVE</title>
     
     <script>
         /* [설정] */
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec"; 
-        const POLL_INTERVAL = 5000; // 5초 주기 체크 (신속한 동기화)
-        const ADMIN_PASSWORD = "1234"; // 비밀번호
+        const POLL_INTERVAL = 5000; 
+        const ADMIN_PASSWORD = "1234"; 
     </script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -23,17 +23,13 @@
 
         /* [로그인/시작 화면] */
         #authScreen, #startScreen { position: fixed; inset: 0; z-index: 9999999; background: rgba(7, 7, 26, 0.98); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
-        .auth-title { color: var(--t-hi); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+        .auth-title { color: var(--t-hi); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; }
         #pwInput { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); padding: 16px 25px; border-radius: 16px; color: white; font-size: 18px; text-align: center; outline: none; width: 300px; transition: 0.3s; }
         #pwInput:focus { border-color: var(--uv-neon); background: rgba(255, 255, 255, 0.08); }
         .auth-btn { background: var(--uv-neon); color: #000; font-weight: 800; padding: 16px 45px; border: none; border-radius: 16px; cursor: pointer; font-size: 18px; transition: 0.2s; }
         .auth-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(180, 164, 255, 0.4); }
-        .start-msg { color: var(--uv-neon); font-size: 32px; font-weight: 900; animation: pulse 1.5s infinite; cursor: pointer; text-align: center; line-height: 1.4; }
+        .start-msg { color: var(--uv-neon); font-size: 32px; font-weight: 900; animation: pulse 1.5s infinite; cursor: pointer; text-align: center; line-height: 1.4; letter-spacing: -0.04em; }
         @keyframes pulse { 0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px var(--uv-neon)); } 50% { opacity: 0.7; } }
-
-        /* [상단 로그인 오버레이] */
-        #loginOverlay { position: fixed; top: 15px; left: 15px; z-index: 99999; background: #FF0000; color: white; padding: 12px 18px; border-radius: 10px; font-weight: 800; font-size: 13px; opacity: 0.3; cursor: pointer; transition: 0.3s; }
-        #loginOverlay:hover { opacity: 1; }
 
         /* [메인 플레이어 바] */
         #playerBar { 
@@ -53,7 +49,6 @@
         
         .track-content { display: flex; align-items: center; gap: 24px; min-width: 0; position: relative; }
         
-        /* 앨범 아트 Cross-fade 효과 */
         .album-art-wrap { width: 110px; height: 110px; border-radius: 18px; overflow: hidden; flex-shrink: 0; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .album-art { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; transition: opacity 0.6s ease, transform 0.6s ease; }
         .album-art.new { opacity: 0; transform: scale(1.1); }
@@ -69,7 +64,6 @@
         .track-meta { display: flex; align-items: center; gap: 10px; min-width: 0; margin-top: 2px; }
         .album-text { color: var(--t-mid); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
         
-        /* 신청자 뱃지 */
         .user-badge { 
             background: rgba(180, 164, 255, 0.2); border: 1px solid rgba(180, 164, 255, 0.4); 
             color: var(--uv-neon); padding: 4px 10px; border-radius: 8px; 
@@ -78,18 +72,14 @@
         }
         @keyframes badgePop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* 컨트롤러 디자인 */
+        /* 컨트롤러 */
         .controls-row { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
         .play-pause-btn { background: var(--uv-neon); color: #000; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 0 15px rgba(180, 164, 255, 0.3); transition: 0.2s; }
-        .play-pause-btn:hover { transform: scale(1.05); }
         
         .mini-progress-bg { flex: 1; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; cursor: pointer; overflow: hidden; position: relative; z-index: 10; }
         .mini-progress-fill { height: 100%; background: var(--uv-neon); width: 0%; box-shadow: 0 0 15px var(--uv-neon); transition: width 0.1s linear; }
         
-        .time-display { 
-            color: var(--t-hi); font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; 
-            width: 105px; text-align: right; text-shadow: 0 0 10px rgba(180, 164, 255, 0.3); flex-shrink: 0; 
-        }
+        .time-display { color: var(--t-hi); font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; width: 105px; text-align: right; text-shadow: 0 0 10px rgba(180, 164, 255, 0.3); flex-shrink: 0; }
 
         .next-playing { opacity: 0.4; }
         .divider { width: 1px; background: rgba(255,255,255,0.1); margin: 5px 0; flex-shrink: 0; }
@@ -99,12 +89,16 @@
 </head>
 <body>
 
-    <div id="authScreen"><div class="auth-title">STYLUS SEOUL PLAYER</div><input type="password" id="pwInput" placeholder="PASSWORD" onkeydown="if(event.key==='Enter') handleLogin()"><button class="auth-btn" onclick="handleLogin()">ACCESS</button></div>
+    <div id="authScreen">
+        <div class="auth-title">MIWIG PLAYER</div>
+        <input type="password" id="pwInput" placeholder="PASSWORD" onkeydown="if(event.key==='Enter') handleLogin()">
+        <button class="auth-btn" onclick="handleLogin()">ACCESS</button>
+    </div>
     
-    <div id="startScreen" onclick="startPlayer()"><div class="start-msg">CLICK TO START<br>ZERO-DELAY SYSTEM</div></div>
+    <div id="startScreen" onclick="startPlayer()">
+        <div class="start-msg">MIWIG SYSTEM<br>CLICK TO START GROOVE</div>
+    </div>
     
-    <div id="loginOverlay"><span onclick="window.open('https://www.youtube.com', '_blank')">⚠️ YOUTUBE SESSION RECOVERY</span><span onclick="this.parentElement.style.display='none'" style="margin-left:15px">✖</span></div>
-
     <div id="yt-wrapper"><div id="player"></div></div>
 
     <div id="playerBar" class="hidden">
@@ -117,8 +111,8 @@
                 </div>
                 <div class="track-info">
                     <div id="npTextWrap" class="text-animate-wrap">
-                        <div id="npTitle" class="track-title">STYLUS SEOUL</div>
-                        <div id="npArtist" class="track-artist">Loading System...</div>
+                        <div id="npTitle" class="track-title">MIWIG SYSTEM</div>
+                        <div id="npArtist" class="track-artist">Connecting...</div>
                         <div class="track-meta"><span id="npAlbum" class="album-text"></span><span id="npUser" class="user-badge" style="display:none"></span></div>
                     </div>
                     <div class="controls-row">
@@ -155,8 +149,7 @@
 
     <script>
         let player, currentData = null, nextData = null, isPlaying = false, progressUpdater = null;
-        let lastPlayedRowIndex = null; 
-        let isProcessingNext = false; 
+        let lastPlayedRowIndex = null, isProcessingNext = false; 
         const DEFAULT_COVER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='1'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E";
 
         window.onload = () => {
@@ -166,7 +159,7 @@
 
         function handleLogin() {
             if (document.getElementById('pwInput').value === ADMIN_PASSWORD) { localStorage.setItem('player_logged_in', 'true'); location.reload(); }
-            else { alert('WRONG PASSWORD'); }
+            else { alert('ACCESS DENIED'); }
         }
 
         function startPlayer() { document.getElementById('startScreen').style.display = 'none'; initPlayer(); }
@@ -183,7 +176,6 @@
                 const res = await fetch(GAS_URL);
                 const data = await res.json();
                 if (data.result !== "success" || !data.queue) return;
-                
                 const q = data.queue;
                 if (!isPlaying && !isProcessingNext && q.length > 0) {
                     if (q[0].rowIndex === lastPlayedRowIndex) { showEmptyState(); return; }
@@ -207,24 +199,19 @@
         }
 
         function animateUpdateUI(prefix, songData) {
-            const wrap = document.getElementById(`${prefix}TextWrap`);
-            const artOld = document.getElementById(`${prefix}Art-old`);
-            const artNew = document.getElementById(`${prefix}Art-new`);
-
+            const wrap = document.getElementById(`${prefix}TextWrap`), artOld = document.getElementById(`${prefix}Art-old`), artNew = document.getElementById(`${prefix}Art-new`);
             wrap.classList.add('changing');
             artNew.src = songData ? (songData.thumbUrl || DEFAULT_COVER) : DEFAULT_COVER;
-            artNew.style.opacity = '1'; artNew.style.transform = 'scale(1)';
-            artOld.style.opacity = '0';
-
+            artNew.style.opacity = '1'; artNew.style.transform = 'scale(1)'; artOld.style.opacity = '0';
             setTimeout(() => {
                 const title = document.getElementById(`${prefix}Title`), artist = document.getElementById(`${prefix}Artist`), 
                       album = document.getElementById(`${prefix}Album`), badge = document.getElementById(`${prefix}User`);
                 if (songData) {
                     title.textContent = songData.title; artist.textContent = songData.artist; album.textContent = songData.album || "";
-                    if (songData.nickname) { badge.textContent = `REQ. ${songData.nickname}`; badge.style.display = 'inline-block'; } else { badge.style.display = 'none'; }
+                    if (songData.nickname) { badge.textContent = `MIWIG · ${songData.nickname}`; badge.style.display = 'inline-block'; } else { badge.style.display = 'none'; }
                 } else {
-                    title.textContent = prefix === 'np' ? "신청곡 대기 중..." : "WAITING NEXT SONG";
-                    artist.textContent = prefix === 'np' ? "Stylus Seoul" : "-";
+                    title.textContent = prefix === 'np' ? "MIWIG SYSTEM" : "WAITING NEXT SONG";
+                    artist.textContent = prefix === 'np' ? "Midnight With Groove" : "-";
                     album.textContent = ""; badge.style.display = 'none';
                 }
                 wrap.classList.remove('changing');
@@ -239,18 +226,8 @@
             document.getElementById('timeDisplay').textContent = "0:00 / -0:00";
         }
 
-        function togglePlayPause() { 
-            const s = player.getPlayerState();
-            if (s === 1) player.pauseVideo(); else player.playVideo();
-        }
-
-        function seekVideo(e) { 
-            if (!player || !player.getDuration) return;
-            const rect = e.currentTarget.getBoundingClientRect(); 
-            const perc = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-            player.seekTo(perc * player.getDuration(), true); 
-        }
-
+        function togglePlayPause() { const s = player.getPlayerState(); if (s === 1) player.pauseVideo(); else player.playVideo(); }
+        function seekVideo(e) { if (!player || !player.getDuration) return; const rect = e.currentTarget.getBoundingClientRect(); const perc = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)); player.seekTo(perc * player.getDuration(), true); }
         function onStateChange(e) {
             const p = document.getElementById('icon-play'), s = document.getElementById('icon-pause');
             if (e.data === 0) nextSong();
@@ -259,37 +236,22 @@
         }
 
         async function nextSong() {
-            if (isProcessingNext) return;
-            isProcessingNext = true; isPlaying = false;
+            if (isProcessingNext) return; isProcessingNext = true; isPlaying = false;
             const rid = currentData ? currentData.rowIndex : null;
-
-            if (nextData && nextData.youtubeId) {
-                const target = nextData; nextData = null;
-                playSong(target, null);
-            }
-            if (rid) { 
-                try { await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "complete", rowIndex: rid }) }); } catch(e) {}
-                checkQueue();
-            }
+            if (nextData && nextData.youtubeId) { const target = nextData; nextData = null; playSong(target, null); }
+            if (rid) { try { await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "complete", rowIndex: rid }) }); } catch(e) {} checkQueue(); }
             isProcessingNext = false;
         }
 
         function updateProgress() {
             if (player && player.getDuration) {
                 const cur = player.getCurrentTime(), tot = player.getDuration();
-                if (tot > 0) {
-                    document.getElementById('mini-progress-bar').style.width = (cur/tot*100) + '%';
-                    const rem = Math.max(0, tot - cur);
-                    document.getElementById('timeDisplay').textContent = `${formatTime(cur)} / -${formatTime(rem)}`;
-                }
+                if (tot > 0) { document.getElementById('mini-progress-bar').style.width = (cur/tot*100) + '%'; const rem = Math.max(0, tot - cur); document.getElementById('timeDisplay').textContent = `${formatTime(cur)} / -${formatTime(rem)}`; }
             }
             if (player.getPlayerState() === 1) progressUpdater = requestAnimationFrame(updateProgress);
         }
 
-        function formatTime(sec) {
-            const m = Math.floor(sec / 60), s = Math.floor(sec % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
+        function formatTime(sec) { const m = Math.floor(sec / 60), s = Math.floor(sec % 60).toString().padStart(2, '0'); return `${m}:${s}`; }
     </script>
 </body>
 </html>
