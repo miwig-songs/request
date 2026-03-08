@@ -3,140 +3,282 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>MIWIG Waitlist</title>
+<title>MIWIG Live Waitlist</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
+/* ════════════════════════════════════════
+   Cosmic Dark — Design System (리퀘스트 페이지와 100% 동기화)
+════════════════════════════════════════ */
 :root {
-  --bg: #07071A;
-  --surf: rgba(255, 255, 255, 0.04);
-  --uv: #5F4B8B;
-  --uv-neon: #B4A4FF;
-  --border: rgba(148, 130, 255, 0.12);
-  --t-hi: #F5F2FF;
-  --t-mid: #A89DC8;
-  --t-dim: #635E8A;
-  --font-main: 'Pretendard', 'Noto Sans JP', sans-serif;
+  --bg:          #07071A;
+  --surf-1:      #0D0D24;
+  --surf-2:      #111230;
+  --surf-3:      #191938;
+  --surf-input:  #1E1E44;
+
+  --border-dim:  rgba(148, 130, 255, 0.09);
+  --border-mid:  rgba(148, 130, 255, 0.18);
+  --border-glow: rgba(148, 130, 255, 0.38);
+
+  --t-hi:   #F5F2FF;   
+  --t-mid:  #A89DC8;   
+  --t-lo:   #635E8A;   
+
+  --uv:          #5F4B8B;
+  --uv-bright: #9480E0;
+  --uv-neon:   #B4A4FF;
+  --uv-glow:   rgba(95, 75, 139, 0.45);
+  --uv-grad:   linear-gradient(135deg, #5F4B8B 0%, #7D52C4 55%, #A070D8 100%);
+
+  --r-sm:  6px;
+  --r-md:  10px;
+  --r-lg:  14px;
+  --r-f:   9999px;
+
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-std:    cubic-bezier(0.2,  0,    0,    1);
+  --t1: 150ms;
+  --t2: 260ms;
+  --t3: 420ms;
+
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  color-scheme: dark;
 }
 
-/* Reset & Base */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { background: var(--bg); }
-body { 
+/* ════════════════════════════════════════
+   Reset & Base
+════════════════════════════════════════ */
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+html { 
+  height: 100%; 
+  -webkit-text-size-adjust: 100%; 
   background: var(--bg); 
-  font-family: var(--font-main); 
-  color: var(--t-hi); 
-  -webkit-font-smoothing: antialiased;
-  padding-bottom: env(safe-area-inset-bottom);
 }
+body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--t-hi);
+  overscroll-behavior: none;
+  /* 모바일 하단 플로팅 버튼을 위한 여백 확보 */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; }
+ul { list-style: none; }
+::-webkit-scrollbar { width: 0; height: 0; }
 
-/* Cosmic Background */
+/* ════════════════════════════════════════
+   Cosmic Nebula Background
+════════════════════════════════════════ */
 .cosmic-bg {
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: radial-gradient(circle at 50% -20%, rgba(95,75,139,0.3) 0%, transparent 70%);
+  background:
+    radial-gradient(ellipse 160% 90% at 50% -10%, rgba(95,75,139,0.28) 0%, transparent 58%),
+    radial-gradient(ellipse 80%  50% at 90%  95%, rgba(65,45,115,0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 55%  35% at  5%  65%, rgba(80,55,130,0.09) 0%, transparent 50%);
+}
+.cosmic-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle 1px at 18% 22%, rgba(200,190,255,0.55) 0%, transparent 100%),
+    radial-gradient(circle 1px at 74% 11%, rgba(200,190,255,0.40) 0%, transparent 100%),
+    radial-gradient(circle 1px at 42% 38%, rgba(200,190,255,0.30) 0%, transparent 100%),
+    radial-gradient(circle 1px at 88% 52%, rgba(200,190,255,0.45) 0%, transparent 100%),
+    radial-gradient(circle 1px at  9% 78%, rgba(200,190,255,0.35) 0%, transparent 100%),
+    radial-gradient(circle 1px at 61% 68%, rgba(200,190,255,0.28) 0%, transparent 100%),
+    radial-gradient(circle 1px at 31% 85%, rgba(200,190,255,0.38) 0%, transparent 100%),
+    radial-gradient(circle 1px at 95%  7%, rgba(200,190,255,0.50) 0%, transparent 100%),
+    radial-gradient(circle 2px at 55% 28%, rgba(180,164,255,0.22) 0%, transparent 100%),
+    radial-gradient(circle 2px at 22% 55%, rgba(180,164,255,0.18) 0%, transparent 100%);
 }
 
-/* Header */
-nav {
-  position: sticky; top: 0; z-index: 1000;
-  background: rgba(7, 7, 26, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  height: 60px; display: flex; align-items: center; justify-content: center;
+/* ════════════════════════════════════════
+   Header (리퀘스트 페이지와 동일)
+════════════════════════════════════════ */
+.header-wrap {
+  position: sticky; top: 0; z-index: 300;
+  padding: calc(14px + env(safe-area-inset-top)) 20px 14px;
+  background: rgba(7, 7, 26, 0.78);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--t1), background var(--t2);
+  display: flex; justify-content: space-between; align-items: center;
 }
-.nav-inner { width: 100%; max-width: 600px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
-.nav-logo { font-size: 19px; font-weight: 900; font-style: italic; color: #fff; text-decoration: none; }
-.nav-logo span { color: var(--uv-neon); }
-.live-status { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; color: var(--t-dim); letter-spacing: 0.1em; }
-.dot { width: 6px; height: 6px; background: #ff4b4b; border-radius: 50%; box-shadow: 0 0 10px #ff4b4b; animation: blink 1.5s infinite; }
-
-.container { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; padding: 24px 20px; }
-.label { font-size: 11px; font-weight: 900; color: var(--uv-neon); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-.label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-/* On Air Card */
-.now-air { margin-bottom: 50px; }
-.oa-card {
-  position: relative; overflow: hidden;
-  background: linear-gradient(145deg, rgba(255,255,255,0.05), transparent);
-  border: 1px solid var(--uv); border-radius: 20px; padding: 24px;
-  display: flex; flex-direction: column; gap: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+.header-wrap.scrolled {
+  background: rgba(7, 7, 26, 0.94);
+  border-bottom: 1px solid var(--border-dim);
 }
-.oa-art-wrap { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
-.oa-art { width: 100%; height: 100%; object-fit: cover; }
-.oa-glow { position: absolute; inset: 0; background: radial-gradient(circle at center, var(--uv-neon), transparent 70%); opacity: 0.15; pointer-events: none; }
+@media (min-width: 600px) {
+  .header-wrap { max-width: 600px; margin: 0 auto; }
+}
 
-.oa-info { min-width: 0; }
-.oa-title { font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 6px; letter-spacing: -0.02em; font-feature-settings: "palt"; }
-.oa-artist { font-size: 17px; color: var(--t-mid); margin-bottom: 16px; }
-.oa-user { display: inline-flex; font-size: 10px; font-weight: 900; color: var(--uv-neon); border: 1.5px solid var(--uv-neon); padding: 3px 10px; border-radius: 4px; text-transform: uppercase; }
+.header-brand { display: flex; align-items: center; gap: 12px; }
+.header-logo { 
+  width: 36px; height: 36px; flex-shrink: 0; border-radius: 9px; object-fit: cover; 
+  box-shadow: 0 0 0 1px rgba(148,130,255,0.22), 0 0 12px rgba(95,75,139,0.50), 0 0 26px rgba(95,75,139,0.16); 
+}
+.header-text { display: flex; flex-direction: column; gap: 2px; }
+.header-title { 
+  font-size: 18px; font-weight: 800; font-style: italic; letter-spacing: -0.3px; line-height: 1.1; 
+  background: linear-gradient(95deg, #F5F2FF 0%, var(--uv-neon) 100%); 
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; 
+}
+.header-sub { font-size: 11px; font-weight: 500; color: var(--t-lo); letter-spacing: 0.3px; }
 
-/* Waitlist Queue */
-.queue-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-.q-link { text-decoration: none; color: inherit; display: block; background: var(--bg); transition: 0.2s; }
-.q-link:active { background: rgba(148, 130, 255, 0.08); }
-
-.q-item { padding: 18px 20px; display: flex; align-items: center; gap: 16px; position: relative; }
-.q-art { width: 52px; height: 52px; border-radius: 6px; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.05); }
-.q-art img { width: 100%; height: 100%; object-fit: cover; }
-
-.q-info { flex: 1; min-width: 0; }
-.q-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-feature-settings: "palt"; }
-.q-artist { font-size: 14px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.q-user { font-size: 10px; font-weight: 800; color: var(--uv-neon); text-transform: uppercase; margin-top: 5px; opacity: 0.8; }
-
-.q-icon { margin-left: 10px; color: var(--t-dim); opacity: 0.5; }
-
-/* Empty & Animation */
-#empty { text-align: center; padding: 100px 0; color: var(--t-dim); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; }
+.live-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--t-lo); letter-spacing: 0.1em; }
+.dot { width: 6px; height: 6px; background: #ff4b4b; border-radius: 50%; box-shadow: 0 0 10px rgba(255, 75, 75, 0.5); animation: blink 1.5s infinite; }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-@media (min-width: 480px) {
-  .oa-card { flex-direction: row; align-items: center; padding: 32px; gap: 32px; }
-  .oa-art-wrap { width: 180px; }
-  .oa-title { font-size: 34px; }
+/* ════════════════════════════════════════
+   Waitlist Content
+════════════════════════════════════════ */
+.container { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; padding: 24px 20px; }
+
+.section-label { 
+  font-size: 12px; font-weight: 800; color: var(--uv-neon); 
+  letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 16px; 
+  display: flex; align-items: center; gap: 12px; 
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border-mid); }
+
+/* [Now Playing Card] */
+.now-air { margin-bottom: 40px; }
+.now-card {
+  background: var(--surf-2);
+  border: 1px solid rgba(148, 130, 255, 0.2);
+  border-radius: 20px; padding: 20px;
+  display: flex; align-items: center; gap: 20px;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.65), 0 0 28px rgba(95,75,139,0.22);
+  transition: transform var(--t1), border-color var(--t1);
+}
+.now-card:active { transform: scale(0.98); border-color: var(--uv-bright); }
+.now-art { width: 90px; height: 90px; border-radius: var(--r-md); overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+.now-art img { width: 100%; height: 100%; object-fit: cover; }
+.now-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.now-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--t-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+.now-artist { font-size: 14px; color: var(--t-mid); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.now-req { display: inline-block; font-size: 10px; font-weight: 800; color: var(--uv-neon); border: 1px solid rgba(180,164,255,0.3); padding: 3px 8px; border-radius: 4px; align-self: flex-start; }
+
+/* [Queue List] */
+.track-list { display: flex; flex-direction: column; gap: 2px; }
+.track-item { border-radius: var(--r-lg); overflow: hidden; }
+.track-row {
+  display: flex; align-items: center; gap: 14px; padding: 12px;
+  background: transparent; border-radius: var(--r-lg);
+  transition: background var(--t1);
+}
+.track-row:active { background: rgba(148,130,255,0.06); }
+
+.thumb-wrap {
+  position: relative; width: 48px; height: 48px; flex-shrink: 0;
+  border-radius: var(--r-md); overflow: hidden; background: var(--surf-3); border: 1px solid var(--border-dim);
+}
+.track-thumb { width: 100%; height: 100%; object-fit: cover; }
+.track-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.track-title { font-size: 16px; font-weight: 600; color: var(--t-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }
+.track-sub { font-size: 14px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.track-user { font-size: 11px; font-weight: 700; color: var(--uv-neon); margin-top: 4px; }
+
+.track-trail { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
+.trail-icon { color: var(--t-lo); width: 18px; height: 18px; transition: color var(--t1); }
+.track-row:active .trail-icon { color: var(--uv-neon); }
+
+#empty { text-align: center; padding: 80px 24px; color: var(--t-mid); font-size: 14px; display: none; }
+
+/* ════════════════════════════════════════
+   Floating Button (To Request Page)
+════════════════════════════════════════ */
+.floating-btn {
+  position: fixed;
+  bottom: calc(24px + env(safe-area-inset-bottom)); right: 24px;
+  width: 58px; height: 58px;
+  background: var(--uv-grad); color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px rgba(95, 75, 139, 0.5), 0 0 0 1px rgba(255,255,255,0.1);
+  z-index: 9999; transition: transform 0.2s var(--ease-spring), filter 0.2s;
+}
+.floating-btn:active { transform: scale(0.85); filter: brightness(1.2); }
+.floating-btn svg { width: 26px; height: 26px; }
+
+@media (min-width: 600px) {
+  .now-art { width: 120px; height: 120px; }
+  .now-title { font-size: 24px; }
+  .floating-btn {
+    right: calc(50vw - 276px); /* 600px 중앙 정렬 기준 바깥쪽 배치 */
+  }
 }
 </style>
 </head>
 <body>
 
-<div class="cosmic-bg"></div>
+<div class="cosmic-bg" aria-hidden="true"></div>
 
-<nav>
-  <div class="nav-inner">
-    <a href="#" class="nav-logo">MIWIG <span>WAITLIST</span></a>
-    <div class="live-status"><div class="dot"></div>LIVE STATUS</div>
+<header class="header-wrap" id="headerWrap">
+  <div class="header-brand">
+    <img class="header-logo" src="https://miwig-songs.github.io/request/thumb.jpg" alt="로고">
+    <div class="header-text">
+      <span class="header-title">Live Waitlist</span>
+      <span class="header-sub">미위구 스트리밍 대기 현황</span>
+    </div>
   </div>
-</nav>
+  <div class="live-status"><div class="dot"></div>LIVE</div>
+</header>
 
 <div class="container">
-  <div id="onAirSection" style="display:none;" class="now-air">
-    <div class="label">Now Playing</div>
-    <div class="oa-card">
-      <div class="oa-art-wrap">
-        <img id="onAirArt" class="oa-art" src="" alt="">
-        <div class="oa-glow"></div>
+  <div id="onAirSection" class="now-air" style="display:none;">
+    <div class="section-label">Now Playing</div>
+    <a href="#" id="onAirLink" target="_blank" class="now-card">
+      <div class="now-art"><img id="onAirArt" src="" alt=""></div>
+      <div class="now-info">
+        <div id="onAirTitle" class="now-title">-</div>
+        <div id="onAirArtist" class="now-artist">-</div>
+        <div class="now-req">REQ: <span id="onAirUser">-</span></div>
       </div>
-      <div class="oa-info">
-        <div id="onAirTitle" class="oa-title">-</div>
-        <div id="onAirArtist" class="oa-artist">-</div>
-        <div class="oa-user">REQ: <span id="onAirUser">-</span></div>
-      </div>
-    </div>
+    </a>
   </div>
 
   <div id="queueSection" style="display:none;">
-    <div class="label">Upcoming Queue</div>
-    <div id="qContainer" class="queue-list">
+    <div class="section-label">Upcoming Queue</div>
+    <div id="qContainer" class="track-list">
       </div>
   </div>
 
-  <div id="empty" style="display:none;">NO TRACKS IN QUEUE</div>
+  <div id="empty">현재 대기 중인 신청곡이 없습니다.</div>
 </div>
+
+<a href="../index.html" class="floating-btn" aria-label="곡 신청하기">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>
+</a>
 
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec";
 const POLL_INTERVAL = 5000;
+
+// Header scroll effect
+const $headerWrap = document.getElementById('headerWrap');
+let isScrolling = false;
+window.addEventListener('scroll', () => {
+  if (!isScrolling) {
+    window.requestAnimationFrame(() => {
+      $headerWrap.classList.toggle('scrolled', window.scrollY > 10);
+      isScrolling = false;
+    });
+    isScrolling = true;
+  }
+}, { passive: true });
+
+function esc(s) { 
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); 
+}
 
 async function sync() {
   try {
@@ -161,6 +303,7 @@ async function sync() {
     document.getElementById('onAirArtist').textContent = cur.artist;
     document.getElementById('onAirArt').src = cur.thumbUrl || '';
     document.getElementById('onAirUser').textContent = (cur.nickname || 'GUEST').toUpperCase();
+    document.getElementById('onAirLink').href = `https://music.youtube.com/watch?v=${cur.youtubeId}`;
 
     // 2. Queue List
     const next = q.slice(1);
@@ -170,22 +313,26 @@ async function sync() {
     } else {
       document.getElementById('queueSection').style.display = 'block';
       container.innerHTML = next.map(s => `
-        <a href="https://music.youtube.com/watch?v=${s.youtubeId}" target="_blank" class="q-link">
-          <div class="q-item">
-            <div class="q-art"><img src="${s.thumbUrl || ''}" alt=""></div>
-            <div class="q-info">
-              <div class="q-title">${s.title}</div>
-              <div class="q-artist">${s.artist}</div>
-              <div class="q-user">BY ${(s.nickname || 'GUEST').toUpperCase()}</div>
+        <div class="track-item">
+          <a href="https://music.youtube.com/watch?v=${s.youtubeId}" target="_blank" class="track-row">
+            <div class="thumb-wrap">
+              <img class="track-thumb" src="${s.thumbUrl || ''}" alt="" loading="lazy">
             </div>
-            <div class="q-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <div class="track-info">
+              <div class="track-title">${esc(s.title)}</div>
+              <div class="track-sub">${esc(s.artist)}</div>
+              <div class="track-user">REQ: ${esc((s.nickname || 'GUEST').toUpperCase())}</div>
             </div>
-          </div>
-        </a>
+            <div class="track-trail">
+              <svg class="trail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </div>
+          </a>
+        </div>
       `).join('');
     }
-  } catch (e) { console.error(e); }
+  } catch (e) { console.error("Waitlist Update Error:", e); }
 }
 
 sync();
