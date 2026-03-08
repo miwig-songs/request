@@ -2,69 +2,104 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>미위구 플레이어 - 실시간 동기화 버전</title>
+    <title>미위구 플레이어 - 시네마틱 애니메이션 버전</title>
     
     <script>
         /* [설정] */
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec"; 
-        const POLL_INTERVAL = 10000; // 10초마다 체크
+        const POLL_INTERVAL = 5000; // 5초마다 체크
         const ADMIN_PASSWORD = "1234"; 
     </script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
-        :root { --bg-panel: rgba(7, 7, 26, 0.94); --uv-neon: #B4A4FF; --t-hi: #F5F2FF; --t-mid: #A89DC8; }
-        body { margin: 0; padding: 0; overflow: hidden; font-family: 'Pretendard', sans-serif; background: transparent; }
+        :root { --bg-panel: rgba(7, 7, 26, 0.96); --uv-neon: #B4A4FF; --t-hi: #F5F2FF; --t-mid: #A89DC8; }
+        body { margin: 0; padding: 0; overflow: hidden; font-family: 'Pretendard', sans-serif; background: transparent; -webkit-font-smoothing: antialiased; }
 
         /* [접근 제어 / 시작 화면] */
         #authScreen, #startScreen { position: fixed; inset: 0; z-index: 9999999; background: rgba(7, 7, 26, 0.98); backdrop-filter: blur(10px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
-        .auth-title { color: var(--t-hi); font-size: 20px; font-weight: 700; }
-        #pwInput { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); padding: 14px 20px; border-radius: 12px; color: white; font-size: 16px; text-align: center; outline: none; }
-        .auth-btn { background: var(--uv-neon); color: #000; font-weight: 800; padding: 14px 30px; border: none; border-radius: 12px; cursor: pointer; }
-        .start-msg { color: var(--uv-neon); font-size: 24px; font-weight: 800; animation: pulse 1.5s infinite; cursor: pointer; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .auth-title { color: var(--t-hi); font-size: 24px; font-weight: 800; letter-spacing: -0.03em; }
+        #pwInput { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); padding: 16px 25px; border-radius: 16px; color: white; font-size: 18px; text-align: center; outline: none; width: 300px; transition: 0.3s; }
+        #pwInput:focus { border-color: var(--uv-neon); background: rgba(255, 255, 255, 0.08); box-shadow: 0 0 20px rgba(180, 164, 255, 0.2); }
+        .auth-btn { background: var(--uv-neon); color: #000; font-weight: 800; padding: 16px 45px; border: none; border-radius: 16px; cursor: pointer; font-size: 18px; transition: 0.2s; }
+        .auth-btn:hover { transform: scale(1.03); box-shadow: 0 5px 20px rgba(180, 164, 255, 0.4); }
+        .auth-btn:active { transform: scale(0.98); }
+        .start-msg { color: var(--uv-neon); font-size: 32px; font-weight: 900; animation: pulse 1.5s infinite, subtitleSlide 1s ease-out; cursor: pointer; text-align: center; line-height: 1.3; letter-spacing: -0.04em; }
+        @keyframes subtitleSlide { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px var(--uv-neon)); } 50% { opacity: 0.7; filter: drop-shadow(0 0 2px var(--uv-neon)); } }
 
         /* [상단 유틸리티] */
-        #loginOverlay { position: fixed; top: 10px; left: 10px; z-index: 99999; background: #FF0000; color: white; padding: 10px 15px; border-radius: 8px; font-weight: 800; font-size: 12px; display: flex; align-items: center; gap: 10px; transition: 0.3s; opacity: 0.3; }
-        #loginOverlay:hover { opacity: 1; }
-        .yt-close { cursor: pointer; font-size: 16px; }
+        #loginOverlay { position: fixed; top: 15px; left: 15px; z-index: 99999; background: #FF0000; color: white; padding: 12px 18px; border-radius: 10px; font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 12px; transition: 0.3s; opacity: 0.3; cursor: pointer; }
+        #loginOverlay:hover { opacity: 1; transform: translateY(2px); }
 
-        /* [메인 플레이어 바] */
-        #playerBar { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 860px; background: var(--bg-panel); backdrop-filter: blur(20px); border: 1px solid rgba(148, 130, 255, 0.3); border-radius: 20px; padding: 20px 25px; display: flex; gap: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); transition: 0.5s; }
-        #playerBar.hidden { transform: translateX(-50%) translateY(150%); opacity: 0; }
+        /* [메인 플레이어 바 - 등장 애니메이션] */
+        #playerBar { 
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(0); 
+            width: 1000px; background: var(--bg-panel); backdrop-filter: blur(25px); 
+            border: 1px solid rgba(148, 130, 255, 0.2); border-radius: 30px; 
+            padding: 28px 38px; display: flex; align-items: stretch; gap: 40px; 
+            box-shadow: 0 30px 80px rgba(0,0,0,0.8); 
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s; /* 슥 올라오는 애니메이션 */
+            opacity: 1;
+        }
+        #playerBar.hidden { transform: translateX(-50%) translateY(100px); opacity: 0; pointer-events: none; }
 
-        .track-section { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-        .section-header { font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; }
-        .now-playing .section-header { color: var(--uv-neon); }
-        .next-playing .section-header { color: var(--t-mid); }
+        .track-section { flex: 1; display: flex; flex-direction: column; gap: 15px; min-width: 0; transition: opacity 0.4s; }
+        .section-header { font-size: 12px; font-weight: 900; letter-spacing: 0.25em; text-transform: uppercase; flex-shrink: 0; }
+        .now-playing .section-header { color: var(--uv-neon); text-shadow: 0 0 15px rgba(180, 164, 255, 0.6); }
+        .next-playing .section-header { color: var(--t-mid); opacity: 0.8; }
         
-        .track-content { display: flex; align-items: center; gap: 16px; min-width: 0; }
-        .album-art { width: 80px; height: 80px; border-radius: 12px; background: #1a1a1a; object-fit: cover; flex-shrink: 0; }
-        .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 4px; }
+        .track-content { display: flex; align-items: center; gap: 22px; min-width: 0; position: relative; }
         
-        .track-title { color: var(--t-hi); font-size: 17px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-artist { color: var(--t-hi); font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-meta { display: flex; align-items: center; gap: 8px; min-width: 0; }
-        .album-text { color: var(--t-mid); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-        .user-badge { background: rgba(180, 164, 255, 0.15); border: 1px solid rgba(180, 164, 255, 0.3); color: var(--uv-neon); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        /* 앨범 아트 애니메이션 (트랜지션용 래퍼 추가) */
+        .album-art-wrap { width: 105px; height: 105px; border-radius: 18px; overflow: hidden; flex-shrink: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; }
+        .album-art { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; transition: opacity 0.5s, transform 0.5s; }
+        .album-art.new { opacity: 0; transform: scale(1.1); } /* 새 이미지는 살짝 크고 투명하게 대기 */
+        .album-art.old { opacity: 1; transform: scale(1); z-index: 1; } /* 기존 이미지는 위에 존재 */
 
-        /* 컨트롤러 */
-        .controls-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
-        .play-pause-btn { background: var(--uv-neon); color: #000; border: none; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
-        .mini-progress-bg { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; overflow: hidden; }
-        .mini-progress-fill { height: 100%; background: var(--uv-neon); width: 0%; box-shadow: 0 0 8px var(--uv-neon); }
-        .time-display { color: var(--t-mid); font-size: 11px; font-variant-numeric: tabular-nums; }
+        /* 텍스트 애니메이션 래퍼 */
+        .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 5px; position: relative; overflow: hidden; }
+        .text-animate-wrap { transition: opacity 0.4s, transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .text-animate-wrap.changing { opacity: 0; transform: translateY(-10px); } /* 곡 바뀔 때 위로 살짝 페이드아웃 */
+        
+        .track-title { color: var(--t-hi); font-size: 22px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; letter-spacing: -0.02em; }
+        .track-artist { color: var(--t-hi); font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.85; }
+        .track-meta { display: flex; align-items: center; gap: 10px; min-width: 0; margin-top: 3px; }
+        .album-text { color: var(--t-mid); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+        
+        /* ✨ 신청자 뱃지 - Pop-in 애니메이션 */
+        .user-badge { 
+            background: rgba(180, 164, 255, 0.2); border: 1px solid rgba(180, 164, 255, 0.4); 
+            color: var(--uv-neon); padding: 5px 12px; border-radius: 9px; 
+            font-size: 12px; font-weight: 800; white-space: nowrap; 
+            animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* 통통 튀는 등장 */
+            box-shadow: 0 0 10px rgba(180, 164, 255, 0.2);
+        }
+        @keyframes badgePop { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
 
-        .next-playing { opacity: 0.45; }
-        .divider { width: 1px; background: rgba(255,255,255,0.08); }
+        /* 컨트롤러 디자인 & 인터랙션 */
+        .controls-row { display: flex; align-items: center; gap: 18px; margin-top: 10px; flex-shrink: 0; }
+        .play-pause-btn { background: var(--uv-neon); color: #000; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 0 15px rgba(180, 164, 255, 0.3); transition: 0.2s, box-shadow 0.3s; }
+        .play-pause-btn:hover { box-shadow: 0 0 25px rgba(180, 164, 255, 0.6); transform: scale(1.05); }
+        .play-pause-btn:active { transform: scale(0.95); }
+        .play-pause-btn svg { transition: transform 0.2s; }
+        .mini-progress-bg { flex: 1; height: 7px; background: rgba(255,255,255,0.08); border-radius: 4px; cursor: pointer; overflow: hidden; position: relative; transition: height 0.2s; }
+        .mini-progress-bg:hover { height: 9px; background: rgba(255,255,255,0.12); }
+        .mini-progress-fill { height: 100%; background: var(--uv-neon); width: 0%; box-shadow: 0 0 15px var(--uv-neon); transition: width 0.1s linear; border-radius: 4px; }
+        .time-display { color: var(--t-mid); font-size: 12px; font-variant-numeric: tabular-nums; font-weight: 700; width: 95px; text-align: right; opacity: 0.9; }
+
+        .next-playing { opacity: 0.35; transition: opacity 0.5s; }
+        .next-playing:hover { opacity: 0.7; }
+        .divider { width: 1px; background: rgba(255,255,255,0.06); margin: 8px 0; flex-shrink: 0; }
+
         #yt-wrapper { position: fixed; top: -10px; right: -10px; width: 100px; height: 60px; opacity: 0.01; }
     </style>
 </head>
 <body>
 
-    <div id="authScreen"><div class="auth-title">플레이어 접근 권한이 필요합니다</div><input type="password" id="pwInput" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter') handleLogin()"><button class="auth-btn" onclick="handleLogin()">입장하기</button></div>
-    <div id="startScreen" onclick="startPlayer()"><div class="start-msg">▶ 화면을 클릭하여 플레이어 시작</div></div>
-    <div id="loginOverlay"><span onclick="window.open('https://www.youtube.com', '_blank')" style="cursor:pointer">⚠️ 연령제한/광고 제거 로그인</span><span class="yt-close" onclick="this.parentElement.style.display='none'">✖</span></div>
+    <div id="authScreen"><div class="auth-title">STYLUS SEOUL BROADCAST</div><input type="password" id="pwInput" placeholder="PASSWORD" onkeydown="if(event.key==='Enter') handleLogin()"><button class="auth-btn" onclick="handleLogin()">ENTER</button></div>
+    <div id="startScreen" onclick="startPlayer()"><div class="start-msg">CLICK TO INIT<br>CINEMATIC BROADCAST</div></div>
+    <div id="loginOverlay"><span onclick="window.open('https://www.youtube.com', '_blank')">⚠️ YOUTUBE SESSION RECOVERY</span><span onclick="this.parentElement.style.display='none'" style="margin-left:15px">✖</span></div>
 
     <div id="yt-wrapper"><div id="player"></div></div>
 
@@ -72,36 +107,58 @@
         <div class="track-section now-playing">
             <div class="section-header">Now Playing</div>
             <div class="track-content">
-                <img id="npArt" class="album-art" src="">
+                <div class="album-art-wrap">
+                    <img id="npArt-old" class="album-art old" src="">
+                    <img id="npArt-new" class="album-art new" src="">
+                </div>
                 <div class="track-info">
-                    <div id="npTitle" class="track-title">재생할 곡이 없습니다</div>
-                    <div id="npArtist" class="track-artist">-</div>
-                    <div class="track-meta"><span id="npAlbum" class="album-text"></span><span id="npUser" class="user-badge" style="display:none"></span></div>
+                    <div id="npTextWrap" class="text-animate-wrap">
+                        <div id="npTitle" class="track-title">STYLUS SEOUL</div>
+                        <div id="npArtist" class="track-artist">Loading System...</div>
+                        <div class="track-meta">
+                            <span id="npAlbum" class="album-text"></span>
+                            <span id="npUser" class="user-badge" style="display:none"></span>
+                        </div>
+                    </div>
                     <div class="controls-row">
-                        <button class="play-pause-btn" onclick="togglePlayPause()"><svg id="icon-pause" viewBox="0 0 24 24" width="12"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg><svg id="icon-play" viewBox="0 0 24 24" width="12" style="display:none; margin-left:2px;"><path d="M8 5v14l11-7z"/></svg></button>
+                        <button class="play-pause-btn" onclick="togglePlayPause()">
+                            <svg id="icon-pause" viewBox="0 0 24 24" width="18"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            <svg id="icon-play" viewBox="0 0 24 24" width="18" style="display:none; margin-left:3px;"><path d="M8 5v14l11-7z"/></svg>
+                        </button>
                         <div class="mini-progress-bg" onclick="seekVideo(event)"><div id="mini-progress-bar" class="mini-progress-fill"></div></div>
                         <div id="timeDisplay" class="time-display">0:00 / -0:00</div>
                     </div>
                 </div>
             </div>
         </div>
+        
         <div class="divider"></div>
+
         <div class="track-section next-playing">
             <div class="section-header">Next Playing</div>
             <div class="track-content">
-                <img id="nxArt" class="album-art" src="">
-                <div class="track-info">
-                    <div id="nxTitle" class="track-title">대기열이 비어있습니다</div>
-                    <div id="nxArtist" class="track-artist">-</div>
-                    <div class="track-meta"><span id="nxAlbum" class="album-text"></span><span id="nxUser" class="user-badge" style="display:none"></span></div>
+                <div class="album-art-wrap" style="width:90px; height:90px; border-radius:15px;">
+                    <img id="nxArt-old" class="album-art old" src="">
+                    <img id="nxArt-new" class="album-art new" src="">
+                </div>
+                <div class="track-info" style="gap:3px">
+                    <div id="nxTextWrap" class="text-animate-wrap">
+                        <div id="nxTitle" class="track-title" style="font-size:19px">EMPTY</div>
+                        <div id="nxArtist" class="track-artist" style="font-size:14px">-</div>
+                        <div class="track-meta">
+                            <span id="nxAlbum" class="album-text" style="font-size:12px"></span>
+                            <span id="nxUser" class="user-badge" style="display:none; padding:3px 9px; font-size:11px; border-radius:7px"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let player, currentData = null, isPlaying = false, progressUpdater = null;
-        const DEFAULT_COVER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='none' stroke='%23444' stroke-width='1'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E";
+        let player, currentData = null, nextData = null, isPlaying = false, progressUpdater = null;
+        let lastPlayedRowIndex = null; 
+        const DEFAULT_COVER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='1'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E";
 
         window.onload = () => {
             if (localStorage.getItem('player_logged_in') === 'true') { document.getElementById('startScreen').style.display = 'flex'; }
@@ -110,14 +167,11 @@
 
         function handleLogin() {
             if (document.getElementById('pwInput').value === ADMIN_PASSWORD) { localStorage.setItem('player_logged_in', 'true'); location.reload(); }
-            else { alert('비밀번호 오류'); }
+            else { alert('WRONG PASSWORD'); }
         }
 
         function startPlayer() { document.getElementById('startScreen').style.display = 'none'; initPlayer(); }
-
-        function initPlayer() {
-            const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(tag);
-        }
+        function initPlayer() { const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(tag); }
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', { height: '60', width: '100', playerVars: { 'autoplay': 1, 'controls': 0, 'enablejsapi': 1, 'origin': location.origin },
@@ -130,89 +184,191 @@
                 const res = await fetch(GAS_URL);
                 const data = await res.json();
                 if (data.result !== "success" || !data.queue) return;
-
+                
                 const queue = data.queue;
                 
-                // 1. 노래가 안 나오고 있으면 즉시 재생 시작
                 if (!isPlaying && queue.length > 0) {
+                    if (queue[0].rowIndex === lastPlayedRowIndex) {
+                        showEmptyState();
+                        return;
+                    }
                     playSong(queue[0], queue[1] || null);
-                } 
-                // 2. 노래가 나오고 있더라도 'Next Playing' UI는 계속 업데이트
-                else {
-                    updateNextUI(queue[isPlaying ? 1 : 0] || null);
-                    if (!isPlaying) showEmptyState();
+                } else {
+                    nextData = queue[isPlaying ? 1 : 0] || null;
+                    // 재생 중일 때도 넥스트 UI 갱신 (애니메이션 없이 조용히 바꾸기 위해 updateNextUI 사용)
+                    updateNextUI(nextData, false); 
+                    if (!isPlaying && queue.length === 0) showEmptyState();
                 }
             } catch (e) { console.error(e); }
         }
 
-        function playSong(song, nextSong) {
-            currentData = song; isPlaying = true;
-            document.getElementById('playerBar').classList.remove('hidden');
-            updateNowUI(song);
-            updateNextUI(nextSong);
+        function playSong(song, next) {
+            currentData = song; 
+            nextData = next;
+            lastPlayedRowIndex = song.rowIndex;
+            isPlaying = true;
+            
+            // 플레이어 바 등장 애니메이션
+            const bar = document.getElementById('playerBar');
+            bar.classList.remove('hidden');
+            
+            // UI 업데이트 (애니메이션 적용)
+            animateUpdateUI('np', song);
+            animateUpdateUI('nx', next);
+            
             player.loadVideoById(song.youtubeId);
             player.unMute(); player.setVolume(100);
         }
 
-        function updateNowUI(song) {
-            if (!song) return;
-            document.getElementById('npTitle').textContent = song.title;
-            document.getElementById('npArtist').textContent = song.artist;
-            document.getElementById('npAlbum').textContent = song.album || "";
-            document.getElementById('npArt').src = song.thumbUrl || DEFAULT_COVER;
-            const badge = document.getElementById('npUser');
-            if (song.nickname) { badge.textContent = `Req. ${song.nickname}`; badge.style.display = 'inline-block'; }
-            else { badge.style.display = 'none'; }
+        // 🚨 [핵심] 애니메이션 업데이트 함수 (Cross-fade & Pop-in)
+        function animateUpdateUI(prefix, songData) {
+            const wrap = document.getElementById(`${prefix}TextWrap`);
+            const artOld = document.getElementById(`${prefix}Art-old`);
+            const artNew = document.getElementById(`${prefix}Art-new`);
+
+            // 1. 텍스트 페이드 아웃 시작
+            wrap.classList.add('changing');
+
+            // 2. 앨범 아트 Cross-fade (0.5초 소요)
+            if (songData) {
+                artNew.src = songData.thumbUrl || DEFAULT_COVER;
+                artNew.style.opacity = '1';
+                artNew.style.transform = 'scale(1)'; // 커지면서 등장
+                artOld.style.opacity = '0'; // 기존 꺼는 페이드아웃
+            } else {
+                artNew.src = DEFAULT_COVER;
+                artNew.style.opacity = '1';
+                artOld.style.opacity = '0';
+            }
+
+            // 3. 0.4초 뒤 (텍스트 페이드아웃 완료 시점) 데이터 변경 및 페이드인
+            setTimeout(() => {
+                const title = document.getElementById(`${prefix}Title`);
+                const artist = document.getElementById(`${prefix}Artist`);
+                const album = document.getElementById(`${prefix}Album`);
+                const badge = document.getElementById(`${prefix}User`);
+
+                if (songData) {
+                    title.textContent = songData.title;
+                    artist.textContent = songData.artist;
+                    album.textContent = songData.album || "";
+                    if (songData.nickname) {
+                        badge.textContent = `REQ. ${songData.nickname}`;
+                        badge.style.display = 'inline-block'; // display 변경 자체가 Pop-in 키프레임 유발
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                } else {
+                    if (prefix === 'np') {
+                        title.textContent = "신청곡을 기다리는 중...";
+                        artist.textContent = "Stylus Seoul System";
+                    } else {
+                        title.textContent = "WAITING NEXT SONG";
+                        artist.textContent = "-";
+                    }
+                    album.textContent = "";
+                    badge.style.display = 'none';
+                }
+
+                // 텍스트 페이드인 시작
+                wrap.classList.remove('changing');
+
+                // Cross-fade 완료 후 old 이미지 교체 (다음 전환 대기)
+                setTimeout(() => {
+                    artOld.src = artNew.src;
+                    artOld.style.opacity = '1'; // old를 다시 보이게 함 (z-index 낮음)
+                    artNew.style.opacity = '0'; // new는 투명하게 대기
+                    artNew.style.transform = 'scale(1.1)'; // 다시 살짝 크게 대기
+                }, 150); // Cross-fadetransition보다 살짝 길게
+
+            }, 400); // .changing transition 시간과 맞춤
         }
 
-        function updateNextUI(next) {
-            const title = document.getElementById('nxTitle'), artist = document.getElementById('nxArtist'), 
-                  album = document.getElementById('nxAlbum'), art = document.getElementById('nxArt'), badge = document.getElementById('nxUser');
-            if (next) {
-                title.textContent = next.title; artist.textContent = next.artist; album.textContent = next.album || ""; art.src = next.thumbUrl || DEFAULT_COVER;
-                badge.textContent = `Req. ${next.nickname}`; badge.style.display = 'inline-block';
+        // 재생 중 넥스트 UI 갱신용 (애니메이션 없음)
+        function updateNextUI(next, animate = true) {
+            if(animate) {
+                animateUpdateUI('nx', next);
+                return;
+            }
+            // 단순 교체 로직
+            const artOld = document.getElementById(`nxArt-old`);
+            const title = document.getElementById(`nxTitle`);
+            const artist = document.getElementById(`nxArtist`);
+            const album = document.getElementById(`nxAlbum`);
+            const badge = document.getElementById(`nxUser`);
+            if(next) {
+                artOld.src = next.thumbUrl || DEFAULT_COVER;
+                title.textContent = next.title;
+                artist.textContent = next.artist;
+                album.textContent = next.album || "";
+                if(next.nickname) { badge.textContent = `REQ. ${next.nickname}`; badge.style.display = 'inline-block'; }
+                else { badge.style.display = 'none'; }
             } else {
-                title.textContent = "다음 대기 곡이 없습니다"; artist.textContent = "-"; album.textContent = ""; art.src = DEFAULT_COVER; badge.style.display = 'none';
+                artOld.src = DEFAULT_COVER;
+                title.textContent = "WAITING NEXT SONG";
+                artist.textContent = "-";
+                album.textContent = "";
+                badge.style.display = 'none';
             }
         }
 
         function showEmptyState() {
-            document.getElementById('playerBar').classList.remove('hidden');
-            document.getElementById('npTitle').textContent = "신청곡을 기다리는 중...";
-            document.getElementById('npArtist').textContent = "Stylus Seoul";
-            document.getElementById('npArt').src = DEFAULT_COVER;
+            animateUpdateUI('np', null); // Now Playing을 대기 상태로 애니메이션 업데이트
             document.getElementById('mini-progress-bar').style.width = '0%';
             document.getElementById('timeDisplay').textContent = "0:00 / -0:00";
         }
 
-        function togglePlayPause() {
-            const state = player.getPlayerState();
-            if (state === 1) player.pauseVideo(); else player.playVideo();
+        function togglePlayPause() { 
+            const s = player.getPlayerState();
+            const btn = document.getElementById('playPauseBtn');
+            if (s === 1) {
+                player.pauseVideo();
+                btn.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.2)'; // 일시정지 시 빛 줄임
+            } else {
+                player.playVideo();
+                btn.style.boxShadow = '0 0 25px rgba(180, 164, 255, 0.6)'; // 재생 시 빛 강조
+            }
         }
-
-        function seekVideo(e) {
-            const rect = e.currentTarget.getBoundingClientRect();
-            player.seekTo(( (e.clientX - rect.left) / rect.width ) * player.getDuration(), true);
-        }
+        function seekVideo(e) { const rect = e.currentTarget.getBoundingClientRect(); player.seekTo(( (e.clientX - rect.left) / rect.width ) * player.getDuration(), true); }
 
         function onStateChange(e) {
             const p = document.getElementById('icon-play'), s = document.getElementById('icon-pause');
-            if (e.data === 0) nextSong();
-            if (e.data === 1) { p.style.display='none'; s.style.display='block'; updateProgress(); }
-            if (e.data === 2) { p.style.display='block'; s.style.display='none'; cancelAnimationFrame(progressUpdater); }
+            const btn = document.getElementById('playPauseBtn');
+            if (e.data === 0) nextSong(); // 곡 종료
+            if (e.data === 1) { // 재생 중
+                p.style.display='none'; s.style.display='block'; 
+                btn.style.background = 'var(--uv-neon)';
+                updateProgress(); 
+            }
+            if (e.data === 2) { // 일시정지
+                p.style.display='block'; s.style.display='none'; 
+                btn.style.background = 'rgba(255,255,255,0.6)'; // 일시정지 시 색상 변경
+                cancelAnimationFrame(progressUpdater); 
+            }
         }
 
         async function nextSong() {
             isPlaying = false;
-            if (currentData) { await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "complete", rowIndex: currentData.rowIndex }) }); }
-            checkQueue();
+            const finishedRowIndex = currentData ? currentData.rowIndex : null;
+
+            // 제로 딜레이 바톤 터치 (nextData 활용)
+            if (nextData && nextData.youtubeId) {
+                console.log("시네마틱 바톤 터치!");
+                // np는 서서히 바꾸고 nx는 대기 문구로 바꿈
+                playSong(nextData, null); 
+            }
+
+            // 시트 업데이트
+            if (finishedRowIndex) { 
+                fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "complete", rowIndex: finishedRowIndex }) }).then(() => checkQueue());
+            }
         }
 
         function updateProgress() {
             if (isPlaying && player.getDuration) {
                 const cur = player.getCurrentTime(), tot = player.getDuration();
                 document.getElementById('mini-progress-bar').style.width = (cur/tot*100) + '%';
-                const rem = tot - cur;
+                const rem = Math.max(0, tot - cur);
                 document.getElementById('timeDisplay').textContent = `${Math.floor(cur/60)}:${Math.floor(cur%60).toString().padStart(2,'0')} / -${Math.floor(rem/60)}:${Math.floor(rem%60).toString().padStart(2,'0')}`;
                 if (player.getPlayerState() === 1) progressUpdater = requestAnimationFrame(updateProgress);
             }
