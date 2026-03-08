@@ -15,9 +15,7 @@
     <style>
         :root { 
             --bg-body: #0a0a0a;
-            --bg-header: #0a0a0a;
             --uv-main: #5f4b8b; 
-            --uv-dim: rgba(95, 75, 139, 0.1);
             --border-color: #222;
             --t-hi: #fff;
             --t-mid: #888;
@@ -25,71 +23,69 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { 
-            background-color: var(--bg-body); 
-            font-family: var(--font-main); 
-            color: var(--t-hi); 
-            -webkit-font-smoothing: antialiased;
-        }
+        body { background-color: var(--bg-body); font-family: var(--font-main); color: var(--t-hi); -webkit-font-smoothing: antialiased; }
 
-        /* 🚨 Header: Request Page Clone Style */
+        /* [Header] */
         nav {
             position: sticky; top: 0; z-index: 100;
-            background: var(--bg-header);
-            border-bottom: 1px solid var(--border-color);
-            height: 64px;
-            display: flex; align-items: center; justify-content: center;
-            padding: 0 20px;
+            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-color); height: 64px;
+            display: flex; align-items: center; justify-content: center; padding: 0 20px;
         }
         .nav-inner { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; }
-        .nav-logo { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; cursor: pointer; }
+        .nav-logo { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; text-decoration: none; color: inherit; }
         .nav-logo span { color: var(--uv-main); }
         .live-status { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--t-mid); }
         .status-dot { width: 8px; height: 8px; background: #ff4b4b; border-radius: 50%; box-shadow: 0 0 10px rgba(255, 75, 75, 0.5); animation: blink 1.5s infinite; }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 32px 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 24px 20px; }
+        .section-title { font-size: 14px; font-weight: 800; color: var(--uv-main); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; display: block; }
 
-        /* [Section Titles] */
-        .section-title { font-size: 14px; font-weight: 800; color: var(--uv-main); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: block; }
-
-        /* [NOW PLAYING Card - Enhanced for Mobile] */
+        /* [NOW PLAYING Card - Mobile Optimized] */
+        .on-air-link { text-decoration: none; color: inherit; display: block; margin-bottom: 32px; }
         .on-air-card { 
-            background: #111;
-            border: 1px solid var(--uv-main);
-            border-radius: 16px; padding: 24px; margin-bottom: 40px;
-            display: flex; flex-direction: column; gap: 20px;
+            background: #111; border: 1px solid var(--uv-main); border-radius: 20px; padding: 20px;
+            display: flex; flex-direction: column; gap: 16px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5); transition: transform 0.1s;
         }
-        .oa-art { width: 100%; aspect-ratio: 1/1; border-radius: 10px; overflow: hidden; background: #1a1a1a; }
+        .on-air-card:active { transform: scale(0.98); background: #161616; }
+        
+        .oa-art { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; background: #1a1a1a; position: relative; }
         .oa-art img { width: 100%; height: 100%; object-fit: cover; }
-        .oa-info { display: flex; flex-direction: column; gap: 4px; }
-        .oa-title { font-size: 28px; font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; }
-        .oa-artist { font-size: 18px; color: var(--t-mid); font-weight: 500; margin-bottom: 12px; }
-        .oa-requester { align-self: flex-start; background: var(--uv-main); color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 800; }
+        /* 모바일에서 듣기 안내 상시 노출 */
+        .oa-play-hint { position: absolute; bottom: 12px; right: 12px; background: var(--uv-main); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* [WAITLIST Cards] */
-        .queue-container { display: flex; flex-direction: column; gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
-        .queue-card { 
-            background: var(--bg-body);
-            padding: 16px; 
-            display: flex; align-items: center; gap: 16px;
-            transition: background 0.2s;
-        }
-        .q-art { width: 50px; height: 50px; border-radius: 4px; overflow: hidden; flex-shrink: 0; background: #1a1a1a; }
+        .oa-info { display: flex; flex-direction: column; gap: 4px; }
+        .oa-title { font-size: 26px; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; }
+        .oa-artist { font-size: 17px; color: var(--t-mid); font-weight: 500; margin-bottom: 8px; }
+        .oa-requester { align-self: flex-start; background: var(--uv-main); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 800; }
+
+        /* [WAITLIST - Mobile List Optimized] */
+        .queue-container { display: flex; flex-direction: column; gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; }
+        .queue-link { text-decoration: none; color: inherit; display: block; background: var(--bg-body); }
+        .queue-link:active { background: #161616; }
+        
+        .queue-card { padding: 16px; display: flex; align-items: center; gap: 14px; position: relative; }
+        .q-art { width: 52px; height: 52px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: #1a1a1a; }
         .q-art img { width: 100%; height: 100%; object-fit: cover; }
-        .q-info { flex: 1; min-width: 0; }
+        
+        .q-info { flex: 1; min-width: 0; padding-right: 40px; }
         .q-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .q-artist { font-size: 14px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .q-user { font-size: 12px; font-weight: 800; color: var(--uv-main); margin-left: auto; }
+        
+        /* 모바일용 재생 아이콘 */
+        .q-play-icon { position: absolute; right: 16px; color: var(--uv-main); opacity: 0.6; }
 
-        #emptyState { text-align: center; padding: 60px 0; color: var(--t-mid); font-size: 15px; }
+        .q-user-row { margin-top: 4px; font-size: 11px; font-weight: 800; color: var(--uv-main); text-transform: uppercase; }
 
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        #emptyState { text-align: center; padding: 80px 0; color: var(--t-mid); font-size: 14px; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* [Tablet+ Layout] */
+        /* Tablet+ */
         @media (min-width: 480px) {
-            .on-air-card { flex-direction: row; align-items: center; padding: 32px; gap: 32px; }
-            .oa-art { width: 200px; }
-            .oa-title { font-size: 32px; }
+            .on-air-card { flex-direction: row; align-items: center; padding: 24px; gap: 24px; }
+            .oa-art { width: 180px; }
+            .oa-title { font-size: 30px; }
         }
     </style>
 </head>
@@ -97,24 +93,29 @@
 
 <nav>
     <div class="nav-inner">
-        <div class="nav-logo" onclick="location.reload()">MIWIG <span>SONGS</span></div>
-        <div class="live-status"><span class="status-dot"></span>LIVE STATUS</div>
+        <a href="#" class="nav-logo">MIWIG <span>SONGS</span></a>
+        <div class="live-status"><span class="status-dot"></span>LIVE</div>
     </div>
 </nav>
 
 <div class="container">
     <div id="onAirSection" style="display:none;">
         <span class="section-title">Now Playing</span>
-        <div class="on-air-card">
-            <div class="oa-art"><img id="onAirArt" src="" alt=""></div>
-            <div class="oa-info">
-                <div class="oa-title" id="onAirTitle">Title</div>
-                <div class="oa-artist" id="onAirArtist">Artist</div>
-                <div class="oa-requester">
-                    Requested by <span id="onAirUser">Guest</span>
+        <a href="" id="onAirLink" target="_blank" class="on-air-link">
+            <div class="on-air-card">
+                <div class="oa-art">
+                    <img id="onAirArt" src="" alt="">
+                    <div class="oa-play-hint">▶ LISTEN</div>
+                </div>
+                <div class="oa-info">
+                    <div class="oa-title" id="onAirTitle">Title</div>
+                    <div class="oa-artist" id="onAirArtist">Artist</div>
+                    <div class="oa-requester">
+                        BY <span id="onAirUser">Guest</span>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <div id="queueSection" style="display:none;">
@@ -124,7 +125,7 @@
     </div>
 
     <div id="emptyState" style="display:none;">
-        <p>현재 대기 중인 신청곡이 없습니다.</p>
+        <p>대기 중인 신청곡이 없습니다.</p>
     </div>
 </div>
 
@@ -145,15 +146,16 @@
 
             document.getElementById('emptyState').style.display = 'none';
 
-            // 1. 현재 곡
+            // 1. On Air
             const current = q[0];
             document.getElementById('onAirSection').style.display = 'block';
             document.getElementById('onAirTitle').textContent = current.title;
             document.getElementById('onAirArtist').textContent = current.artist;
             document.getElementById('onAirArt').src = current.thumbUrl || '';
             document.getElementById('onAirUser').textContent = current.nickname || 'GUEST';
+            document.getElementById('onAirLink').href = `https://music.youtube.com/watch?v=${current.youtubeId}`;
 
-            // 2. 대기 목록
+            // 2. Waitlist
             const nextList = q.slice(1);
             const container = document.getElementById('queueContainer');
             
@@ -162,14 +164,19 @@
             } else {
                 document.getElementById('queueSection').style.display = 'block';
                 container.innerHTML = nextList.map((song) => `
-                    <div class="queue-card">
-                        <div class="q-art"><img src="${song.thumbUrl || ''}" alt=""></div>
-                        <div class="q-info">
-                            <div class="q-title">${song.title}</div>
-                            <div class="q-artist">${song.artist}</div>
+                    <a href="https://music.youtube.com/watch?v=${song.youtubeId}" target="_blank" class="queue-link">
+                        <div class="queue-card">
+                            <div class="q-art"><img src="${song.thumbUrl || ''}" alt=""></div>
+                            <div class="q-info">
+                                <div class="q-title">${song.title}</div>
+                                <div class="q-artist">${song.artist}</div>
+                                <div class="q-user-row">REQ: ${song.nickname || 'GUEST'}</div>
+                            </div>
+                            <div class="q-play-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
                         </div>
-                        <div class="q-user">${song.nickname || 'GUEST'}</div>
-                    </div>
+                    </a>
                 `).join('');
             }
         } catch (e) { console.error(e); }
