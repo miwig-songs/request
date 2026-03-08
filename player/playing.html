@@ -16,7 +16,7 @@
         :root { 
             --bg-panel: rgba(2, 2, 6, 0.98); 
             --uv-main: #5f4b8b; 
-            --uv-soft: rgba(95, 75, 139, 0.12);
+            --uv-soft: rgba(95, 75, 139, 0.15);
             --t-hi: #FFFFFF; 
             --t-mid: #A1A1A1; 
             --bezier: cubic-bezier(0.33, 1, 0.68, 1);
@@ -26,7 +26,7 @@
         
         #mainContainer { width: 100vw; height: 100vh; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 30px; }
 
-        /* [Helper UI] */
+        /* [Helper Tools] */
         #helperTools { position: fixed; top: 20px; left: 20px; z-index: 1000000; display: flex; gap: 8px; opacity: 0.15; transition: 0.3s; }
         #helperTools:hover { opacity: 1; }
         .h-btn { background: var(--uv-main); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 13px; font-family: var(--font-main); }
@@ -35,12 +35,12 @@
         /* [Screens] */
         #authScreen, #startScreen { position: fixed; inset: 0; z-index: 99999; background: #000; display: none; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
         .auth-title { font-size: 24px; font-weight: 900; color: var(--uv-main); letter-spacing: 0.1em; }
-        #pwInput { background: #111; border: 1px solid #222; padding: 15px 25px; border-radius: 12px; color: white; font-size: 20px; text-align: center; width: 300px; outline: none; font-family: var(--font-main); }
-        .auth-btn { background: var(--uv-main); color: #fff; font-weight: 900; padding: 15px 50px; border: none; border-radius: 12px; cursor: pointer; font-family: var(--font-main); }
+        #pwInput { background: #111; border: 1px solid #222; padding: 18px 30px; border-radius: 12px; color: white; font-size: 20px; text-align: center; width: 350px; outline: none; font-family: var(--font-main); }
+        .auth-btn { background: var(--uv-main); color: #fff; font-weight: 900; padding: 15px 50px; border: none; border-radius: 12px; cursor: pointer; }
         .start-msg { color: var(--uv-main); font-size: 32px; font-weight: 900; animation: startPulse 2s infinite; cursor: pointer; }
         @keyframes startPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* [Player Bar - 1400px Master] */
+        /* [Player Bar] */
         #playerBar { 
             width: 1400px; background: var(--bg-panel); backdrop-filter: blur(35px);
             border: 1px solid rgba(95, 75, 139, 0.25); border-radius: 40px; 
@@ -52,18 +52,17 @@
         #playerBar.hidden { transform: translateY(300px); opacity: 0; pointer-events: none; }
         @keyframes barFloat { 0% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
         
-        .track-section { display: flex; flex-direction: column; min-width: 0; cursor: pointer; border-radius: 30px; transition: background 0.3s; }
+        .track-section { display: flex; flex-direction: column; min-width: 0; cursor: pointer; border-radius: 30px; transition: background 0.3s, opacity 0.4s var(--bezier); }
         .now-playing { flex: 1.45; padding: 5px 35px 5px 5px; }
-        .next-playing { flex: 0.55; padding: 5px 5px 5px 40px; opacity: 0.12; border-left: 1px solid rgba(255,255,255,0.06); }
-        .now-playing:hover { background: var(--uv-soft); }
-
-        /* 🚨 Header Row: Center Align & Balanced Boldness */
-        .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; height: 40px; }
         
-        /* NOW PLAYING: 700 Bold for Clarity */
+        /* 🚨 Next Up 시인성 상향 (0.12 -> 0.45) */
+        .next-playing { flex: 0.55; padding: 5px 5px 5px 40px; opacity: 0.45; border-left: 1px solid rgba(255,255,255,0.12); }
+        .now-playing:hover { background: var(--uv-soft); }
+        .next-playing:hover { opacity: 0.95; background: rgba(255, 255, 255, 0.04); }
+
+        .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; height: 40px; }
         .section-header { font-size: 32px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--uv-main); }
         
-        /* 🚨 Requester Badge: Synced Boldness */
         .user-badge { 
             background: var(--uv-soft); border: 2.2px solid var(--uv-main); 
             color: var(--uv-main); padding: 4px 22px; border-radius: 12px; 
@@ -87,7 +86,6 @@
         .scrolling { animation: marqueeMove 22s linear infinite; padding-left: 45px; } 
         @keyframes marqueeMove { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* Typography: Balanced Bold (700) */
         .track-title { font-size: 52px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.15; margin-bottom: 5px; font-feature-settings: "palt", "kern"; }
         .track-artist { font-size: 28px; font-weight: 600; color: var(--t-mid); letter-spacing: -0.01em; }
         
@@ -133,7 +131,7 @@
 
             <div class="track-section next-playing" onclick="nextSong()">
                 <div class="section-header-row">
-                    <div class="section-header" style="font-size:20px; opacity:0.5; font-weight:700;">Next Up</div>
+                    <div class="section-header" style="font-size:22px; opacity:0.75; font-weight:700;">Next Up</div>
                     <span id="nxUser" class="user-badge" style="display:none; font-size:20px; padding:4px 16px;"></span>
                 </div>
                 <div class="track-content">
