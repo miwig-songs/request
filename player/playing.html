@@ -10,24 +10,20 @@
     </script>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;900&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700&family=Noto+Sans+SC:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root { 
             --bg-panel: rgba(2, 2, 6, 0.98); 
             --uv-main: #5f4b8b; 
-            --uv-soft: rgba(95, 75, 139, 0.2);
-            --uv-border: rgba(95, 75, 139, 0.4);
+            --uv-soft: rgba(95, 75, 139, 0.12);
             --t-hi: #FFFFFF; 
             --t-mid: #A1A1A1; 
-            --t-dim: rgba(255, 255, 255, 0.1);
             --bezier: cubic-bezier(0.33, 1, 0.68, 1);
-            /* 🚨 한자 대응을 위한 폰트 스택 확장 */
             --font-main: 'Pretendard', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
         }
         body { margin: 0; padding: 0; overflow: hidden; font-family: var(--font-main); background: transparent; -webkit-font-smoothing: antialiased; color: var(--t-hi); }
         
-        /* [Container - 30px Floating] */
         #mainContainer { width: 100vw; height: 100vh; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 30px; }
 
         /* [Helper UI] */
@@ -44,11 +40,11 @@
         .start-msg { color: var(--uv-main); font-size: 32px; font-weight: 900; animation: startPulse 2s infinite; cursor: pointer; }
         @keyframes startPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* [Player Bar - Master Layout] */
+        /* [Player Bar - 1400px Master] */
         #playerBar { 
             width: 1400px; background: var(--bg-panel); backdrop-filter: blur(35px);
-            border: 1px solid var(--uv-border); border-radius: 40px; 
-            padding: 16px 45px 22px 45px; display: flex; align-items: center; 
+            border: 1px solid rgba(95, 75, 139, 0.25); border-radius: 40px; 
+            padding: 18px 45px 22px 45px; display: flex; align-items: center; 
             box-shadow: 0 40px 100px rgba(0,0,0,0.9); 
             transition: transform 1s var(--bezier), opacity 1s var(--bezier); 
             animation: barFloat 8s infinite alternate var(--bezier);
@@ -57,24 +53,26 @@
         @keyframes barFloat { 0% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
         
         .track-section { display: flex; flex-direction: column; min-width: 0; cursor: pointer; border-radius: 30px; transition: background 0.3s; }
-        .now-playing { flex: 1.45; padding: 8px 40px 8px 10px; }
-        .next-playing { flex: 0.55; padding: 8px 10px 8px 45px; opacity: 0.12; border-left: 1px solid rgba(255,255,255,0.06); }
+        .now-playing { flex: 1.45; padding: 5px 35px 5px 5px; }
+        .next-playing { flex: 0.55; padding: 5px 5px 5px 40px; opacity: 0.12; border-left: 1px solid rgba(255,255,255,0.06); }
         .now-playing:hover { background: var(--uv-soft); }
 
-        .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .section-header { font-size: 36px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--uv-main); }
+        /* 🚨 Header Row: Center Align & Balanced Boldness */
+        .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; height: 40px; }
         
-        /* 🚨 Giant Requester Badge */
+        /* NOW PLAYING: 700 Bold for Clarity */
+        .section-header { font-size: 32px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--uv-main); }
+        
+        /* 🚨 Requester Badge: Synced Boldness */
         .user-badge { 
-            background: var(--uv-soft); border: 2px solid var(--uv-border); 
-            color: #fff; padding: 6px 24px; border-radius: 12px; 
-            font-size: 30px; font-weight: 800; flex-shrink: 0; max-width: 380px;
+            background: var(--uv-soft); border: 2.2px solid var(--uv-main); 
+            color: var(--uv-main); padding: 4px 22px; border-radius: 12px; 
+            font-size: 26px; font-weight: 700; flex-shrink: 0; max-width: 380px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .user-badge.pop { animation: badgeSpark 0.7s var(--bezier); }
         @keyframes badgeSpark { 0% { transform: scale(0.85); opacity: 0; filter: brightness(2); } 100% { transform: scale(1); opacity: 1; filter: brightness(1); } }
 
-        /* [Contents Layout] */
         .track-content { display: flex; align-items: center; gap: 35px; min-width: 0; pointer-events: none; } 
         .art-box { width: 145px; height: 145px; border-radius: 24px; overflow: hidden; flex-shrink: 0; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .next-playing .art-box { width: 105px; height: 105px; border-radius: 18px; }
@@ -83,25 +81,19 @@
         .album-art.old { opacity: 1; z-index: 1; }
 
         .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-        
-        /* [Marquee Protection] */
         .marquee-container { width: 100%; overflow: hidden; position: relative; }
         .marquee-container.is-scrolling { mask-image: linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent); }
         .marquee-content { display: inline-block; white-space: nowrap; }
         .scrolling { animation: marqueeMove 22s linear infinite; padding-left: 45px; } 
         @keyframes marqueeMove { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* 🚨 Multilingual Typography (Hanja/Kanji optimized) */
-        .track-title { 
-            font-size: 52px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.15; margin-bottom: 5px; 
-            font-feature-settings: "palt", "kern"; /* 글자 간격 최적화 */
-        }
+        /* Typography: Balanced Bold (700) */
+        .track-title { font-size: 52px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.15; margin-bottom: 5px; font-feature-settings: "palt", "kern"; }
         .track-artist { font-size: 28px; font-weight: 600; color: var(--t-mid); letter-spacing: -0.01em; }
         
-        /* [Progress Area] */
         .progress-box { width: 100%; margin-top: 25px; display: flex; align-items: center; gap: 20px; }
         .p-bg { flex: 1; height: 12px; background: rgba(255,255,255,0.06); border-radius: 20px; cursor: pointer; overflow: hidden; position: relative; }
-        .p-fill { height: 100%; background: var(--uv-main); width: 0%; box-shadow: 0 0 15px var(--uv-main); transition: width 0.1s linear; }
+        .p-fill { height: 100%; background: var(--uv-main); width: 0%; box-shadow: 0 0 15px rgba(95, 75, 139, 0.4); transition: width 0.1s linear; }
         .p-time { font-size: 24px; font-weight: 900; font-variant-numeric: tabular-nums; width: 160px; text-align: right; color: var(--t-hi); }
 
         #yt-wrapper { position: fixed; top: -100px; left: -100px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -130,7 +122,7 @@
                     <div class="art-box"><img id="npArt-old" class="album-art old" src=""><img id="npArt-new" class="album-art new" src=""></div>
                     <div class="track-info">
                         <div class="marquee-container" id="npTitleCont"><div id="npTitle" class="marquee-content track-title">MIWIG SYSTEM</div></div>
-                        <div class="marquee-container" id="npArtistCont"><div id="npArtist" class="marquee-content track-artist">CJK Multilingual Ready</div></div>
+                        <div class="marquee-container" id="npArtistCont"><div id="npArtist" class="marquee-content track-artist">Ready to Groove</div></div>
                         <div class="progress-box" onclick="event.stopPropagation()">
                             <div class="p-bg" onclick="seekVideo(event)"><div id="npFill" class="p-fill"></div></div>
                             <div id="npTime" class="p-time">0:00 / -0:00</div>
@@ -141,8 +133,8 @@
 
             <div class="track-section next-playing" onclick="nextSong()">
                 <div class="section-header-row">
-                    <div class="section-header" style="font-size:22px; opacity:0.5;">Next Up</div>
-                    <span id="nxUser" class="user-badge" style="display:none; font-size:22px; padding:4px 16px;"></span>
+                    <div class="section-header" style="font-size:20px; opacity:0.5; font-weight:700;">Next Up</div>
+                    <span id="nxUser" class="user-badge" style="display:none; font-size:20px; padding:4px 16px;"></span>
                 </div>
                 <div class="track-content">
                     <div class="art-box"><img id="nxArt-old" class="album-art old" src=""><img id="nxArt-new" class="album-art new" src=""></div>
@@ -183,17 +175,17 @@
             if (data) { 
                 title.textContent = data.title; artist.textContent = data.artist; 
                 if (data.nickname) { 
-                    badge.textContent = data.nickname; badge.style.display = 'inline-block';
+                    badge.textContent = data.nickname; badge.style.display = 'flex';
                     badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop');
                 } else { badge.style.display = 'none'; } 
                 setTimeout(() => { checkMarquee(title); checkMarquee(artist); }, 200);
             } else { 
-                title.textContent = prefix === 'np' ? "MIWIG BROADCAST" : "EMPTY"; artist.textContent = prefix === 'np' ? "IDLE" : "-"; badge.style.display = 'none'; resetMarquee(title); resetMarquee(artist);
+                title.textContent = prefix === 'np' ? "MIWIG SYSTEM" : "EMPTY"; artist.textContent = prefix === 'np' ? "IDLE" : "-"; badge.style.display = 'none'; resetMarquee(title); resetMarquee(artist);
             }
             setTimeout(() => { artOld.src = artNew.src; artOld.style.opacity = '1'; artNew.style.opacity = '0'; }, 400);
         }
 
-        function checkMarquee(el) { const container = el.parentElement; resetMarquee(el); if (el.scrollWidth > container.offsetWidth) { const t = el.textContent; el.innerHTML = `<span>${t}</span><span style="padding-left:120px">${t}</span>`; el.classList.add('scrolling'); container.classList.add('is-scrolling'); } }
+        function checkMarquee(el) { const container = el.parentElement; resetMarquee(el); if (el.scrollWidth > container.offsetWidth) { const t = el.textContent; el.innerHTML = `<span>${t}</span><span style="padding-left:100px">${t}</span>`; el.classList.add('scrolling'); container.classList.add('is-scrolling'); } }
         function resetMarquee(el) { el.classList.remove('scrolling'); if(el.parentElement) el.parentElement.classList.remove('is-scrolling'); el.innerHTML = el.textContent; }
         function showEmptyState() { if (isPlaying) return; document.getElementById('playerBar').classList.add('hidden'); }
         function togglePlayPause() { const s = player.getPlayerState(); if (s === 1) player.pauseVideo(); else player.playVideo(); }
