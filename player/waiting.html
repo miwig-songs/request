@@ -9,82 +9,74 @@
         const POLL_INTERVAL = 5000; 
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --bg: #000000;
-            --uv: #5f4b8b; 
-            --border: #1a1a1a; /* 리퀘스트 페이지 특유의 매우 어두운 보더 */
-            --t-hi: #ffffff;
-            --t-mid: #999999;
-            --t-dim: #444444;
-            --font-main: 'Pretendard', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
+            --bg-body: #0a0a0a;
+            --uv-main: #5f4b8b; 
+            --border-color: #222;
+            --t-hi: #fff;
+            --t-mid: #888;
+            --font-main: 'Pretendard', sans-serif;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { 
-            background-color: var(--bg); 
-            font-family: var(--font-main); 
-            color: var(--t-hi); 
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
+        body { background-color: var(--bg-body); font-family: var(--font-main); color: var(--t-hi); -webkit-font-smoothing: antialiased; }
 
-        /* 🚨 Header: MIWIG REQUEST 페이지 완전 복제 */
+        /* [Header] */
         nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
-            border-bottom: 1px solid #111;
-            height: 60px; display: flex; align-items: center; justify-content: center;
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color); height: 60px;
+            display: flex; align-items: center; justify-content: center; padding: 0 20px;
         }
-        .nav-inner { width: 100%; max-width: 800px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
-        .nav-logo { font-size: 19px; font-weight: 800; letter-spacing: -0.02em; text-decoration: none; color: #fff; display: flex; gap: 5px; }
-        .nav-logo span { color: var(--uv); }
-        .status-box { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; color: var(--t-dim); letter-spacing: 0.1em; }
-        .dot { width: 6px; height: 6px; background: #ff4b4b; border-radius: 50%; box-shadow: 0 0 10px rgba(255, 75, 75, 0.4); animation: blink 1.5s infinite; }
+        .nav-inner { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo { font-size: 18px; font-weight: 800; text-decoration: none; color: inherit; }
+        .nav-logo span { color: var(--uv-main); }
+        .live-status { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #555; }
+        .status-dot { width: 6px; height: 6px; background: #ff4b4b; border-radius: 50%; box-shadow: 0 0 10px #ff4b4b; animation: blink 1.5s infinite; }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 84px 20px 40px 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 24px 20px; }
+        .section-title { font-size: 12px; font-weight: 800; color: var(--uv-main); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; display: block; }
 
-        /* [Section Label] */
-        .section-label { margin-bottom: 20px; font-size: 11px; font-weight: 900; color: var(--uv); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
-        .section-label::after { content: ''; flex: 1; height: 1px; background: #111; }
-
-        /* [Now Playing - Hero Card] */
-        .on-air-wrap { margin-bottom: 50px; }
-        .oa-link { text-decoration: none; color: inherit; display: block; }
-        .oa-card { 
-            display: flex; gap: 24px; align-items: flex-start;
-            padding: 24px; background: #080808; border-radius: 12px; border: 1px solid #111;
-            transition: border-color 0.3s;
+        /* [NOW PLAYING - Pure Info] */
+        .on-air-card { 
+            background: #111; border: 1px solid var(--border-color); border-radius: 20px; padding: 20px;
+            display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;
         }
-        .oa-link:active .oa-card { border-color: var(--uv); }
-        .oa-art { width: 140px; height: 140px; border-radius: 4px; overflow: hidden; flex-shrink: 0; border: 1px solid #1a1a1a; }
+        .oa-art { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; background: #000; }
         .oa-art img { width: 100%; height: 100%; object-fit: cover; }
-        .oa-info { flex: 1; min-width: 0; padding-top: 4px; }
-        .oa-title { font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 6px; color: #fff; font-feature-settings: "palt"; }
-        .oa-artist { font-size: 16px; color: var(--t-mid); margin-bottom: 18px; }
-        .oa-req { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: var(--uv); border: 1px solid var(--uv); padding: 3px 10px; border-radius: 2px; text-transform: uppercase; }
+        .oa-info { display: flex; flex-direction: column; gap: 4px; }
+        .oa-title { font-size: 26px; font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
+        .oa-artist { font-size: 16px; color: var(--t-mid); margin-bottom: 8px; }
+        .oa-req { align-self: flex-start; background: #1a1a1a; color: var(--uv-main); border: 1px solid var(--uv-main); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; }
 
-        /* [Waitlist - Clean Minimal List] */
-        .queue-container { display: flex; flex-direction: column; border-top: 1px solid var(--border); }
-        .q-link { text-decoration: none; color: inherit; display: block; border-bottom: 1px solid var(--border); }
-        .q-link:active { background: #050505; }
-        .q-item { padding: 18px 4px; display: flex; align-items: center; gap: 16px; position: relative; }
-        .q-art { width: 50px; height: 50px; border-radius: 2px; overflow: hidden; flex-shrink: 0; opacity: 0.8; }
+        /* [WAITLIST - Actionable] */
+        .queue-container { display: flex; flex-direction: column; gap: 10px; }
+        .queue-link { text-decoration: none; color: inherit; display: block; }
+        .queue-card { 
+            background: #111; border: 1px solid var(--border-color); border-radius: 14px;
+            padding: 14px; display: flex; align-items: center; gap: 14px; transition: 0.2s;
+        }
+        .queue-link:active .queue-card { background: #1a1a1a; border-color: var(--uv-main); }
+
+        .q-art { width: 52px; height: 52px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
         .q-art img { width: 100%; height: 100%; object-fit: cover; }
         .q-info { flex: 1; min-width: 0; }
-        .q-title { font-size: 16px; font-weight: 700; margin-bottom: 3px; color: #eee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-feature-settings: "palt"; }
-        .q-artist { font-size: 13px; color: var(--t-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .q-user { font-size: 10px; font-weight: 800; color: var(--uv); text-transform: uppercase; margin-top: 5px; opacity: 0.8; }
-        .q-icon { color: #222; font-size: 14px; }
+        .q-title { font-size: 15px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .q-artist { font-size: 13px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .q-play-btn { 
+            width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--uv-main);
+            display: flex; align-items: center; justify-content: center; color: var(--uv-main);
+            box-shadow: 0 0 10px rgba(95, 75, 139, 0.2);
+        }
 
-        #empty { text-align: center; padding: 100px 0; color: var(--t-dim); font-size: 13px; letter-spacing: 0.1em; }
+        #empty { text-align: center; padding: 100px 0; color: var(--t-mid); font-size: 14px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        @media (max-width: 480px) {
-            .oa-card { flex-direction: column; gap: 16px; padding: 20px; }
-            .oa-art { width: 100%; height: auto; aspect-ratio: 1/1; }
-            .oa-title { font-size: 24px; }
+        @media (min-width: 480px) {
+            .on-air-card { flex-direction: row; align-items: center; gap: 28px; padding: 28px; }
+            .oa-art { width: 200px; }
         }
     </style>
 </head>
@@ -92,39 +84,35 @@
 
 <nav>
     <div class="nav-inner">
-        <a href="#" class="nav-logo">MIWIG <span>WAITLIST</span></a>
-        <div class="status-box"><div class="dot"></div>LIVE</div>
+        <a href="#" class="nav-logo">MIWIG <span>SONGS</span></a>
+        <div class="live-status"><div class="status-dot"></div>LIVE</div>
     </div>
 </nav>
 
 <div class="container">
     <div id="onAirSection" style="display:none;">
-        <div class="section-label">Now Playing</div>
-        <div class="on-air-wrap">
-            <a href="" id="onAirLink" target="_blank" class="oa-link">
-                <div class="oa-card">
-                    <div class="oa-art"><img id="onAirArt" src="" alt=""></div>
-                    <div class="oa-info">
-                        <div class="oa-title" id="onAirTitle">-</div>
-                        <div class="oa-artist" id="onAirArtist">-</div>
-                        <div class="oa-req">REQ: <span id="onAirUser">-</span></div>
-                    </div>
-                </div>
-            </a>
+        <span class="section-title">Now Playing</span>
+        <div class="on-air-card">
+            <div class="oa-art"><img id="onAirArt" src="" alt=""></div>
+            <div class="oa-info">
+                <div class="oa-title" id="onAirTitle">Title</div>
+                <div class="oa-artist" id="onAirArtist">Artist</div>
+                <div class="oa-req">REQ: <span id="onAirUser">GUEST</span></div>
+            </div>
         </div>
     </div>
 
     <div id="queueSection" style="display:none;">
-        <div class="section-label">Upcoming Queue</div>
+        <span class="section-title">Waitlist Queue</span>
         <div class="queue-container" id="queueContainer">
             </div>
     </div>
 
-    <div id="empty" style="display:none;">NO TRACKS IN QUEUE</div>
+    <div id="empty" style="display:none;">현재 대기 목록이 비어 있습니다.</div>
 </div>
 
 <script>
-    async function updateUI() {
+    async function updateWaitlist() {
         try {
             const res = await fetch(GAS_URL);
             const data = await res.json();
@@ -140,16 +128,15 @@
 
             document.getElementById('empty').style.display = 'none';
 
-            // Now Playing
+            // Now Playing (정보 노출 전용)
             const cur = q[0];
             document.getElementById('onAirSection').style.display = 'block';
             document.getElementById('onAirTitle').textContent = cur.title;
             document.getElementById('onAirArtist').textContent = cur.artist;
             document.getElementById('onAirArt').src = cur.thumbUrl || '';
             document.getElementById('onAirUser').textContent = (cur.nickname || 'GUEST').toUpperCase();
-            document.getElementById('onAirLink').href = `https://music.youtube.com/watch?v=${cur.youtubeId}`;
 
-            // Waitlist
+            // Waitlist (클릭 가능)
             const next = q.slice(1);
             const container = document.getElementById('queueContainer');
             if (next.length === 0) {
@@ -157,23 +144,24 @@
             } else {
                 document.getElementById('queueSection').style.display = 'block';
                 container.innerHTML = next.map((song) => `
-                    <a href="https://music.youtube.com/watch?v=${song.youtubeId}" target="_blank" class="q-link">
-                        <div class="q-item">
+                    <a href="https://music.youtube.com/watch?v=${song.youtubeId}" target="_blank" class="queue-link">
+                        <div class="queue-card">
                             <div class="q-art"><img src="${song.thumbUrl || ''}" alt=""></div>
                             <div class="q-info">
                                 <div class="q-title">${song.title}</div>
                                 <div class="q-artist">${song.artist}</div>
-                                <div class="q-user">REQ: ${(song.nickname || 'GUEST').toUpperCase()}</div>
                             </div>
-                            <div class="q-icon">↗</div>
+                            <div class="q-play-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
                         </div>
                     </a>
                 `).join('');
             }
         } catch (e) { console.error(e); }
     }
-    updateUI();
-    setInterval(updateUI, POLL_INTERVAL);
+    updateWaitlist();
+    setInterval(updateWaitlist, POLL_INTERVAL);
 </script>
 
 </body>
