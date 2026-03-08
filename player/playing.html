@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>MIWIG PLAYER</title>
+    <title>미위구 플레이어 - 듀얼 레이아웃 버전 (컨트롤러 추가)</title>
     
     <script>
         /* [설정] 최상단 */
@@ -69,7 +69,7 @@
         #playerBar {
             position: fixed; bottom: 30px; left: 50%;
             transform: translateX(-50%) translateY(0);
-            width: 860px; /* 두 개의 트랙을 담기 위해 넓게 설정 */
+            width: 860px;
             background: var(--bg-panel);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(148, 130, 255, 0.3);
@@ -81,45 +81,53 @@
         }
         #playerBar.hidden { transform: translateX(-50%) translateY(150%); opacity: 0; }
 
-        /* 트랙 영역 공통 */
-        .track-section { flex: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-        
-        /* 헤더 (Now Playing / Next Playing) */
-        .section-header { 
-            font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; 
-        }
+        .track-section { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+        .section-header { font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; }
         .now-playing .section-header { color: var(--uv-neon); }
         .next-playing .section-header { color: var(--t-mid); }
 
-        /* 컨텐츠 래퍼 (미들 정렬 핵심) */
-        .track-content { display: flex; align-items: center; gap: 16px; }
+        .track-content { display: flex; align-items: center; gap: 16px; height: 100%; }
         
         .album-art { 
             width: 80px; height: 80px; border-radius: 12px; background: #1a1a1a; 
             object-fit: cover; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         
-        .track-info { 
-            flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 3px;
+        .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 2px; }
+        
+        .track-title { color: var(--t-hi); font-size: 17px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+        .track-artist { color: var(--t-hi); font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-meta { color: var(--t-mid); font-size: 11px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-user { color: var(--uv-neon); font-weight: 600; }
+
+        /* 🎛️ [Now Playing 컨트롤러 영역] */
+        .controls-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+        
+        .play-pause-btn {
+            background: var(--uv-neon); color: #000; border: none; border-radius: 50%;
+            width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s; flex-shrink: 0;
+        }
+        .play-pause-btn:active { transform: scale(0.9); }
+        .play-pause-btn svg { width: 12px; height: 12px; fill: currentColor; }
+        
+        /* 🎚️ [미니 재생바] */
+        .mini-progress-bg {
+            flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;
+            cursor: pointer; position: relative; overflow: hidden; display: flex; align-items: center;
+        }
+        .mini-progress-fill {
+            height: 100%; background: var(--uv-neon); width: 0%; pointer-events: none;
+            box-shadow: 0 0 8px var(--uv-neon); transition: width 0.1s linear;
         }
         
-        /* 텍스트 스타일링 */
-        .track-title { color: var(--t-hi); font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
-        .track-artist { color: var(--t-hi); font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-album { color: var(--t-mid); font-size: 12px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-user { color: var(--uv-neon); font-size: 12px; font-weight: 600; margin-top: 2px; }
+        .time-display {
+            color: var(--t-mid); font-size: 11px; font-variant-numeric: tabular-nums; flex-shrink: 0; font-weight: 500;
+        }
 
-        /* 넥스트 트랙 딤(Dimmed) 처리 */
         .next-playing { opacity: 0.45; transition: opacity 0.3s; }
-
-        /* 가운데 구분선 */
         .divider { width: 1px; background: rgba(255,255,255,0.08); margin: 0 5px; }
 
-        /* 하단 진행바 */
-        .progress-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 0 0 20px 20px; overflow: hidden; }
-        #progress-bar { height: 100%; background: var(--uv-neon); width: 0%; box-shadow: 0 0 10px var(--uv-neon); }
-        
-        /* 유튜브 실제 영역 */
         #yt-wrapper { position: fixed; top: -10px; right: -10px; width: 100px; height: 60px; opacity: 0.01; }
     </style>
 </head>
@@ -143,7 +151,6 @@
     <div id="yt-wrapper"><div id="player"></div></div>
 
     <div id="playerBar" class="hidden">
-        
         <div class="track-section now-playing">
             <div class="section-header">Now Playing</div>
             <div class="track-content">
@@ -151,8 +158,21 @@
                 <div class="track-info">
                     <div id="npTitle" class="track-title"></div>
                     <div id="npArtist" class="track-artist"></div>
-                    <div id="npAlbum" class="track-album"></div>
-                    <div id="npUser" class="track-user"></div>
+                    <div class="track-meta">
+                        <span id="npAlbum"></span> <span id="npUser" class="track-user"></span>
+                    </div>
+                    
+                    <div class="controls-row">
+                        <button id="playPauseBtn" class="play-pause-btn" onclick="togglePlayPause()">
+                            <svg id="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            <svg id="icon-play" viewBox="0 0 24 24" style="display:none; margin-left: 2px;"><path d="M8 5v14l11-7z"/></svg>
+                        </button>
+                        <div class="mini-progress-bg" onclick="seekVideo(event)">
+                            <div id="mini-progress-bar" class="mini-progress-fill"></div>
+                        </div>
+                        <div id="timeDisplay" class="time-display">0:00 / -0:00</div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -166,18 +186,17 @@
                 <div class="track-info">
                     <div id="nxTitle" class="track-title"></div>
                     <div id="nxArtist" class="track-artist"></div>
-                    <div id="nxAlbum" class="track-album"></div>
-                    <div id="nxUser" class="track-user"></div>
+                    <div class="track-meta">
+                        <span id="nxAlbum"></span> <span id="nxUser" class="track-user"></span>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="progress-container"><div id="progress-bar"></div></div>
     </div>
 
     <script>
-        let player, currentId = null, isPlaying = false;
-        // 기본 턴테이블/레코드판 아이콘 (곡이 없거나 대기 중일 때 표시)
+        let player, currentData = null, isPlaying = false;
+        let progressUpdater = null;
         const DEFAULT_COVER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='none' stroke='%23444' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E";
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -220,9 +239,7 @@
                 height: '60',
                 width: '100',
                 playerVars: { 
-                    'autoplay': 1, 
-                    'controls': 0,
-                    'enablejsapi': 1,
+                    'autoplay': 1, 'controls': 0, 'enablejsapi': 1,
                     'origin': window.location.protocol + '//' + window.location.hostname 
                 },
                 events: {
@@ -245,58 +262,62 @@
         async function checkQueue() {
             if (isPlaying) return;
             try {
-                const res = await fetch(`${GAS_URL}?action=getNext`);
+                const res = await fetch(GAS_URL);
                 const data = await res.json();
                 
-                // 백엔드가 단일 객체(현재 곡)를 주는지 배열/객체로 주는지에 따른 유연한 처리
-                // 현재 GAS가 'song' 단일 객체만 반환한다고 가정
-                let currentSong = data;
-                let nextSong = data.next || null; // 백엔드에서 next 필드를 보내준다면 사용
+                if (data.result === "success" && data.queue && data.queue.length > 0) {
+                    let currentSong = data.queue[0];
+                    let nextSong = data.queue.length > 1 ? data.queue[1] : null;
 
-                if (currentSong && currentSong.videoId) {
-                    playSong(currentSong, nextSong);
+                    if (currentSong && currentSong.youtubeId) {
+                        playSong(currentSong, nextSong);
+                    } else {
+                        showEmptyState();
+                    }
                 } else {
-                    // 💡 대기 곡이 없을 때 UI
-                    document.getElementById('playerBar').classList.remove('hidden');
-                    
-                    // Now Playing 초기화
-                    document.getElementById('npTitle').textContent = "신청곡을 기다리는 중...";
-                    document.getElementById('npArtist').textContent = "Stylus Seoul";
-                    document.getElementById('npAlbum').textContent = "";
-                    document.getElementById('npUser').textContent = "";
-                    document.getElementById('npArt').src = DEFAULT_COVER;
-                    
-                    // Next Playing 초기화
-                    document.getElementById('nxTitle').textContent = "대기열이 비어있습니다";
-                    document.getElementById('nxArtist').textContent = "-";
-                    document.getElementById('nxAlbum').textContent = "";
-                    document.getElementById('nxUser').textContent = "";
-                    document.getElementById('nxArt').src = DEFAULT_COVER;
-
-                    document.getElementById('progress-bar').style.width = '0%';
+                    showEmptyState();
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("큐 체크 실패:", e); }
+        }
+
+        function showEmptyState() {
+            document.getElementById('playerBar').classList.remove('hidden');
+            
+            document.getElementById('npTitle').textContent = "신청곡을 기다리는 중...";
+            document.getElementById('npArtist').textContent = "Stylus Seoul";
+            document.getElementById('npAlbum').textContent = "";
+            document.getElementById('npUser').textContent = "";
+            document.getElementById('npArt').src = DEFAULT_COVER;
+            
+            document.getElementById('nxTitle').textContent = "대기열이 비어있습니다";
+            document.getElementById('nxArtist').textContent = "-";
+            document.getElementById('nxAlbum').textContent = "";
+            document.getElementById('nxUser').textContent = "";
+            document.getElementById('nxArt').src = DEFAULT_COVER;
+
+            document.getElementById('mini-progress-bar').style.width = '0%';
+            document.getElementById('timeDisplay').textContent = "0:00 / -0:00";
         }
 
         function playSong(song, nextSong) {
-            currentId = song.id;
+            currentData = song;
             isPlaying = true;
             document.getElementById('playerBar').classList.remove('hidden');
             
-            // 🎧 [Now Playing] UI 세팅
+            // Now Playing
             document.getElementById('npTitle').textContent = song.title || "-";
             document.getElementById('npArtist').textContent = song.artist || "-";
-            document.getElementById('npAlbum').textContent = song.album || "";
-            document.getElementById('npUser').textContent = song.name ? `Req by. ${song.name}` : "";
-            document.getElementById('npArt').src = song.thumb || DEFAULT_COVER;
+            document.getElementById('npAlbum').textContent = song.album ? song.album + " · " : "";
+            document.getElementById('npUser').textContent = song.nickname ? `Req by. ${song.nickname}` : "";
+            document.getElementById('npArt').src = song.thumbUrl || DEFAULT_COVER;
 
-            // ⏭️ [Next Playing] UI 세팅 (데이터가 있으면 표시, 없으면 대기 문구)
+            // Next Playing
             if (nextSong) {
                 document.getElementById('nxTitle').textContent = nextSong.title || "-";
                 document.getElementById('nxArtist').textContent = nextSong.artist || "-";
-                document.getElementById('nxAlbum').textContent = nextSong.album || "";
-                document.getElementById('nxUser').textContent = nextSong.name ? `Req by. ${nextSong.name}` : "";
-                document.getElementById('nxArt').src = nextSong.thumb || DEFAULT_COVER;
+                document.getElementById('nxAlbum').textContent = nextSong.album ? nextSong.album + " · " : "";
+                document.getElementById('nxUser').textContent = nextSong.nickname ? `Req by. ${nextSong.nickname}` : "";
+                document.getElementById('nxArt').src = nextSong.thumbUrl || DEFAULT_COVER;
             } else {
                 document.getElementById('nxTitle').textContent = "다음 대기 곡이 없습니다";
                 document.getElementById('nxArtist').textContent = "-";
@@ -305,27 +326,90 @@
                 document.getElementById('nxArt').src = DEFAULT_COVER;
             }
             
-            player.loadVideoById(song.videoId);
+            player.loadVideoById(song.youtubeId);
             player.unMute();
             player.setVolume(100);
         }
 
+        // 🎛️ 재생 / 일시정지 토글 기능
+        function togglePlayPause() {
+            if (!player || !player.getPlayerState) return;
+            const state = player.getPlayerState();
+            if (state === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        }
+
+        // 🎚️ 재생바 클릭하여 곡 탐색(Seek) 기능
+        function seekVideo(e) {
+            if (!player || !player.getDuration) return;
+            const bar = e.currentTarget;
+            const rect = bar.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const perc = clickX / rect.width;
+            const seekTime = perc * player.getDuration();
+            player.seekTo(seekTime, true);
+        }
+
+        // ⏰ 시간 포맷 변환 (초 -> 0:00)
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        // ▶️ 유튜브 상태 감지 (버튼 아이콘 변경 및 진행바 업데이트)
         function onStateChange(e) {
-            if (e.data === YT.PlayerState.ENDED) nextSong();
-            if (e.data === YT.PlayerState.PLAYING) updateProgress();
+            const iconPlay = document.getElementById('icon-play');
+            const iconPause = document.getElementById('icon-pause');
+
+            if (e.data === YT.PlayerState.ENDED) {
+                cancelAnimationFrame(progressUpdater);
+                nextSong();
+            }
+            if (e.data === YT.PlayerState.PLAYING) {
+                iconPlay.style.display = 'none';
+                iconPause.style.display = 'block';
+                updateProgress();
+            }
+            if (e.data === YT.PlayerState.PAUSED) {
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
+                cancelAnimationFrame(progressUpdater);
+            }
         }
 
         async function nextSong() {
             isPlaying = false;
-            if (currentId) await fetch(`${GAS_URL}?action=setDone&id=${currentId}`);
+            if (currentData && currentData.rowIndex) {
+                try {
+                    await fetch(GAS_URL, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "complete", rowIndex: currentData.rowIndex })
+                    });
+                } catch(e) { console.error("완료 처리 실패:", e); }
+            }
             checkQueue();
         }
 
         function updateProgress() {
             if (isPlaying && player && player.getDuration) {
-                const perc = (player.getCurrentTime() / player.getDuration()) * 100;
-                document.getElementById('progress-bar').style.width = perc + '%';
-                if (isPlaying) requestAnimationFrame(updateProgress);
+                const current = player.getCurrentTime() || 0;
+                const total = player.getDuration() || 0;
+                const remain = total - current;
+                
+                const perc = total > 0 ? (current / total) * 100 : 0;
+                document.getElementById('mini-progress-bar').style.width = perc + '%';
+                
+                // 시간 표시 업데이트 (예: 1:23 / -3:15)
+                document.getElementById('timeDisplay').textContent = `${formatTime(current)} / -${formatTime(remain)}`;
+                
+                if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                    progressUpdater = requestAnimationFrame(updateProgress);
+                }
             }
         }
     </script>
