@@ -2,61 +2,90 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>MIWIG PLAYER</title>
+    <title>미위구 플레이어 - 로그인 통합 버전</title>
+    
     <script>
-        /* [1] 최상단 웹앱 URL 입력 */
+        /* [설정] 최상단 */
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec"; 
         const POLL_INTERVAL = 10000;
+        const ADMIN_PASSWORD = "1234"; // 🚨 여기에 원하시는 비밀번호를 설정하세요!
     </script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
-        :root { --bg-panel: rgba(7, 7, 26, 0.98); --uv-neon: #B4A4FF; --t-hi: #F5F2FF; --t-mid: #A89DC8; }
+        :root { --bg-panel: rgba(7, 7, 26, 0.96); --uv-neon: #B4A4FF; --t-hi: #F5F2FF; --t-mid: #A89DC8; }
         body { margin: 0; padding: 0; overflow: hidden; font-family: 'Pretendard', sans-serif; background: transparent; }
 
-        /* 로그인 버튼 - 상호작용에서만 사용 */
-        #loginBtn {
-            position: fixed; top: 20px; left: 20px; z-index: 999999;
-            background: #FF0000; color: white; padding: 15px 25px;
+        /* 🔒 [접근 제어용 로그인 화면] */
+        #authScreen {
+            position: fixed; inset: 0; z-index: 9999999;
+            background: rgba(7, 7, 26, 0.98); backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px;
+        }
+        .auth-title { color: var(--t-hi); font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+        #pwInput {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 14px 20px; border-radius: 12px; color: white; font-size: 16px;
+            text-align: center; outline: none; transition: all 0.3s;
+        }
+        #pwInput:focus { border-color: var(--uv-neon); background: rgba(255, 255, 255, 0.1); }
+        .auth-btn {
+            background: var(--uv-neon); color: #000; font-weight: 800; font-size: 16px;
+            padding: 14px 30px; border: none; border-radius: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .auth-btn:active { transform: scale(0.95); }
+
+        /* [유튜브 세션 복구 버튼] */
+        #loginOverlay {
+            position: fixed; top: 10px; left: 10px; z-index: 99999;
+            background: #FF0000; color: white; padding: 12px 20px;
             border-radius: 8px; font-weight: 800; cursor: pointer;
-            opacity: 0.1; transition: opacity 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-size: 13px;
+            transition: opacity 0.3s;
         }
-        #loginBtn:hover { opacity: 1; }
+        /* 마우스 안 올리면 화면에서 거슬리지 않게 투명도 낮춤 */
+        #loginOverlay:not(:hover) { opacity: 0.3; }
+        #loginOverlay:hover { opacity: 1; }
 
-        /* 플레이어 바 *//
+        /* [플레이어 바] */
         #playerBar {
-            position: fixed; bottom: 50px; left: 50%;
-            transform: translateX(-50%) translateY(200px);
-            width: 550px; background: var(--bg-panel);
-            border: 1px solid rgba(148, 130, 255, 0.4);
-            border-radius: 24px; padding: 20px;
-            display: flex; align-items: center; gap: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            opacity: 0;
+            position: fixed; bottom: 30px; left: 50%;
+            transform: translateX(-50%) translateY(0);
+            width: 500px; background: var(--bg-panel);
+            border: 1px solid rgba(148, 130, 255, 0.3);
+            border-radius: 20px; padding: 15px;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.7);
+            transition: all 0.5s; opacity: 1;
         }
-        #playerBar.active { transform: translateX(-50%) translateY(0); opacity: 1; }
+        #playerBar.hidden { transform: translateX(-50%) translateY(150%); opacity: 0; }
 
-        .album-art { width: 80px; height: 80px; border-radius: 14px; object-fit: cover; box-shadow: 0 0 20px rgba(180,164,255,0.2); }
+        .album-art { width: 65px; height: 65px; border-radius: 10px; background: #111; object-fit: cover; }
         .song-info { flex: 1; overflow: hidden; }
-        .song-title { color: var(--t-hi); font-size: 20px; font-weight: 800; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .song-artist { color: var(--t-mid); font-size: 15px; }
-        .progress-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 0 0 24px 24px; overflow: hidden; }
-        #progress-bar { height: 100%; background: linear-gradient(90deg, #7D52C4, var(--uv-neon)); width: 0%; }
+        .song-title { color: var(--t-hi); font-size: 17px; font-weight: 800; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .song-artist { color: var(--t-mid); font-size: 13px; }
+        .progress-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 0 0 20px 20px; overflow: hidden; }
+        #progress-bar { height: 100%; background: var(--uv-neon); width: 0%; }
         
-        /* 실제 유튜브 영상 (아주 작게 숨김 - 오디오 출력용) */
-        #yt-wrapper { position: fixed; top: 0; left: 0; width: 200px; height: 150px; opacity: 0.01; pointer-events: none; }
+        /* 유튜브 실제 영역 (작게 숨김) */
+        #yt-wrapper { position: fixed; top: -10px; right: -10px; width: 100px; height: 60px; opacity: 0.01; }
     </style>
 </head>
 <body>
 
-    <div id="loginBtn" onclick="location.href='https://www.youtube.com/login'">
-        유튜브 로그인/세션 연결
+    <div id="authScreen" style="display: none;">
+        <div class="auth-title">플레이어 접근 권한이 필요합니다</div>
+        <input type="password" id="pwInput" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter') handleLogin()">
+        <button class="auth-btn" onclick="handleLogin()">입장하기</button>
+    </div>
+
+    <div id="loginOverlay" onclick="window.open('https://www.youtube.com', '_blank')">
+        ⚠️ 세션 오류 해결 (클릭하여 새 탭에서 로그인)
     </div>
 
     <div id="yt-wrapper"><div id="player"></div></div>
 
-    <div id="playerBar">
+    <div id="playerBar" class="hidden">
         <img id="albumArt" class="album-art" src="">
         <div class="song-info">
             <div id="songTitle" class="song-title"></div>
@@ -65,27 +94,69 @@
         <div class="progress-container"><div id="progress-bar"></div></div>
     </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let player, currentId = null, isPlaying = false;
 
+        // 🟢 페이지 요소가 전부 준비되면 로그인 상태 체크
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('player_logged_in') === 'true') {
+                initPlayer(); // 이미 로그인되어 있으면 바로 플레이어 띄움
+            } else {
+                document.getElementById('authScreen').style.display = 'flex'; // 아니면 로그인 창 띄움
+                document.getElementById('pwInput').focus(); // 바로 칠 수 있게 커서 놔줌
+            }
+        });
+
+        // 🟢 로그인 처리 함수
+        function handleLogin() {
+            const pw = document.getElementById('pwInput').value;
+            if (pw === ADMIN_PASSWORD) {
+                localStorage.setItem('player_logged_in', 'true');
+                document.getElementById('authScreen').style.display = 'none'; // 창 걷어내기
+                initPlayer(); // 플레이어 로직 가동!
+            } else {
+                alert('비밀번호가 일치하지 않습니다.');
+                document.getElementById('pwInput').value = '';
+                document.getElementById('pwInput').focus();
+            }
+        }
+
+        // 🟢 유튜브 API 불러오기 (로그인 성공 시에만 작동)
+        function initPlayer() {
+            if (document.getElementById('yt-script')) return; // 중복 로드 방지
+            const tag = document.createElement('script');
+            tag.id = 'yt-script';
+            tag.src = "https://www.youtube.com/iframe_api";
+            document.head.appendChild(tag);
+        }
+
+        // 유튜브 API 준비 완료
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '150', width: '200',
+                height: '60',
+                width: '100',
+                host: 'https://www.youtube-nocookie.com',
                 playerVars: { 
-                    'autoplay': 1, 'controls': 0, 'mute': 0,
-                    'origin': location.origin,
-                    'enablejsapi': 1
+                    'autoplay': 1, 
+                    'controls': 0,
+                    'enablejsapi': 1,
+                    'origin': window.location.protocol + '//' + window.location.hostname 
                 },
                 events: {
-                    'onReady': () => { setInterval(checkQueue, POLL_INTERVAL); checkQueue(); },
-                    'onStateChange': (e) => {
-                        if (e.data === 0) nextSong();
-                        if (e.data === 1) updateProgress();
-                    },
-                    'onError': () => nextSong()
+                    'onReady': onPlayerReady,
+                    'onStateChange': onStateChange,
+                    'onError': (e) => { 
+                        console.log("에러 발생, 다음 곡으로:", e.data);
+                        nextSong(); 
+                    }
                 }
             });
+        }
+
+        function onPlayerReady() {
+            console.log("Ready");
+            setInterval(checkQueue, POLL_INTERVAL);
+            checkQueue();
         }
 
         async function checkQueue() {
@@ -93,7 +164,9 @@
             try {
                 const res = await fetch(`${GAS_URL}?action=getNext`);
                 const song = await res.json();
-                if (song && song.videoId) playSong(song);
+                if (song && song.videoId) {
+                    playSong(song);
+                }
             } catch (e) { console.error(e); }
         }
 
@@ -103,25 +176,30 @@
             document.getElementById('songTitle').textContent = song.title;
             document.getElementById('songArtist').textContent = song.artist;
             document.getElementById('albumArt').src = song.thumb;
-            document.getElementById('playerBar').classList.add('active');
+            document.getElementById('playerBar').classList.remove('hidden');
             
             player.loadVideoById(song.videoId);
             player.unMute();
             player.setVolume(100);
         }
 
+        function onStateChange(e) {
+            if (e.data === YT.PlayerState.ENDED) nextSong();
+            if (e.data === YT.PlayerState.PLAYING) updateProgress();
+        }
+
         async function nextSong() {
             isPlaying = false;
-            document.getElementById('playerBar').classList.remove('active');
+            document.getElementById('playerBar').classList.add('hidden');
             if (currentId) await fetch(`${GAS_URL}?action=setDone&id=${currentId}`);
-            setTimeout(checkQueue, 2000);
+            checkQueue();
         }
 
         function updateProgress() {
             if (isPlaying && player && player.getDuration) {
                 const perc = (player.getCurrentTime() / player.getDuration()) * 100;
                 document.getElementById('progress-bar').style.width = perc + '%';
-                requestAnimationFrame(updateProgress);
+                if (isPlaying) requestAnimationFrame(updateProgress);
             }
         }
     </script>
