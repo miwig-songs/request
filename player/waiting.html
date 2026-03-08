@@ -10,129 +10,121 @@
     </script>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root { 
-            --bg-deep: #05050a;
-            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-body: #0a0a0a;
+            --bg-header: #0a0a0a;
             --uv-main: #5f4b8b; 
-            --uv-soft: rgba(95, 75, 139, 0.2);
-            --uv-border: rgba(95, 75, 139, 0.3);
-            --t-hi: #FFFFFF; 
-            --t-mid: #A8A8B3; 
-            --font-main: 'Pretendard', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
-            --safe-bottom: env(safe-area-inset-bottom);
+            --uv-dim: rgba(95, 75, 139, 0.1);
+            --border-color: #222;
+            --t-hi: #fff;
+            --t-mid: #888;
+            --font-main: 'Pretendard', 'Noto Sans JP', sans-serif;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { 
-            margin: 0; padding: 0; 
-            background-color: var(--bg-deep); 
+            background-color: var(--bg-body); 
             font-family: var(--font-main); 
             color: var(--t-hi); 
-            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* [Header - Request Page Style] */
+        /* 🚨 Header: Request Page Clone Style */
         nav {
             position: sticky; top: 0; z-index: 100;
-            background: rgba(5, 5, 10, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 18px 24px;
-            display: flex; justify-content: space-between; align-items: center;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            height: 64px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 20px;
         }
-        .nav-logo { font-size: 18px; font-weight: 900; letter-spacing: 0.1em; color: var(--t-hi); }
+        .nav-inner { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; cursor: pointer; }
         .nav-logo span { color: var(--uv-main); }
-        .status-dot { width: 8px; height: 8px; background: #ff4b4b; border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 10px #ff4b4b; animation: pulse 1.5s infinite; }
-        .live-label { font-size: 12px; font-weight: 800; color: var(--t-mid); letter-spacing: 0.1em; }
+        .live-status { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--t-mid); }
+        .status-dot { width: 8px; height: 8px; background: #ff4b4b; border-radius: 50%; box-shadow: 0 0 10px rgba(255, 75, 75, 0.5); animation: blink 1.5s infinite; }
 
-        .content { padding: 24px; max-width: 600px; margin: 0 auto; padding-bottom: calc(40px + var(--safe-bottom)); }
+        .container { max-width: 800px; margin: 0 auto; padding: 32px 20px; }
 
         /* [Section Titles] */
-        .section-title { font-size: 13px; font-weight: 900; color: var(--uv-main); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 16px; margin-top: 32px; display: block; }
+        .section-title { font-size: 14px; font-weight: 800; color: var(--uv-main); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: block; }
 
-        /* [ON AIR Card] */
+        /* [NOW PLAYING Card - Enhanced for Mobile] */
         .on-air-card { 
-            background: linear-gradient(145deg, rgba(95, 75, 139, 0.15), rgba(0,0,0,0));
-            border: 1px solid var(--uv-border);
-            border-radius: 24px; padding: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            background: #111;
+            border: 1px solid var(--uv-main);
+            border-radius: 16px; padding: 24px; margin-bottom: 40px;
+            display: flex; flex-direction: column; gap: 20px;
         }
-        .oa-layout { display: flex; flex-direction: column; gap: 20px; }
-        .oa-art { width: 100%; aspect-ratio: 1/1; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .oa-art { width: 100%; aspect-ratio: 1/1; border-radius: 10px; overflow: hidden; background: #1a1a1a; }
         .oa-art img { width: 100%; height: 100%; object-fit: cover; }
-        .oa-info { min-width: 0; }
-        .oa-title { font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 6px; font-feature-settings: "palt"; }
-        .oa-artist { font-size: 18px; color: var(--t-mid); margin-bottom: 16px; font-weight: 500; }
-        .oa-requester { display: inline-flex; align-items: center; gap: 8px; background: var(--uv-main); color: #fff; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 800; }
+        .oa-info { display: flex; flex-direction: column; gap: 4px; }
+        .oa-title { font-size: 28px; font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; }
+        .oa-artist { font-size: 18px; color: var(--t-mid); font-weight: 500; margin-bottom: 12px; }
+        .oa-requester { align-self: flex-start; background: var(--uv-main); color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 800; }
 
-        /* [Waitlist Cards] */
-        .queue-container { display: grid; gap: 12px; }
+        /* [WAITLIST Cards] */
+        .queue-container { display: flex; flex-direction: column; gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
         .queue-card { 
-            background: var(--bg-card); 
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 18px; padding: 14px 18px; 
+            background: var(--bg-body);
+            padding: 16px; 
             display: flex; align-items: center; gap: 16px;
-            transition: transform 0.2s;
+            transition: background 0.2s;
         }
-        .queue-card:active { transform: scale(0.98); background: rgba(255,255,255,0.06); }
-        .q-art { width: 54px; height: 54px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: #111; }
+        .q-art { width: 50px; height: 50px; border-radius: 4px; overflow: hidden; flex-shrink: 0; background: #1a1a1a; }
         .q-art img { width: 100%; height: 100%; object-fit: cover; }
         .q-info { flex: 1; min-width: 0; }
-        .q-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-feature-settings: "palt"; }
+        .q-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .q-artist { font-size: 14px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .q-user { font-size: 12px; font-weight: 800; color: var(--uv-main); background: var(--uv-soft); padding: 4px 10px; border-radius: 6px; flex-shrink: 0; }
+        .q-user { font-size: 12px; font-weight: 800; color: var(--uv-main); margin-left: auto; }
 
-        /* Empty State */
-        #emptyState { text-align: center; padding: 60px 0; opacity: 0.5; }
-        .empty-icon { font-size: 40px; margin-bottom: 10px; display: block; }
+        #emptyState { text-align: center; padding: 60px 0; color: var(--t-mid); font-size: 15px; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* Tablet over layout */
+        /* [Tablet+ Layout] */
         @media (min-width: 480px) {
-            .oa-layout { flex-direction: row; align-items: center; }
-            .oa-art { width: 180px; }
+            .on-air-card { flex-direction: row; align-items: center; padding: 32px; gap: 32px; }
+            .oa-art { width: 200px; }
+            .oa-title { font-size: 32px; }
         }
     </style>
 </head>
 <body>
 
 <nav>
-    <div class="nav-logo">MIWIG <span>WAITLIST</span></div>
-    <div class="live-label"><span class="status-dot"></span>LIVE</div>
+    <div class="nav-inner">
+        <div class="nav-logo" onclick="location.reload()">MIWIG <span>SONGS</span></div>
+        <div class="live-status"><span class="status-dot"></span>LIVE STATUS</div>
+    </div>
 </nav>
 
-<div class="content">
+<div class="container">
     <div id="onAirSection" style="display:none;">
         <span class="section-title">Now Playing</span>
         <div class="on-air-card">
-            <div class="oa-layout">
-                <div class="oa-art"><img id="onAirArt" src="" alt=""></div>
-                <div class="oa-info">
-                    <div class="oa-title" id="onAirTitle">Connecting...</div>
-                    <div class="oa-artist" id="onAirArtist">-</div>
-                    <div class="oa-requester">
-                        <span>Requested by</span>
-                        <span id="onAirUser">Guest</span>
-                    </div>
+            <div class="oa-art"><img id="onAirArt" src="" alt=""></div>
+            <div class="oa-info">
+                <div class="oa-title" id="onAirTitle">Title</div>
+                <div class="oa-artist" id="onAirArtist">Artist</div>
+                <div class="oa-requester">
+                    Requested by <span id="onAirUser">Guest</span>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="queueSection" style="display:none;">
-        <span class="section-title">Up Next</span>
+        <span class="section-title">Waitlist</span>
         <div class="queue-container" id="queueContainer">
             </div>
     </div>
 
-    <div id="emptyState">
-        <span class="empty-icon">💿</span>
-        <p>대기 중인 신청곡이 없습니다.</p>
+    <div id="emptyState" style="display:none;">
+        <p>현재 대기 중인 신청곡이 없습니다.</p>
     </div>
 </div>
 
@@ -141,7 +133,6 @@
         try {
             const res = await fetch(GAS_URL);
             const data = await res.json();
-            
             if (data.result !== "success" || !data.queue) return;
             const q = data.queue;
 
@@ -154,7 +145,7 @@
 
             document.getElementById('emptyState').style.display = 'none';
 
-            // 1. 현재 곡 (ON AIR) 업데이트
+            // 1. 현재 곡
             const current = q[0];
             document.getElementById('onAirSection').style.display = 'block';
             document.getElementById('onAirTitle').textContent = current.title;
@@ -162,7 +153,7 @@
             document.getElementById('onAirArt').src = current.thumbUrl || '';
             document.getElementById('onAirUser').textContent = current.nickname || 'GUEST';
 
-            // 2. 대기 목록 (UP NEXT) 업데이트
+            // 2. 대기 목록
             const nextList = q.slice(1);
             const container = document.getElementById('queueContainer');
             
@@ -172,9 +163,7 @@
                 document.getElementById('queueSection').style.display = 'block';
                 container.innerHTML = nextList.map((song) => `
                     <div class="queue-card">
-                        <div class="q-art">
-                            <img src="${song.thumbUrl || ''}" alt="">
-                        </div>
+                        <div class="q-art"><img src="${song.thumbUrl || ''}" alt=""></div>
                         <div class="q-info">
                             <div class="q-title">${song.title}</div>
                             <div class="q-artist">${song.artist}</div>
@@ -183,11 +172,8 @@
                     </div>
                 `).join('');
             }
-        } catch (e) {
-            console.error("Fetch Error:", e);
-        }
+        } catch (e) { console.error(e); }
     }
-
     fetchWaitlist();
     setInterval(fetchWaitlist, POLL_INTERVAL);
 </script>
