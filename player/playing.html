@@ -13,7 +13,7 @@
         :root { 
             --bg-panel: rgba(5, 5, 12, 0.98); 
             --uv-neon: #B4A4FF; 
-            --uv-glow: rgba(180, 164, 255, 0.2);
+            --uv-glow: rgba(180, 164, 255, 0.25);
             --t-hi: #FFFFFF; 
             --t-mid: #A1A1A1; 
             --t-dim: rgba(255, 255, 255, 0.15);
@@ -24,7 +24,7 @@
         #mainContainer { width: 100vw; height: 100vh; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 60px; }
 
         /* [Login Helper] */
-        #helperTools { position: fixed; top: 20px; left: 20px; z-index: 1000000; display: flex; gap: 8px; opacity: 0.15; transition: 0.4s; }
+        #helperTools { position: fixed; top: 20px; left: 20px; z-index: 1000000; display: flex; gap: 8px; opacity: 0.2; transition: 0.3s; }
         #helperTools:hover { opacity: 1; }
         .h-btn { background: var(--uv-neon); color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 800; cursor: pointer; font-size: 12px; }
         .h-close { background: #333; color: #fff; width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -37,11 +37,11 @@
         .start-msg { color: var(--uv-neon); font-size: 32px; font-weight: 900; animation: startPulse 2s infinite; cursor: pointer; }
         @keyframes startPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* [Player Bar - 1400px Slim Master] */
+        /* [Player Bar - Slim Master] */
         #playerBar { 
-            width: 1400px; background: var(--bg-panel); backdrop-filter: blur(25px);
-            border: 1px solid rgba(180, 164, 255, 0.15); border-radius: 40px; 
-            padding: 24px 50px; display: flex; align-items: center; 
+            width: 1400px; background: var(--bg-panel); backdrop-filter: blur(30px);
+            border: 1px solid rgba(180, 164, 255, 0.2); border-radius: 40px; 
+            padding: 15px 45px 20px 45px; display: flex; align-items: center; 
             box-shadow: 0 40px 100px rgba(0,0,0,0.9); 
             transition: transform 1s var(--bezier), opacity 1s var(--bezier); 
             animation: barFloat 8s infinite alternate var(--bezier);
@@ -54,65 +54,71 @@
         }
         
         .track-section { display: flex; flex-direction: column; min-width: 0; cursor: pointer; border-radius: 30px; transition: background 0.3s; }
-        .now-playing { flex: 1.4; padding: 10px 40px 10px 10px; }
-        .next-playing { flex: 0.6; padding: 10px 10px 10px 45px; opacity: 0.2; border-left: 1px solid rgba(255,255,255,0.06); }
+        .now-playing { flex: 1.45; padding: 5px 35px 5px 5px; }
+        .next-playing { flex: 0.55; padding: 5px 5px 5px 40px; opacity: 0.2; border-left: 1px solid rgba(255,255,255,0.06); }
         .now-playing:hover { background: rgba(180, 164, 255, 0.05); }
-        .next-playing:hover { opacity: 0.85; background: rgba(255, 255, 255, 0.03); }
+        .next-playing:hover { opacity: 0.8; }
 
-        /* 🚨 Header Layout: Header (Left) + Badge (Right) */
-        .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .section-header { font-size: 15px; font-weight: 900; letter-spacing: 0.35em; text-transform: uppercase; color: var(--uv-neon); text-shadow: 0 0 10px rgba(180, 164, 255, 0.3); }
+        /* 🚨 Header Row: Header + Giant Badge */
+        .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .section-header { font-size: 36px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: var(--uv-neon); text-shadow: 0 0 20px rgba(180, 164, 255, 0.4); }
         
-        /* 🚨 Giant Badge */
+        /* 🚨 Spark Badge Animation */
         .user-badge { 
-            background: rgba(180, 164, 255, 0.15); border: 1px solid rgba(180, 164, 255, 0.3); 
-            color: var(--uv-neon); padding: 4px 14px; border-radius: 10px; 
-            font-size: 15px; font-weight: 800; flex-shrink: 0; max-width: 180px;
+            background: rgba(180, 164, 255, 0.25); border: 2.5px solid rgba(180, 164, 255, 0.5); 
+            color: var(--uv-neon); padding: 6px 24px; border-radius: 14px; 
+            font-size: 30px; font-weight: 900; flex-shrink: 0; max-width: 350px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            box-shadow: 0 0 20px rgba(180, 164, 255, 0.25);
+        }
+        .user-badge.pop { animation: badgeSpark 0.8s var(--bezier); }
+
+        @keyframes badgeSpark {
+            0% { transform: scale(0.6); opacity: 0; filter: brightness(3) blur(5px); }
+            40% { transform: scale(1.1); opacity: 1; filter: brightness(2) drop-shadow(0 0 30px var(--uv-neon)); }
+            100% { transform: scale(1); opacity: 1; filter: brightness(1) drop-shadow(0 0 5px rgba(180, 164, 255, 0.2)); }
         }
 
         .track-content { display: flex; align-items: center; gap: 35px; min-width: 0; pointer-events: none; } 
         
-        .art-box { width: 130px; height: 130px; border-radius: 22px; overflow: hidden; flex-shrink: 0; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
-        .next-playing .art-box { width: 100px; height: 100px; border-radius: 18px; }
+        /* 썸네일 레이아웃 Fix */
+        .art-box { width: 145px; height: 145px; border-radius: 24px; overflow: hidden; flex-shrink: 0; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .next-playing .art-box { width: 105px; height: 105px; border-radius: 18px; }
         .album-art { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; transition: opacity 0.8s var(--bezier); }
         .album-art.new { opacity: 0; }
         .album-art.old { opacity: 1; z-index: 1; }
 
         .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
         
-        /* 🚨 Marquee & Typography (Giant Scale) */
+        /* Marquee & Typography */
         .marquee-container { width: 100%; overflow: hidden; position: relative; }
         .marquee-container.is-scrolling {
-            mask-image: linear-gradient(to right, transparent, black 30px, black calc(100% - 30px), transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 30px, black calc(100% - 30px), transparent);
+            mask-image: linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent);
         }
         .marquee-content { display: inline-block; white-space: nowrap; padding-left: 0; }
-        .scrolling { animation: marqueeMove 20s linear infinite; padding-left: 35px; } 
+        .scrolling { animation: marqueeMove 20s linear infinite; padding-left: 45px; } 
         
         @keyframes marqueeMove {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
-        .track-title { font-size: 48px; font-weight: 900; letter-spacing: -0.045em; line-height: 1.1; margin-bottom: 6px; }
-        .track-artist { font-size: 26px; font-weight: 600; color: var(--t-mid); }
+        .track-title { font-size: 52px; font-weight: 900; letter-spacing: -0.05em; line-height: 1.05; margin-bottom: 5px; }
+        .track-artist { font-size: 28px; font-weight: 600; color: var(--t-mid); letter-spacing: -0.02em; }
         
-        .track-meta { display: flex; align-items: center; margin-top: 15px; width: 100%; }
-        .album-name { font-size: 17px; font-weight: 500; color: var(--t-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-
-        /* 🚨 Progress & Time Display (Scale Up) */
+        /* Progress & Time (Giant Scale) */
         .progress-box { width: 100%; margin-top: 25px; display: flex; align-items: center; gap: 20px; }
-        .p-bg { flex: 1; height: 10px; background: rgba(255,255,255,0.06); border-radius: 20px; cursor: pointer; overflow: hidden; position: relative; }
-        .p-fill { height: 100%; background: var(--uv-neon); width: 0%; box-shadow: 0 0 20px var(--uv-neon); transition: width 0.1s linear; }
-        .p-time { font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums; width: 150px; text-align: right; color: var(--t-hi); }
+        .p-bg { flex: 1; height: 12px; background: rgba(255,255,255,0.06); border-radius: 20px; cursor: pointer; overflow: hidden; position: relative; }
+        .p-fill { height: 100%; background: var(--uv-neon); width: 0%; box-shadow: 0 0 25px var(--uv-neon); transition: width 0.1s linear; }
+        .p-time { font-size: 24px; font-weight: 900; font-variant-numeric: tabular-nums; width: 160px; text-align: right; color: var(--t-hi); letter-spacing: 0.05em; }
 
         #yt-wrapper { position: fixed; top: -50px; left: -50px; width: 10px; height: 10px; opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
     <div id="helperTools">
-        <button class="h-btn" onclick="location.href='https://www.youtube.com'">LOGIN</button>
+        <button class="h-btn" onclick="location.href='https://www.youtube.com'">🔑 LOGIN</button>
         <button class="h-close" onclick="this.parentElement.style.display='none'">×</button>
     </div>
 
@@ -137,9 +143,6 @@
                         <div class="marquee-container" id="npArtistCont">
                             <div id="npArtist" class="marquee-content track-artist">System Initiated</div>
                         </div>
-                        <div class="track-meta">
-                            <span id="npAlbum" class="album-name"></span>
-                        </div>
                         <div class="progress-box" onclick="event.stopPropagation()">
                             <div class="p-bg" onclick="seekVideo(event)"><div id="npFill" class="p-fill"></div></div>
                             <div id="npTime" class="p-time">0:00 / -0:00</div>
@@ -150,8 +153,8 @@
 
             <div class="track-section next-playing" onclick="nextSong()">
                 <div class="section-header-row">
-                    <div class="section-header">Next Playing</div>
-                    <span id="nxUser" class="user-badge" style="display:none"></span>
+                    <div class="section-header" style="font-size:22px; opacity:0.6; letter-spacing:0.2em;">Next Up</div>
+                    <span id="nxUser" class="user-badge" style="display:none; font-size:22px; padding:4px 16px;"></span>
                 </div>
                 <div class="track-content">
                     <div class="art-box"><img id="nxArt-old" class="album-art old" src=""><img id="nxArt-new" class="album-art new" src=""></div>
@@ -161,9 +164,6 @@
                         </div>
                         <div class="marquee-container">
                             <div id="nxArtist" class="marquee-content track-artist" style="font-size:20px;">-</div>
-                        </div>
-                        <div class="track-meta">
-                            <span id="nxAlbum" class="album-name"></span>
                         </div>
                     </div>
                 </div>
@@ -196,18 +196,23 @@
 
         function updateUI(prefix, data) {
             const artOld = document.getElementById(`${prefix}Art-old`), artNew = document.getElementById(`${prefix}Art-new`);
-            const title = document.getElementById(`${prefix}Title`), artist = document.getElementById(`${prefix}Artist`), album = document.getElementById(`${prefix}Album`), badge = document.getElementById(`${prefix}User`);
+            const title = document.getElementById(`${prefix}Title`), artist = document.getElementById(`${prefix}Artist`), badge = document.getElementById(`${prefix}User`);
             
             artNew.src = data ? (data.thumbUrl || DEFAULT_COVER) : DEFAULT_COVER; artNew.style.opacity = '1'; artOld.style.opacity = '0';
             
             if (data) {
-                title.textContent = data.title; artist.textContent = data.artist; if(album) album.textContent = data.album || "";
-                if (data.nickname) { badge.textContent = data.nickname; badge.style.display = 'inline-block'; } else { badge.style.display = 'none'; }
-                setTimeout(() => { checkMarquee(title); checkMarquee(artist); }, 150);
+                title.textContent = data.title; artist.textContent = data.artist;
+                if (data.nickname) { 
+                    badge.textContent = data.nickname; 
+                    badge.style.display = 'inline-block';
+                    // 🚨 뱃지 스파크 효과 트리거
+                    badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop');
+                } else { badge.style.display = 'none'; }
+                setTimeout(() => { checkMarquee(title); checkMarquee(artist); }, 200);
             } else {
                 title.textContent = prefix === 'np' ? "MIWIG BROADCAST" : "EMPTY";
                 artist.textContent = prefix === 'np' ? "IDLE" : "-";
-                if(album) album.textContent = ""; badge.style.display = 'none';
+                badge.style.display = 'none';
                 resetMarquee(title); resetMarquee(artist);
             }
             setTimeout(() => { artOld.src = artNew.src; artOld.style.opacity = '1'; artNew.style.opacity = '0'; }, 400);
@@ -222,7 +227,7 @@
                 el.classList.add('scrolling'); container.classList.add('is-scrolling');
             }
         }
-        function resetMarquee(el) { el.classList.remove('scrolling'); el.parentElement.classList.remove('is-scrolling'); el.innerHTML = el.textContent; }
+        function resetMarquee(el) { el.classList.remove('scrolling'); if(el.parentElement) el.parentElement.classList.remove('is-scrolling'); el.innerHTML = el.textContent; }
 
         function showEmptyState() { if (isPlaying) return; document.getElementById('playerBar').classList.add('hidden'); }
         function togglePlayPause() { const s = player.getPlayerState(); if (s === 1) player.pauseVideo(); else player.playVideo(); }
