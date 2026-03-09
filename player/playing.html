@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <title>MIWIG PLAYER</title>
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwPK39xSvzBmjAk5A6xhTAt_l5ilg5Napa1HC-_EbHoYU0dTIUOC0ScVAua6au2kqD8Sg/exec"; 
+        
+        // ★ 반드시 스포티파이 개발자 대시보드에서 발급받은 Client ID를 입력하세요
+        const SPOTIFY_CLIENT_ID = "dd331e9315f549e0b8a8f76fa5c4e2fd";
+        
         const POLL_INTERVAL = 5000; 
         const ADMIN_PASSWORD = "1234"; 
     </script>
@@ -15,99 +19,384 @@
     <style>
         :root { 
             --bg-panel: rgba(2, 2, 6, 0.98); 
-            --uv-main: #5f4b8b; 
-            --uv-soft: rgba(95, 75, 139, 0.15);
+            
+            /* 스포티파이 전용 컬러로 교체 */
+            --uv-main: #1DB954; 
+            --uv-soft: rgba(29, 185, 84, 0.15);
+            
             --t-hi: #FFFFFF; 
             --t-mid: #A1A1A1; 
             --bezier: cubic-bezier(0.33, 1, 0.68, 1);
             --font-main: 'Pretendard', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
         }
-        body { margin: 0; padding: 0; overflow: hidden; font-family: var(--font-main); background: transparent; -webkit-font-smoothing: antialiased; color: var(--t-hi); }
+
+        body { 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            font-family: var(--font-main); 
+            background: transparent; 
+            -webkit-font-smoothing: antialiased; 
+            color: var(--t-hi); 
+        }
         
-        #mainContainer { width: 100vw; height: 100vh; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 30px; }
+        #mainContainer { 
+            width: 100vw; 
+            height: 100vh; 
+            display: flex; 
+            align-items: flex-end; 
+            justify-content: center; 
+            padding-bottom: 30px; 
+        }
 
         /* [Helper Tools] */
-        #helperTools { position: fixed; top: 20px; left: 20px; z-index: 1000000; display: flex; gap: 8px; opacity: 0.15; transition: 0.3s; }
-        #helperTools:hover { opacity: 1; }
-        .h-btn { background: var(--uv-main); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 13px; font-family: var(--font-main); }
-        .h-close { background: #222; color: #fff; width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        #helperTools { 
+            position: fixed; 
+            top: 20px; 
+            left: 20px; 
+            z-index: 1000000; 
+            display: flex; 
+            gap: 8px; 
+            opacity: 0.15; 
+            transition: 0.3s; 
+        }
+
+        #helperTools:hover { 
+            opacity: 1; 
+        }
+
+        .h-btn { 
+            background: var(--uv-main); 
+            color: #fff; 
+            border: none; 
+            padding: 10px 18px; 
+            border-radius: 8px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            font-size: 13px; 
+            font-family: var(--font-main); 
+        }
+
+        .h-close { 
+            background: #222; 
+            color: #fff; 
+            width: 34px; 
+            height: 34px; 
+            border-radius: 8px; 
+            border: none; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 18px; 
+        }
 
         /* [Screens] */
-        #authScreen, #startScreen { position: fixed; inset: 0; z-index: 99999; background: #000; display: none; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
-        .auth-title { font-size: 24px; font-weight: 900; color: var(--uv-main); letter-spacing: 0.1em; }
-        #pwInput { background: #111; border: 1px solid #222; padding: 18px 30px; border-radius: 12px; color: white; font-size: 20px; text-align: center; width: 350px; outline: none; font-family: var(--font-main); }
-        .auth-btn { background: var(--uv-main); color: #fff; font-weight: 900; padding: 15px 50px; border: none; border-radius: 12px; cursor: pointer; }
-        .start-msg { color: var(--uv-main); font-size: 32px; font-weight: 900; animation: startPulse 2s infinite; cursor: pointer; }
-        @keyframes startPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        #authScreen, #startScreen { 
+            position: fixed; 
+            inset: 0; 
+            z-index: 99999; 
+            background: #000; 
+            display: none; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 20px; 
+        }
+
+        .auth-title { 
+            font-size: 40px; 
+            font-weight: 900; 
+            color: var(--uv-main); 
+            letter-spacing: 0.1em; 
+            margin-bottom: 10px;
+        }
+
+        .auth-sub {
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        #pwInput { 
+            background: #111; 
+            border: 1px solid #222; 
+            padding: 18px 30px; 
+            border-radius: 12px; 
+            color: white; 
+            font-size: 20px; 
+            text-align: center; 
+            width: 350px; 
+            outline: none; 
+            font-family: var(--font-main); 
+        }
+
+        .auth-btn { 
+            background: var(--uv-main); 
+            color: #fff; 
+            font-weight: 900; 
+            padding: 15px 50px; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-size: 18px;
+        }
+
+        .start-msg { 
+            color: var(--uv-main); 
+            font-size: 32px; 
+            font-weight: 900; 
+            animation: startPulse 2s infinite; 
+            cursor: pointer; 
+            text-align: center;
+        }
+
+        @keyframes startPulse { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0.4; } 
+        }
 
         /* [Player Bar] */
         #playerBar { 
-            width: 1400px; background: var(--bg-panel); backdrop-filter: blur(35px);
-            border: 1px solid rgba(95, 75, 139, 0.25); border-radius: 40px; 
-            padding: 18px 45px 22px 45px; display: flex; align-items: center; 
+            width: 1400px; 
+            background: var(--bg-panel); 
+            backdrop-filter: blur(35px);
+            border: 1px solid rgba(29, 185, 84, 0.25); 
+            border-radius: 40px; 
+            padding: 18px 45px 22px 45px; 
+            display: flex; 
+            align-items: center; 
             box-shadow: 0 40px 100px rgba(0,0,0,0.9); 
             transition: transform 1s var(--bezier), opacity 1s var(--bezier); 
             animation: barFloat 8s infinite alternate var(--bezier);
         }
-        #playerBar.hidden { transform: translateY(300px); opacity: 0; pointer-events: none; }
-        @keyframes barFloat { 0% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
-        
-        .track-section { display: flex; flex-direction: column; min-width: 0; cursor: pointer; border-radius: 30px; transition: background 0.3s, opacity 0.4s var(--bezier); }
-        .now-playing { flex: 1.45; padding: 5px 35px 5px 5px; }
-        
-        /* 🚨 Next Up 시인성 상향 (0.12 -> 0.45) */
-        .next-playing { flex: 0.55; padding: 5px 5px 5px 40px; opacity: 0.45; border-left: 1px solid rgba(255,255,255,0.12); }
-        .now-playing:hover { background: var(--uv-soft); }
-        .next-playing:hover { opacity: 0.95; background: rgba(255, 255, 255, 0.04); }
 
-        .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; height: 40px; }
-        .section-header { font-size: 32px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--uv-main); }
+        #playerBar.hidden { 
+            transform: translateY(300px); 
+            opacity: 0; 
+            pointer-events: none; 
+        }
+
+        @keyframes barFloat { 
+            0% { transform: translateY(0); } 
+            100% { transform: translateY(-6px); } 
+        }
+        
+        .track-section { 
+            display: flex; 
+            flex-direction: column; 
+            min-width: 0; 
+            cursor: pointer; 
+            border-radius: 30px; 
+            transition: background 0.3s, opacity 0.4s var(--bezier); 
+        }
+
+        .now-playing { 
+            flex: 1.45; 
+            padding: 5px 35px 5px 5px; 
+        }
+        
+        .next-playing { 
+            flex: 0.55; 
+            padding: 5px 5px 5px 40px; 
+            opacity: 0.45; 
+            border-left: 1px solid rgba(255,255,255,0.12); 
+        }
+
+        .now-playing:hover { 
+            background: var(--uv-soft); 
+        }
+
+        .next-playing:hover { 
+            opacity: 0.95; 
+            background: rgba(255, 255, 255, 0.04); 
+        }
+
+        .section-header-row { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-bottom: 15px; 
+            height: 40px; 
+        }
+
+        .section-header { 
+            font-size: 32px; 
+            font-weight: 700; 
+            letter-spacing: 0.08em; 
+            text-transform: uppercase; 
+            color: var(--uv-main); 
+        }
         
         .user-badge { 
-            background: var(--uv-soft); border: 2.2px solid var(--uv-main); 
-            color: var(--uv-main); padding: 4px 22px; border-radius: 12px; 
-            font-size: 26px; font-weight: 700; flex-shrink: 0; max-width: 380px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            background: var(--uv-soft); 
+            border: 2.2px solid var(--uv-main); 
+            color: var(--uv-main); 
+            padding: 4px 22px; 
+            border-radius: 12px; 
+            font-size: 26px; 
+            font-weight: 700; 
+            flex-shrink: 0; 
+            max-width: 380px;
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis;
         }
-        .user-badge.pop { animation: badgeSpark 0.7s var(--bezier); }
-        @keyframes badgeSpark { 0% { transform: scale(0.85); opacity: 0; filter: brightness(2); } 100% { transform: scale(1); opacity: 1; filter: brightness(1); } }
 
-        .track-content { display: flex; align-items: center; gap: 35px; min-width: 0; pointer-events: none; } 
-        .art-box { width: 145px; height: 145px; border-radius: 24px; overflow: hidden; flex-shrink: 0; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .next-playing .art-box { width: 105px; height: 105px; border-radius: 18px; }
-        .album-art { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; transition: opacity 0.8s var(--bezier); }
-        .album-art.new { opacity: 0; }
-        .album-art.old { opacity: 1; z-index: 1; }
+        .user-badge.pop { 
+            animation: badgeSpark 0.7s var(--bezier); 
+        }
 
-        .track-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-        .marquee-container { width: 100%; overflow: hidden; position: relative; }
-        .marquee-container.is-scrolling { mask-image: linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent); }
-        .marquee-content { display: inline-block; white-space: nowrap; }
-        .scrolling { animation: marqueeMove 22s linear infinite; padding-left: 45px; } 
-        @keyframes marqueeMove { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes badgeSpark { 
+            0% { transform: scale(0.85); opacity: 0; filter: brightness(2); } 
+            100% { transform: scale(1); opacity: 1; filter: brightness(1); } 
+        }
 
-        .track-title { font-size: 52px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.15; margin-bottom: 5px; font-feature-settings: "palt", "kern"; }
-        .track-artist { font-size: 28px; font-weight: 600; color: var(--t-mid); letter-spacing: -0.01em; }
+        .track-content { 
+            display: flex; 
+            align-items: center; 
+            gap: 35px; 
+            min-width: 0; 
+            pointer-events: none; 
+        } 
+
+        .art-box { 
+            width: 145px; 
+            height: 145px; 
+            border-radius: 24px; 
+            overflow: hidden; 
+            flex-shrink: 0; 
+            position: relative; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+        }
+
+        .next-playing .art-box { 
+            width: 105px; 
+            height: 105px; 
+            border-radius: 18px; 
+        }
+
+        .album-art { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            position: absolute; 
+            inset: 0; 
+            transition: opacity 0.8s var(--bezier); 
+        }
+
+        .album-art.new { 
+            opacity: 0; 
+        }
+
+        .album-art.old { 
+            opacity: 1; 
+            z-index: 1; 
+        }
+
+        .track-info { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            min-width: 0; 
+        }
+
+        .marquee-container { 
+            width: 100%; 
+            overflow: hidden; 
+            position: relative; 
+        }
+
+        .marquee-container.is-scrolling { 
+            mask-image: linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent); 
+            -webkit-mask-image: linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent); 
+        }
+
+        .marquee-content { 
+            display: inline-block; 
+            white-space: nowrap; 
+        }
+
+        .scrolling { 
+            animation: marqueeMove 22s linear infinite; 
+            padding-left: 45px; 
+        } 
+
+        @keyframes marqueeMove { 
+            0% { transform: translateX(0); } 
+            100% { transform: translateX(-50%); } 
+        }
+
+        .track-title { 
+            font-size: 52px; 
+            font-weight: 700; 
+            letter-spacing: -0.04em; 
+            line-height: 1.15; 
+            margin-bottom: 5px; 
+            font-feature-settings: "palt", "kern"; 
+        }
+
+        .track-artist { 
+            font-size: 28px; 
+            font-weight: 600; 
+            color: var(--t-mid); 
+            letter-spacing: -0.01em; 
+        }
         
-        .progress-box { width: 100%; margin-top: 25px; display: flex; align-items: center; gap: 20px; }
-        .p-bg { flex: 1; height: 12px; background: rgba(255,255,255,0.06); border-radius: 20px; cursor: pointer; overflow: hidden; position: relative; }
-        .p-fill { height: 100%; background: var(--uv-main); width: 0%; box-shadow: 0 0 15px rgba(95, 75, 139, 0.4); transition: width 0.1s linear; }
-        .p-time { font-size: 24px; font-weight: 900; font-variant-numeric: tabular-nums; width: 160px; text-align: right; color: var(--t-hi); }
+        .progress-box { 
+            width: 100%; 
+            margin-top: 25px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+        }
 
-        #yt-wrapper { position: fixed; top: -100px; left: -100px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+        .p-bg { 
+            flex: 1; 
+            height: 12px; 
+            background: rgba(255,255,255,0.06); 
+            border-radius: 20px; 
+            cursor: pointer; 
+            overflow: hidden; 
+            position: relative; 
+        }
+
+        .p-fill { 
+            height: 100%; 
+            background: var(--uv-main); 
+            width: 0%; 
+            box-shadow: 0 0 15px rgba(29, 185, 84, 0.4); 
+            transition: width 0.1s linear; 
+        }
+
+        .p-time { 
+            font-size: 24px; 
+            font-weight: 900; 
+            font-variant-numeric: tabular-nums; 
+            width: 160px; 
+            text-align: right; 
+            color: var(--t-hi); 
+        }
     </style>
 </head>
 <body>
     <div id="helperTools">
-        <button class="h-btn" onclick="location.href='https://www.youtube.com'">🔑 LOGIN</button>
+        <button class="h-btn" onclick="loginSpotify()">🔑 SPOTIFY LOGIN</button>
         <button class="h-btn" style="background:#333" onclick="location.reload()">🔄 RELOAD</button>
         <button class="h-close" onclick="this.parentElement.style.display='none'">×</button>
     </div>
 
-    <div id="authScreen"><div class="auth-title">MIWIG BROADCAST ACCESS</div><input type="password" id="pwInput" placeholder="PASSWORD" onkeydown="if(event.key==='Enter') handleLogin()"><button class="auth-btn" onclick="handleLogin()">ACCESS</button></div>
-    <div id="startScreen" onclick="startPlayer()"><div class="start-msg">MIWIG SYSTEM READY<br>CLICK TO INITIATE</div></div>
+    <div id="authScreen">
+        <div class="auth-title">MIWIG SPOTIFY SYNC</div>
+        <input type="password" id="pwInput" placeholder="SYSTEM PASSWORD" onkeydown="if(event.key==='Enter') checkAdmin()">
+        <button class="auth-btn" onclick="checkAdmin()">ACCESS SYSTEM</button>
+        <div class="auth-sub">접속 후 스포티파이 프리미엄 계정 로그인이 필요합니다.</div>
+    </div>
     
-    <div id="yt-wrapper"><div id="player"></div></div>
+    <div id="startScreen" onclick="startPlayer()">
+        <div class="start-msg">SPOTIFY READY<br>CLICK TO INITIATE</div>
+    </div>
 
     <div id="mainContainer">
         <div id="playerBar" class="hidden">
@@ -117,12 +406,21 @@
                     <span id="npUser" class="user-badge" style="display:none"></span>
                 </div>
                 <div class="track-content">
-                    <div class="art-box"><img id="npArt-old" class="album-art old" src=""><img id="npArt-new" class="album-art new" src=""></div>
+                    <div class="art-box">
+                        <img id="npArt-old" class="album-art old" src="">
+                        <img id="npArt-new" class="album-art new" src="">
+                    </div>
                     <div class="track-info">
-                        <div class="marquee-container" id="npTitleCont"><div id="npTitle" class="marquee-content track-title">MIWIG SYSTEM</div></div>
-                        <div class="marquee-container" id="npArtistCont"><div id="npArtist" class="marquee-content track-artist">Ready to Groove</div></div>
+                        <div class="marquee-container" id="npTitleCont">
+                            <div id="npTitle" class="marquee-content track-title">MIWIG SYSTEM</div>
+                        </div>
+                        <div class="marquee-container" id="npArtistCont">
+                            <div id="npArtist" class="marquee-content track-artist">Spotify Connected</div>
+                        </div>
                         <div class="progress-box" onclick="event.stopPropagation()">
-                            <div class="p-bg" onclick="seekVideo(event)"><div id="npFill" class="p-fill"></div></div>
+                            <div class="p-bg" onclick="seekVideo(event)">
+                                <div id="npFill" class="p-fill"></div>
+                            </div>
                             <div id="npTime" class="p-time">0:00 / -0:00</div>
                         </div>
                     </div>
@@ -135,63 +433,371 @@
                     <span id="nxUser" class="user-badge" style="display:none; font-size:20px; padding:4px 16px;"></span>
                 </div>
                 <div class="track-content">
-                    <div class="art-box"><img id="nxArt-old" class="album-art old" src=""><img id="nxArt-new" class="album-art new" src=""></div>
+                    <div class="art-box">
+                        <img id="nxArt-old" class="album-art old" src="">
+                        <img id="nxArt-new" class="album-art new" src="">
+                    </div>
                     <div class="track-info">
-                        <div class="marquee-container"><div id="nxTitle" class="marquee-content track-title" style="font-size:32px;">EMPTY</div></div>
-                        <div class="marquee-container"><div id="nxArtist" class="marquee-content track-artist" style="font-size:20px;">-</div></div>
+                        <div class="marquee-container">
+                            <div id="nxTitle" class="marquee-content track-title" style="font-size:32px;">EMPTY</div>
+                        </div>
+                        <div class="marquee-container">
+                            <div id="nxArtist" class="marquee-content track-artist" style="font-size:20px;">-</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script>
-        let player, currentData = null, nextData = null, isPlaying = false, progressUpdater = null, lastPlayedRowIndex = null, isProcessingNext = false; 
+        let player;
+        let deviceId;
+        let accessToken;
+        
+        let currentData = null;
+        let nextData = null;
+        let isPlaying = false;
+        let lastPlayedRowIndex = null;
+        let isProcessingNext = false;
+        
+        let durationMs = 0;
+        let currentPosMs = 0;
+        let progressUpdater = null;
+        
         const DEFAULT_COVER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='1'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E";
 
-        window.onload = () => { if (localStorage.getItem('player_logged_in') === 'true') { document.getElementById('startScreen').style.display = 'flex'; } else { document.getElementById('authScreen').style.display = 'flex'; document.getElementById('pwInput').focus(); } };
-        function handleLogin() { if (document.getElementById('pwInput').value === ADMIN_PASSWORD) { localStorage.setItem('player_logged_in', 'true'); location.reload(); } else { alert('ACCESS DENIED'); } }
-        function startPlayer() { document.getElementById('startScreen').style.display = 'none'; initPlayer(); }
-        function initPlayer() { const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(tag); }
-        function onYouTubeIframeAPIReady() { player = new YT.Player('player', { height: '10', width: '10', playerVars: { 'autoplay': 1, 'controls': 0, 'enablejsapi': 1 }, events: { 'onReady': () => { setInterval(checkQueue, POLL_INTERVAL); checkQueue(); }, 'onStateChange': onStateChange, 'onError': nextSong } }); }
+        function checkAdmin() {
+            if (document.getElementById('pwInput').value === ADMIN_PASSWORD) {
+                loginSpotify();
+            } else {
+                alert('ACCESS DENIED');
+            }
+        }
+
+        // 스포티파이 Implicit Grant 흐름 (로그인 팝업 띄우기)
+        function loginSpotify() {
+            const redirect_uri = encodeURIComponent(window.location.href.split('#')[0]);
+            const scopes = encodeURIComponent("streaming user-read-email user-read-private user-modify-playback-state");
+            window.location.href = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${redirect_uri}&scope=${scopes}`;
+        }
+
+        // 해시에서 토큰을 추출하고 세팅하는 부분
+        window.onload = () => {
+            const hash = window.location.hash.substring(1).split('&').reduce(function (initial, item) {
+                if (item) { 
+                    var parts = item.split('='); 
+                    initial[parts[0]] = decodeURIComponent(parts[1]); 
+                }
+                return initial;
+            }, {});
+            
+            window.location.hash = ''; // 깔끔한 URL을 위해 해시 지우기
+            
+            accessToken = hash.access_token || localStorage.getItem('spotify_token');
+            
+            if (accessToken) {
+                localStorage.setItem('spotify_token', accessToken);
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('startScreen').style.display = 'flex';
+            } else {
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('pwInput').focus();
+            }
+        };
+
+        function startPlayer() { 
+            document.getElementById('startScreen').style.display = 'none'; 
+            
+            // Spotify 웹 플레이어는 SDK 스크립트가 로드되면서 window.onSpotifyWebPlaybackSDKReady 를 호출합니다.
+            // 버튼 클릭 시 이미 로드되었을 수 있으므로 직접 초기화 함수를 호출해봅니다.
+            if (window.Spotify) {
+                initSpotifyPlayer();
+            }
+        }
+
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            // 아직 startScreen이 닫히지 않았다면 클릭을 기다리고, 닫혔다면 즉시 실행합니다.
+            if (document.getElementById('startScreen').style.display === 'none') {
+                initSpotifyPlayer();
+            }
+        };
+
+        function initSpotifyPlayer() {
+            if (!accessToken) return;
+            
+            player = new Spotify.Player({
+                name: 'MIWIG Broadcast Player',
+                getOAuthToken: cb => { cb(accessToken); },
+                volume: 0.8
+            });
+
+            // 에러 핸들링
+            player.addListener('initialization_error', ({ message }) => { 
+                console.error(message); 
+                alert("초기화 에러: 다시 로그인해주세요."); 
+                localStorage.removeItem('spotify_token'); 
+                location.reload();
+            });
+            
+            player.addListener('authentication_error', ({ message }) => { 
+                console.error(message); 
+                alert("인증 에러: 토큰이 만료되었습니다. 다시 로그인해주세요."); 
+                localStorage.removeItem('spotify_token'); 
+                location.reload();
+            });
+            
+            player.addListener('account_error', ({ message }) => { 
+                console.error(message); 
+                alert("계정 에러: 스포티파이 프리미엄 계정이 필요합니다."); 
+            });
+            
+            player.addListener('ready', ({ device_id }) => {
+                deviceId = device_id;
+                console.log('Spotify Player Ready with Device ID', deviceId);
+                
+                // 내 기기를 스포티파이의 메인 재생 기기로 등록 요청
+                fetch('https://api.spotify.com/v1/me/player', {
+                    method: 'PUT',
+                    headers: { 
+                        'Authorization': `Bearer ${accessToken}`, 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ 
+                        device_ids: [deviceId], 
+                        play: false 
+                    })
+                });
+
+                setInterval(checkQueue, POLL_INTERVAL);
+                checkQueue();
+            });
+
+            // 플레이어 상태 변경 이벤트 (곡 넘어감, 정지, 진행상황 업데이트 등)
+            player.addListener('player_state_changed', state => {
+                if (!state) return;
+                
+                currentPosMs = state.position;
+                durationMs = state.duration;
+                
+                const lbl = document.getElementById('statusLabel');
+                
+                if (state.paused) {
+                    lbl.textContent = "Paused";
+                    cancelAnimationFrame(progressUpdater);
+                    
+                    // 곡이 완전히 끝나서 정지된 경우 다음 곡으로 넘김
+                    if (state.position === 0 && 
+                        state.restrictions.disallow_resuming_reasons && 
+                        state.restrictions.disallow_resuming_reasons[0] === "not_paused") {
+                        nextSong();
+                    }
+                } else {
+                    lbl.textContent = "Now Playing";
+                    updateProgressUI();
+                }
+            });
+
+            player.connect();
+        }
 
         async function checkQueue() { 
             try { 
-                const res = await fetch(GAS_URL); const data = await res.json(); 
+                const res = await fetch(GAS_URL); 
+                const data = await res.json(); 
+                
                 if (data.result !== "success" || !data.queue) return; 
+                
                 const q = data.queue; 
-                if (!isPlaying && !isProcessingNext && q.length > 0) { if (q[0].rowIndex === lastPlayedRowIndex) { showEmptyState(); return; } playSong(q[0], q[1] || null); } 
-                else { const ln = q[isPlaying ? 1 : 0] || null; if (JSON.stringify(ln) !== JSON.stringify(nextData)) { nextData = ln; updateUI('nx', nextData); } if (!isPlaying && q.length === 0) showEmptyState(); } 
-            } catch (e) {} 
+                
+                if (!isPlaying && !isProcessingNext && q.length > 0) { 
+                    if (q[0].rowIndex === lastPlayedRowIndex) { 
+                        showEmptyState(); 
+                        return; 
+                    } 
+                    playSong(q[0], q[1] || null); 
+                } else { 
+                    const ln = q[isPlaying ? 1 : 0] || null; 
+                    if (JSON.stringify(ln) !== JSON.stringify(nextData)) { 
+                        nextData = ln; 
+                        updateUI('nx', nextData); 
+                    } 
+                    if (!isPlaying && q.length === 0) {
+                        showEmptyState(); 
+                    }
+                } 
+            } catch (e) {
+                console.error("Queue Check Error:", e);
+            } 
         }
 
-        function playSong(song, next) { currentData = song; nextData = next; lastPlayedRowIndex = song.rowIndex; isPlaying = true; isProcessingNext = false; document.getElementById('playerBar').classList.remove('hidden'); updateUI('np', song); updateUI('nx', next); player.loadVideoById(song.youtubeId); player.unMute(); player.setVolume(100); setTimeout(updateProgress, 600); }
+        async function playSong(song, next) { 
+            if (!deviceId || !song.spotifyUri) return;
+            
+            currentData = song; 
+            nextData = next; 
+            lastPlayedRowIndex = song.rowIndex; 
+            isPlaying = true; 
+            isProcessingNext = false; 
+            
+            document.getElementById('playerBar').classList.remove('hidden'); 
+            
+            updateUI('np', song); 
+            updateUI('nx', next); 
+            
+            // Web Playback SDK 디바이스로 재생 명령 쏘기
+            try {
+                await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Authorization': `Bearer ${accessToken}`, 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ 
+                        uris: [song.spotifyUri] 
+                    })
+                });
+            } catch (err) { 
+                console.error("Play request failed", err); 
+            }
+        }
+
+        async function nextSong() { 
+            if (isProcessingNext) return; 
+            
+            isProcessingNext = true; 
+            isPlaying = false; 
+            
+            const rid = currentData ? currentData.rowIndex : null; 
+            
+            if (nextData && nextData.spotifyUri) { 
+                const target = nextData; 
+                nextData = null; 
+                playSong(target, null); 
+            } 
+            
+            if (rid) { 
+                try { 
+                    await fetch(GAS_URL, { 
+                        method: "POST", 
+                        body: JSON.stringify({ action: "complete", rowIndex: rid }) 
+                    }); 
+                } catch(e) {} 
+                
+                checkQueue(); 
+            } 
+            
+            isProcessingNext = false; 
+        }
 
         function updateUI(prefix, data) {
-            const artOld = document.getElementById(`${prefix}Art-old`), artNew = document.getElementById(`${prefix}Art-new`), title = document.getElementById(`${prefix}Title`), artist = document.getElementById(`${prefix}Artist`), badge = document.getElementById(`${prefix}User`);
-            artNew.src = data ? (data.thumbUrl || DEFAULT_COVER) : DEFAULT_COVER; artNew.style.opacity = '1'; artOld.style.opacity = '0';
+            const artOld = document.getElementById(`${prefix}Art-old`);
+            const artNew = document.getElementById(`${prefix}Art-new`);
+            const title = document.getElementById(`${prefix}Title`);
+            const artist = document.getElementById(`${prefix}Artist`);
+            const badge = document.getElementById(`${prefix}User`);
+            
+            artNew.src = data ? (data.thumbUrl || DEFAULT_COVER) : DEFAULT_COVER; 
+            artNew.style.opacity = '1'; 
+            artOld.style.opacity = '0';
+            
             if (data) { 
-                title.textContent = data.title; artist.textContent = data.artist; 
+                title.textContent = data.title; 
+                artist.textContent = data.artist; 
                 if (data.nickname) { 
-                    badge.textContent = data.nickname; badge.style.display = 'flex';
-                    badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop');
-                } else { badge.style.display = 'none'; } 
-                setTimeout(() => { checkMarquee(title); checkMarquee(artist); }, 200);
+                    badge.textContent = data.nickname; 
+                    badge.style.display = 'flex';
+                    badge.classList.remove('pop'); 
+                    void badge.offsetWidth; 
+                    badge.classList.add('pop');
+                } else { 
+                    badge.style.display = 'none'; 
+                } 
+                setTimeout(() => { 
+                    checkMarquee(title); 
+                    checkMarquee(artist); 
+                }, 200);
             } else { 
-                title.textContent = prefix === 'np' ? "MIWIG SYSTEM" : "EMPTY"; artist.textContent = prefix === 'np' ? "IDLE" : "-"; badge.style.display = 'none'; resetMarquee(title); resetMarquee(artist);
+                title.textContent = prefix === 'np' ? "MIWIG SYSTEM" : "EMPTY"; 
+                artist.textContent = prefix === 'np' ? "IDLE" : "-"; 
+                badge.style.display = 'none'; 
+                resetMarquee(title); 
+                resetMarquee(artist);
             }
-            setTimeout(() => { artOld.src = artNew.src; artOld.style.opacity = '1'; artNew.style.opacity = '0'; }, 400);
+            
+            setTimeout(() => { 
+                artOld.src = artNew.src; 
+                artOld.style.opacity = '1'; 
+                artNew.style.opacity = '0'; 
+            }, 400);
         }
 
-        function checkMarquee(el) { const container = el.parentElement; resetMarquee(el); if (el.scrollWidth > container.offsetWidth) { const t = el.textContent; el.innerHTML = `<span>${t}</span><span style="padding-left:100px">${t}</span>`; el.classList.add('scrolling'); container.classList.add('is-scrolling'); } }
-        function resetMarquee(el) { el.classList.remove('scrolling'); if(el.parentElement) el.parentElement.classList.remove('is-scrolling'); el.innerHTML = el.textContent; }
-        function showEmptyState() { if (isPlaying) return; document.getElementById('playerBar').classList.add('hidden'); }
-        function togglePlayPause() { const s = player.getPlayerState(); if (s === 1) player.pauseVideo(); else player.playVideo(); }
-        function seekVideo(e) { if (!player || !player.getDuration) return; const rect = e.currentTarget.getBoundingClientRect(); const perc = (e.clientX - rect.left) / rect.width; player.seekTo(perc * player.getDuration(), true); }
-        function onStateChange(e) { const lbl = document.getElementById('statusLabel'); if (e.data === 0) nextSong(); if (e.data === 1) { lbl.textContent = "Now Playing"; updateProgress(); } if (e.data === 2) { lbl.textContent = "Paused"; cancelAnimationFrame(progressUpdater); } }
-        async function nextSong() { if (isProcessingNext) return; isProcessingNext = true; isPlaying = false; const rid = currentData ? currentData.rowIndex : null; if (nextData && nextData.youtubeId) { const target = nextData; nextData = null; playSong(target, null); } if (rid) { try { await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "complete", rowIndex: rid }) }); } catch(e) {} checkQueue(); } isProcessingNext = false; }
-        function updateProgress() { if (player && typeof player.getDuration === "function") { const cur = player.getCurrentTime() || 0, tot = player.getDuration() || 0; if (tot > 0) { document.getElementById('npFill').style.width = (cur/tot*100) + '%'; document.getElementById('npTime').textContent = `${formatTime(cur)} / -${formatTime(tot-cur)}`; } else if (isPlaying) { setTimeout(updateProgress, 300); return; } } if (player && player.getPlayerState() === 1) progressUpdater = requestAnimationFrame(updateProgress); }
-        function formatTime(sec) { if (!sec || isNaN(sec)) return "0:00"; const m = Math.floor(sec/60), s = Math.floor(sec%60).toString().padStart(2, '0'); return `${m}:${s}`; }
+        function checkMarquee(el) { 
+            const container = el.parentElement; 
+            resetMarquee(el); 
+            if (el.scrollWidth > container.offsetWidth) { 
+                const t = el.textContent; 
+                el.innerHTML = `<span>${t}</span><span style="padding-left:100px">${t}</span>`; 
+                el.classList.add('scrolling'); 
+                container.classList.add('is-scrolling'); 
+            } 
+        }
+
+        function resetMarquee(el) { 
+            el.classList.remove('scrolling'); 
+            if(el.parentElement) el.parentElement.classList.remove('is-scrolling'); 
+            el.innerHTML = el.textContent; 
+        }
+
+        function showEmptyState() { 
+            if (isPlaying) return; 
+            document.getElementById('playerBar').classList.add('hidden'); 
+        }
+        
+        async function togglePlayPause() { 
+            if (!player) return;
+            const state = await player.getCurrentState();
+            if (!state) return;
+            if (state.paused) { 
+                player.resume(); 
+            } else { 
+                player.pause(); 
+            } 
+        }
+
+        async function seekVideo(e) { 
+            if (!player || durationMs === 0) return; 
+            const rect = e.currentTarget.getBoundingClientRect(); 
+            const perc = (e.clientX - rect.left) / rect.width; 
+            player.seek(Math.floor(perc * durationMs)); 
+        }
+
+        function updateProgressUI() { 
+            if (durationMs > 0) { 
+                // 스포티파이 SDK는 상태가 바뀔 때만 이벤트를 주므로, 
+                // 게이지 애니메이션의 부드러움을 위해 로컬에서 60fps로 계산합니다.
+                if (document.getElementById('statusLabel').textContent === "Now Playing") {
+                    currentPosMs += 1000/60; 
+                    if(currentPosMs > durationMs) currentPosMs = durationMs;
+                }
+
+                document.getElementById('npFill').style.width = (currentPosMs/durationMs*100) + '%'; 
+                
+                const curText = formatTime(currentPosMs);
+                const remText = formatTime(durationMs - currentPosMs);
+                document.getElementById('npTime').textContent = `${curText} / -${remText}`; 
+            } 
+            progressUpdater = requestAnimationFrame(updateProgressUI); 
+        }
+
+        function formatTime(ms) { 
+            if (!ms || isNaN(ms)) return "0:00"; 
+            const sec = Math.floor(ms/1000);
+            const m = Math.floor(sec/60);
+            const s = Math.floor(sec%60).toString().padStart(2, '0'); 
+            return `${m}:${s}`; 
+        }
     </script>
 </body>
 </html>
