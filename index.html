@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>MIWIG Request</title>
+<title>MIWIG Request (Spotify)</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <style>
 
@@ -32,8 +32,9 @@
   --uv-glow:   rgba(95, 75, 139, 0.45);
   --uv-grad:   linear-gradient(135deg, #5F4B8B 0%, #7D52C4 55%, #A070D8 100%);
 
-  --success:      #1ED760;
-  --success-dark: #0D7A34;
+  /* 스포티파이 전용 컬러 */
+  --spotify:      #1DB954;
+  --spotify-dark: #0D7A34;
 
   --r-sm:  6px;
   --r-md:  10px;
@@ -59,11 +60,13 @@
   margin: 0; 
   padding: 0; 
 }
+
 html { 
   height: 100%; 
   -webkit-text-size-adjust: 100%; 
   background: var(--bg); 
 }
+
 body {
   min-height: 100%;
   background: var(--bg);
@@ -71,6 +74,7 @@ body {
   overscroll-behavior: none;
   padding-bottom: calc(44px + env(safe-area-inset-bottom));
 }
+
 button { 
   border: none; 
   background: none; 
@@ -78,19 +82,23 @@ button {
   font: inherit; 
   color: inherit; 
 }
-input  { 
+
+input { 
   border: none; 
   background: none; 
   outline: none; 
   font: inherit; 
   color: inherit; 
 }
+
 img { 
   display: block; 
 }
+
 ul { 
   list-style: none; 
 }
+
 ::-webkit-scrollbar { 
   width: 0; 
   height: 0; 
@@ -109,6 +117,7 @@ ul {
     radial-gradient(ellipse 80%  50% at 90%  95%, rgba(65,45,115,0.14) 0%, transparent 55%),
     radial-gradient(ellipse 55%  35% at  5%  65%, rgba(80,55,130,0.09) 0%, transparent 50%);
 }
+
 .cosmic-bg::after {
   content: '';
   position: absolute;
@@ -140,6 +149,7 @@ ul {
   border-bottom: 1px solid transparent;
   transition: border-color var(--t1), background var(--t2);
 }
+
 .header-wrap.scrolled {
   background: rgba(7, 7, 26, 0.94);
   border-bottom: 1px solid var(--border-dim);
@@ -155,6 +165,7 @@ ul {
   user-select: none;
   -webkit-user-select: none;
 }
+
 .header-brand:active { 
   opacity: 0.7; 
 }
@@ -176,6 +187,7 @@ ul {
   flex-direction: column;
   gap: 2px;
 }
+
 .header-title {
   font-size: 18px;
   font-weight: 800;
@@ -187,6 +199,7 @@ ul {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
 .header-sub {
   font-size: 11px;
   font-weight: 500;
@@ -205,6 +218,7 @@ ul {
   border: 1px solid var(--border-dim);
   transition: background var(--t1), border-color var(--t2), box-shadow var(--t2);
 }
+
 .search-bar:focus-within {
   background: var(--surf-input);
   border-color: var(--uv-bright);
@@ -212,6 +226,7 @@ ul {
     0 0 0 3px rgba(148,128,224,0.10),
     0 0 22px rgba(95,75,139,0.18);
 }
+
 .search-bar__icon {
   flex-shrink: 0; 
   width: 18px; 
@@ -219,17 +234,21 @@ ul {
   color: var(--t-mid); 
   transition: color var(--t1);
 }
+
 .search-bar:focus-within .search-bar__icon { 
   color: var(--uv-neon); 
 }
+
 .search-bar__input {
   flex: 1; 
   font-size: 16px;
   caret-color: var(--uv-neon);
 }
+
 .search-bar__input::placeholder { 
   color: var(--t-lo); 
 }
+
 .search-bar__clear {
   flex-shrink: 0; 
   width: 24px; 
@@ -243,10 +262,12 @@ ul {
   pointer-events: none;
   transition: opacity var(--t1);
 }
+
 .search-bar__clear.visible { 
   opacity: 1; 
   pointer-events: auto; 
 }
+
 .search-bar__clear svg { 
   width: 16px; 
   height: 16px; 
@@ -266,6 +287,7 @@ ul {
   padding: 52px 24px 44px; 
   text-align: center;
 }
+
 .home-logo {
   width: 128px; 
   height: 128px;
@@ -278,6 +300,7 @@ ul {
     0 0 52px   rgba(95,75,139,0.22),
     0 20px 44px rgba(0,0,0,0.65);
 }
+
 .home-brand {
   font-size: 20px;
   font-weight: 800;
@@ -288,6 +311,7 @@ ul {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
 .home-sub {
   font-size: 14px;
   color: var(--t-mid);
@@ -303,6 +327,7 @@ ul {
   width: 100%;
   max-width: 340px;
 }
+
 .social-link {
   display: flex;
   align-items: center;
@@ -323,6 +348,7 @@ ul {
     background   var(--t2),
     box-shadow   var(--t2);
 }
+
 .social-link:active,
 .social-link:hover {
   color: var(--uv-neon);
@@ -345,9 +371,11 @@ ul {
   color: var(--t-mid); 
   font-size: 14px;
 }
+
 #loader.active { 
   display: flex; 
 }
+
 .loader-ring {
   width: 34px; 
   height: 34px;
@@ -357,6 +385,7 @@ ul {
   animation: spin 0.8s linear infinite;
   box-shadow: 0 0 14px var(--uv-glow);
 }
+
 @keyframes spin { 
   to { transform: rotate(360deg); } 
 }
@@ -369,6 +398,7 @@ ul {
   z-index: 1; 
   display: none; 
 }
+
 #resultsSection.active { 
   display: block; 
 }
@@ -378,6 +408,7 @@ ul {
   align-items: center;
   padding: 16px 24px 8px;
 }
+
 .results-count {
   font-size: 13px;
   font-weight: 700;
@@ -401,8 +432,10 @@ ul {
     box-shadow var(--t2);
   animation: fadeUp var(--t3) var(--ease-spring) both;
 }
+
 .track-item:nth-child(odd)  { animation-delay: 20ms; }
 .track-item:nth-child(even) { animation-delay: 45ms; }
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0);    }
@@ -434,16 +467,20 @@ body.has-selection .track-item:not(.selected) {
   transition: background var(--t1);
   user-select: none;
 }
+
 .track-row:active { 
   background: rgba(148,130,255,0.06); 
 }
+
 .track-item.selected .track-row { 
   padding: 12px 12px 8px; 
   background: transparent; 
 }
+
 .track-item.selected .track-row:active { 
   background: transparent; 
 }
+
 .track-item.done .track-row { 
   cursor: default; 
   opacity: 0.35; 
@@ -462,19 +499,23 @@ body.has-selection .track-item:not(.selected) {
   border: 1px solid var(--border-dim);
   transition: box-shadow var(--t2);
 }
+
 .thumb-wrap:hover { 
   box-shadow: 0 0 14px rgba(95,75,139,0.35); 
 }
+
 .thumb-wrap.playing {
   box-shadow:
     0 0 0 1px rgba(148,130,255,0.35),
     0 0 18px rgba(95,75,139,0.50);
 }
+
 .track-thumb { 
   width: 100%; 
   height: 100%; 
   object-fit: cover; 
 }
+
 .play-overlay {
   position: absolute; 
   inset: 0;
@@ -485,22 +526,27 @@ body.has-selection .track-item:not(.selected) {
   opacity: 0; 
   transition: opacity var(--t1);
 }
+
 .thumb-wrap:hover .play-overlay,
 .thumb-wrap.playing .play-overlay { 
   opacity: 1; 
 }
+
 .icon-play, .icon-pause {
   color: var(--uv-neon); 
   width: 20px; 
   height: 20px;
   filter: drop-shadow(0 0 6px var(--uv-glow));
 }
+
 .icon-pause { 
   display: none; 
 }
+
 .thumb-wrap.playing .icon-play  { 
   display: none; 
 }
+
 .thumb-wrap.playing .icon-pause { 
   display: block; 
 }
@@ -513,6 +559,7 @@ body.has-selection .track-item:not(.selected) {
   flex-direction: column; 
   justify-content: center; 
 }
+
 .track-title { 
   font-size: 16px; 
   font-weight: 600; 
@@ -522,6 +569,7 @@ body.has-selection .track-item:not(.selected) {
   text-overflow: ellipsis; 
   line-height: 1.35; 
 }
+
 .track-sub { 
   font-size: 14px; 
   color: var(--t-mid); 
@@ -530,6 +578,7 @@ body.has-selection .track-item:not(.selected) {
   text-overflow: ellipsis; 
   margin-top: 2px; 
 }
+
 .track-item.done .track-title { 
   text-decoration: line-through; 
 }
@@ -543,47 +592,55 @@ body.has-selection .track-item:not(.selected) {
   width: 24px; 
   height: 24px; 
 }
+
 .trail-icon  {
   color: var(--t-lo); 
   width: 18px; 
   height: 18px;
   transition: transform var(--t2) var(--ease-spring), color var(--t1), filter var(--t2);
 }
+
 .track-item.selected .trail-icon {
   transform: rotate(90deg);
   color: var(--uv-neon);
   filter: drop-shadow(0 0 5px var(--uv-glow));
 }
+
 .done-badge {
   display: none; 
   font-size: 11px; 
   font-weight: 700;
   color: #000; 
-  background: var(--success);
+  background: var(--spotify);
   border-radius: var(--r-sm); 
   padding: 3px 8px;
 }
+
 .track-item.done .done-badge { 
   display: inline-flex; 
 }
+
 .track-item.done .trail-icon  { 
   display: none; 
 }
 
 /* ════════════════════════════════════════
-   Inline Panel (YouTube Music Optimized)
+   Inline Panel
 ════════════════════════════════════════ */
 .panel-wrap {
   display: grid; 
   grid-template-rows: 0fr;
   transition: grid-template-rows var(--t3) var(--ease-spring);
 }
+
 .track-item.selected .panel-wrap { 
   grid-template-rows: 1fr; 
 }
+
 .panel-inner { 
   overflow: hidden; 
 }
+
 .panel {
   background: transparent;
   padding: 4px 12px 18px;
@@ -594,8 +651,8 @@ body.has-selection .track-item:not(.selected) {
   margin-top: 2px;
 }
 
-/* Nick & YouTube Music Input Wraps */
-.nick-wrap, .yt-wrap {
+/* Nick Input */
+.nick-wrap {
   display: flex; 
   align-items: center;
   background: var(--surf-input); 
@@ -605,19 +662,23 @@ body.has-selection .track-item:not(.selected) {
   border: 1px solid var(--border-dim);
   transition: border-color var(--t2), box-shadow var(--t2);
 }
-.nick-wrap:focus-within, .yt-wrap:focus-within {
+
+.nick-wrap:focus-within {
   border-color: var(--uv-bright);
   box-shadow: 0 0 0 2px rgba(148,128,224,0.10),
               0 0 18px rgba(95,75,139,0.12);
 }
-.nick-input, .yt-input { 
+
+.nick-input { 
   flex: 1; 
   font-size: 15px; 
   caret-color: var(--uv-neon); 
 }
-.nick-input::placeholder, .yt-input::placeholder { 
+
+.nick-input::placeholder { 
   color: var(--t-lo); 
 }
+
 .nick-counter { 
   font-size: 12px; 
   color: var(--t-lo); 
@@ -625,17 +686,9 @@ body.has-selection .track-item:not(.selected) {
   flex-shrink: 0; 
   font-variant-numeric: tabular-nums; 
 }
+
 .nick-counter.near { 
   color: #E2A03F; 
-}
-
-/* 유튜브 뮤직 아이콘 (빨간색 포인트) */
-.yt-icon {
-  width: 18px;
-  height: 18px;
-  color: #FF0000;
-  margin-right: 10px;
-  filter: drop-shadow(0 0 5px rgba(255,0,0,0.3));
 }
 
 /* Submit */
@@ -658,15 +711,18 @@ body.has-selection .track-item:not(.selected) {
     0 0  0 1px rgba(148,130,255,0.16);
   transition: transform var(--t1), box-shadow var(--t1);
 }
+
 .submit-btn:hover {
   box-shadow:
     0 6px 32px rgba(95,75,139,0.55),
     0 0  0 1px rgba(148,130,255,0.28);
 }
+
 .submit-btn:active  { 
   transform: scale(0.98); 
   box-shadow: none; 
 }
+
 .submit-btn:disabled { 
   background: var(--surf-3); 
   color: var(--t-lo); 
@@ -674,14 +730,17 @@ body.has-selection .track-item:not(.selected) {
   transform: none; 
   box-shadow: none; 
 }
+
 .submit-btn.success {
-  background: linear-gradient(135deg, var(--success-dark), var(--success));
+  background: linear-gradient(135deg, var(--spotify-dark), var(--spotify));
   color: #000;
-  box-shadow: 0 4px 22px rgba(30,215,96,0.30);
+  box-shadow: 0 4px 22px rgba(29,185,84,0.30);
 }
+
 .submit-btn.loading { 
   pointer-events: none; 
 }
+
 .submit-spinner {
   display: none; 
   width: 18px; 
@@ -691,9 +750,11 @@ body.has-selection .track-item:not(.selected) {
   border-radius: 50%; 
   animation: spin 0.7s linear infinite;
 }
+
 .submit-btn.loading .submit-spinner { 
   display: block; 
 }
+
 .submit-btn.loading .submit-text,
 .submit-btn.success .submit-text  { 
   display: none; 
@@ -713,41 +774,40 @@ body.has-selection .track-item:not(.selected) {
   cursor: pointer; 
   transition: color var(--t1), background var(--t1);
 }
+
 .cancel-btn:active { 
   color: var(--t-mid); 
   background: rgba(148,130,255,0.05); 
 }
 
 /* ════════════════════════════════════════
-   Floating Button (To Waitlist)
+   Floating Button
 ════════════════════════════════════════ */
 .floating-btn {
   position: fixed;
   bottom: calc(24px + env(safe-area-inset-bottom));
   right: 24px;
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   background: var(--uv-grad);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(95, 75, 139, 0.5), 0 0 0 1px rgba(255,255,255,0.1);
-  z-index: 9999;
+  box-shadow: 0 8px 24px rgba(95, 75, 139, 0.5);
+  z-index: 2000;
   text-decoration: none;
   transition: transform 0.2s var(--ease-spring);
 }
+
 .floating-btn:active {
   transform: scale(0.85);
-  filter: brightness(1.2);
 }
+
 .floating-btn svg {
-  width: 26px;
-  height: 26px;
-}
-@media (min-width: 600px) {
-  .floating-btn { right: calc(50vw - 276px); }
+  width: 24px;
+  height: 24px;
 }
 
 /* ════════════════════════════════════════
@@ -777,6 +837,7 @@ body.has-selection .track-item:not(.selected) {
   max-width: calc(100vw - 32px); 
   text-align: center;
 }
+
 #toast.show { 
   opacity: 1; 
   transform: translateX(-50%) translateY(0); 
@@ -804,8 +865,8 @@ input[type=search]::-webkit-search-cancel-button {
   <div class="header-brand" id="headerHomeLink" role="button" aria-label="메인으로 가기">
     <img class="header-logo" src="https://miwig-songs.github.io/request/thumb.jpg" alt="로고">
     <div class="header-text">
-      <span class="header-title">Any Requests?</span>
-      <span class="header-sub">미위구 스트리밍 신청곡 페이지</span>
+      <span class="header-title">Spotify Requests</span>
+      <span class="header-sub">미위구 스포티파이 신청곡 페이지</span>
     </div>
   </div>
 
@@ -814,7 +875,7 @@ input[type=search]::-webkit-search-cancel-button {
       <circle cx="11" cy="11" r="8"/>
       <line x1="21" y1="21" x2="16.65" y2="16.65"/>
     </svg>
-    <input id="searchInput" class="search-bar__input" type="search" placeholder="아티스트, 노래, 가사 등" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="음악 검색">
+    <input id="searchInput" class="search-bar__input" type="search" placeholder="아티스트, 노래 검색" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="음악 검색">
     <button id="clearBtn" class="search-bar__clear" aria-label="검색어 지우기">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"/>
@@ -826,7 +887,7 @@ input[type=search]::-webkit-search-cancel-button {
 
 <section id="homeState" aria-live="polite">
   <img class="home-logo" src="https://miwig-songs.github.io/request/main_image.jpg" alt="" aria-hidden="true">
-  <h1 class="home-brand">미위구 스트리밍 신청곡 페이지</h1>
+  <h1 class="home-brand">미위구 신청곡 페이지</h1>
   <p class="home-sub">듣고 싶은 곡을 검색해서<br>신청하면 같이 들을 수 있어요!</p>
 
   <footer class="app-footer">
@@ -854,7 +915,7 @@ input[type=search]::-webkit-search-cancel-button {
   <div id="scrollSentinel" style="height:10px;margin-top:20px;"></div>
 </section>
 
-<a href="./player/waiting.html" class="floating-btn" aria-label="대기열 보기">
+<a href="./player/waiting.html" class="floating-btn" aria-label="Waitlist">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <line x1="8" y1="6" x2="21" y2="6"></line>
     <line x1="8" y1="12" x2="21" y2="12"></line>
@@ -869,7 +930,7 @@ input[type=search]::-webkit-search-cancel-button {
 
 <script>
 // ★ 아래에 새로 발급받은 '구글 웹 앱 URL'을 넣어주세요!
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwPK39xSvzBmjAk5A6xhTAt_l5ilg5Napa1HC-_EbHoYU0dTIUOC0ScVAua6au2kqD8Sg/exec';
 
 (function() {
   if (window._mWG_initialized) return;
@@ -877,8 +938,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD
 
   let selItem = null, selTrack = null;
   let currentAudio = null, currentThumb = null;
-  let allResults = [], renderCount = 0;
-  const CHUNK_SIZE = 50;
+  
   const savedNickname = localStorage.getItem('mwg_nickname') || '';
 
   const $headerWrap = document.getElementById('headerWrap');
@@ -920,202 +980,212 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD
     }
   }
 
-  // 🔥 텍스트 정제 함수: 유튜브 뮤직 검색을 방해하는 태그 제거
-  function cleanText(text) {
-    if (!text) return '';
-    return text
-      .replace(/\(.*?(feat|remaster|version|single|edit|mix|cover|acoustic|live).*?\)/gi, '')
-      .replace(/\[.*?\]/g, '')
-      .replace(/- .*?(Single|EP|Remaster|Version|Edit).*/gi, '')
-      .replace(/[「」『』]/g, ' ')
-      .trim();
-  }
-
-  function doSearch(q) {
+  // ★ 아이튠즈 API 대신 GAS로 스포티파이 검색 요청을 보냅니다.
+  async function doSearch(q) {
     q = q.trim(); 
     if (!q) { 
       showHome(); 
       return; 
     }
+    
     showLoader(); 
     stopAudio();
-    const old = document.getElementById('itunes-jsonp');
-    if (old) old.remove();
-    const s = document.createElement('script');
-    s.id = 'itunes-jsonp';
-    s.src = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=song&country=KR&limit=200&callback=_itcb`;
-    s.onerror = () => { 
+    
+    try {
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'search', query: q })
+      });
+      const resData = await response.json();
+      
+      if (resData.result === 'success') {
+        renderList(resData.data || []);
+      } else {
+        throw new Error(resData.error || "Search Failed");
+      }
+    } catch (e) {
+      console.error(e);
       showHome(); 
       toast('검색 중 오류가 발생했습니다'); 
-    };
-    document.head.appendChild(s);
+    }
   }
 
-  window._itcb = function(data) {
-    const s = document.getElementById('itunes-jsonp');
-    if (s) s.remove();
-    allResults = (data && data.results) || [];
-    renderCount = 0;
+  function renderList(tracks) {
     resetSel(); 
     $list.innerHTML = '';
     
-    if (allResults.length) {
-      $count.textContent = `${allResults.length} Songs`;
-      loadMore(); 
+    if (tracks.length > 0) {
+      $count.textContent = `${tracks.length} Songs`;
+      
+      tracks.forEach(t => {
+        // 스포티파이 데이터 구조에 맞게 변수 할당
+        const thumb = t.album.images.length > 0 ? t.album.images[0].url : 'https://via.placeholder.com/300';
+        const song = t.name || '알 수 없음';
+        const artist = t.artists.map(a => a.name).join(', ') || '';
+        const preview = t.preview_url || '';
+        const spotifyLink = t.external_urls ? t.external_urls.spotify : '';
+        const spotifyUri = t.uri || '';
+        
+        const tdata = { song, artist, thumb, spotifyLink, spotifyUri, previewUrl: preview };
+
+        const li = document.createElement('li');
+        li.className = 'track-item';
+        
+        li.innerHTML = `
+          <div class="track-row" tabindex="0" role="button" aria-expanded="false">
+            <div class="thumb-wrap" tabindex="0" role="button" aria-label="미리듣기">
+              <img class="track-thumb" src="${thumb}" alt="" loading="lazy">
+              <div class="play-overlay">
+                <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              </div>
+            </div>
+            <div class="track-info">
+              <div class="track-title">${esc(song)}</div>
+              <div class="track-sub">${esc(artist)}</div>
+            </div>
+            <div class="track-trail">
+              <svg class="trail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+              <span class="done-badge">완료</span>
+            </div>
+          </div>
+          <div class="panel-wrap">
+            <div class="panel-inner">
+              <div class="panel">
+                <div class="nick-wrap">
+                  <input class="nick-input" type="text" maxlength="15" placeholder="채팅 닉네임을 입력하세요" autocomplete="off" value="${esc(savedNickname)}">
+                  <span class="nick-counter">${savedNickname.length} / 15</span>
+                </div>
+                <button class="submit-btn" type="button">
+                  <div class="submit-spinner" aria-hidden="true"></div>
+                  <span class="submit-text">신청하기</span>
+                  <svg class="submit-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </button>
+                <button class="cancel-btn" type="button">취소</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const row = li.querySelector('.track-row');
+        const thumbWrap = li.querySelector('.thumb-wrap');
+        const nick = li.querySelector('.nick-input');
+        const ctr = li.querySelector('.nick-counter');
+        const sbtn = li.querySelector('.submit-btn');
+        const checkIcon = li.querySelector('.submit-check');
+        const cbtn = li.querySelector('.cancel-btn');
+
+        if (savedNickname.length >= 13) ctr.classList.add('near');
+
+        thumbWrap.addEventListener('click', e => {
+          e.stopPropagation(); 
+          e.preventDefault();
+          
+          if (!preview) { 
+            toast('이 곡은 스포티파이 30초 미리듣기를 지원하지 않습니다.'); 
+            return; 
+          }
+          
+          if (currentAudio && currentThumb === thumbWrap) {
+            if (currentAudio.paused) { 
+              currentAudio.play(); 
+              thumbWrap.classList.add('playing'); 
+            } else { 
+              currentAudio.pause(); 
+              thumbWrap.classList.remove('playing'); 
+            }
+            return;
+          }
+          
+          stopAudio();
+          currentAudio = new Audio(preview); 
+          currentThumb = thumbWrap;
+          thumbWrap.classList.add('playing'); 
+          currentAudio.play();
+          
+          currentAudio.addEventListener('ended', () => { 
+            thumbWrap.classList.remove('playing'); 
+            currentAudio = null; 
+          });
+          currentAudio.addEventListener('error', () => { 
+            toast('미리듣기를 재생할 수 없습니다.'); 
+            stopAudio(); 
+          });
+        });
+
+        function select() {
+          if (li.classList.contains('done')) return;
+          const already = li.classList.contains('selected');
+          
+          document.querySelectorAll('.track-item.selected').forEach(el => {
+            if (el !== li) {
+              el.classList.remove('selected');
+              el.querySelector('.track-row').setAttribute('aria-expanded','false');
+            }
+          });
+          
+          if (already) { 
+            deselect(); 
+            return; 
+          }
+          
+          selItem = li; 
+          selTrack = tdata;
+          li.classList.add('selected'); 
+          row.setAttribute('aria-expanded','true');
+          
+          setTimeout(() => {
+            const headerOffset = 110;
+            const offsetPosition = li.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            if (!nick.value) nick.focus();
+          }, 200);
+        }
+        
+        row.addEventListener('click', select);
+        row.addEventListener('keydown', e => { 
+          if (e.key==='Enter'||e.key===' ') { 
+            e.preventDefault(); 
+            select(); 
+          } 
+        });
+
+        nick.addEventListener('input', () => {
+          const n = nick.value.length; 
+          ctr.textContent = `${n} / 15`;
+          ctr.classList.toggle('near', n >= 13);
+        });
+
+        sbtn.addEventListener('click', () => {
+          const u = nick.value.trim();
+          if (!u) { 
+            nick.focus(); 
+            shake(nick.closest('.nick-wrap')); 
+            return; 
+          }
+          sbtn.classList.add('loading'); 
+          sbtn.disabled = true;
+          localStorage.setItem('mwg_nickname', u);
+          
+          send({ ...selTrack, user: u }, li, sbtn, checkIcon);
+        });
+
+        cbtn.addEventListener('click', () => deselect());
+        $list.appendChild(li);
+      });
+
       hideAllStates(); 
       $results.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      
     } else { 
       showEmpty(); 
     }
-  };
-
-  function loadMore() {
-    const chunk = allResults.slice(renderCount, renderCount + CHUNK_SIZE);
-    if (!chunk.length) return;
-    renderList(chunk);
-    renderCount += chunk.length;
-  }
-
-  const observer = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting && renderCount < allResults.length) loadMore();
-  }, { rootMargin: '200px' });
-  observer.observe(document.getElementById('scrollSentinel'));
-
-  function renderList(tracks) {
-    tracks.forEach(t => {
-      const thumb = (t.artworkUrl100 || '').replace('100x100','300x300');
-      const song = t.trackName || '알 수 없음';
-      const artist = t.artistName || '';
-      const album = t.collectionName || '';
-      const preview = t.previewUrl || '';
-      
-      const cleanSong = cleanText(song);
-      const cleanArtist = cleanText(artist);
-      const tdata = { song, artist, cleanSong, cleanArtist, album, thumb, previewUrl: preview };
-
-      const li = document.createElement('li');
-      li.className = 'track-item';
-      li.innerHTML = `
-        <div class="track-row" tabindex="0" role="button" aria-expanded="false">
-          <div class="thumb-wrap" tabindex="0" role="button" aria-label="미리듣기">
-            <img class="track-thumb" src="${thumb}" alt="" loading="lazy">
-            <div class="play-overlay">
-              <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </div>
-          </div>
-          <div class="track-info">
-            <div class="track-title">${esc(song)}</div>
-            <div class="track-sub">${esc(artist)}${album?' · '+esc(album):''}</div>
-          </div>
-          <div class="track-trail">
-            <svg class="trail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-            <span class="done-badge">완료</span>
-          </div>
-        </div>
-        <div class="panel-wrap">
-          <div class="panel-inner">
-            <div class="panel">
-              <div class="nick-wrap">
-                <input class="nick-input" type="text" maxlength="15" placeholder="채팅 닉네임을 입력하세요" autocomplete="off" value="${esc(savedNickname)}">
-                <span class="nick-counter">${savedNickname.length} / 15</span>
-              </div>
-              
-              <div class="yt-wrap">
-                <svg class="yt-icon" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-                </svg>
-                <input class="yt-input" type="url" placeholder="유튜브 뮤직 URL 직접 입력 (선택)" autocomplete="off">
-              </div>
-
-              <button class="submit-btn" type="button">
-                <div class="submit-spinner" aria-hidden="true"></div>
-                <span class="submit-text">신청하기</span>
-                <svg class="submit-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-              </button>
-              <button class="cancel-btn" type="button">취소</button>
-            </div>
-          </div>
-        </div>`;
-
-      const row = li.querySelector('.track-row');
-      const thumbWrap = li.querySelector('.thumb-wrap');
-      const nick = li.querySelector('.nick-input');
-      const ytUrlInput = li.querySelector('.yt-input');
-      const ctr = li.querySelector('.nick-counter');
-      const sbtn = li.querySelector('.submit-btn');
-      const checkIcon = li.querySelector('.submit-check');
-      const cbtn = li.querySelector('.cancel-btn');
-
-      if (savedNickname.length >= 13) ctr.classList.add('near');
-
-      thumbWrap.addEventListener('click', e => {
-        e.stopPropagation(); e.preventDefault();
-        if (!preview) { toast('미리듣기를 지원하지 않는 곡입니다.'); return; }
-        if (currentAudio && currentThumb === thumbWrap) {
-          if (currentAudio.paused) { currentAudio.play(); thumbWrap.classList.add('playing'); } 
-          else { currentAudio.pause(); thumbWrap.classList.remove('playing'); }
-          return;
-        }
-        stopAudio();
-        currentAudio = new Audio(preview); currentThumb = thumbWrap;
-        thumbWrap.classList.add('playing'); currentAudio.play();
-        currentAudio.addEventListener('ended', () => { thumbWrap.classList.remove('playing'); currentAudio = null; });
-      });
-
-      function select() {
-        if (li.classList.contains('done')) return;
-        const already = li.classList.contains('selected');
-        document.querySelectorAll('.track-item.selected').forEach(el => {
-          if (el !== li) { el.classList.remove('selected'); el.querySelector('.track-row').setAttribute('aria-expanded','false'); }
-        });
-        if (already) { deselect(); return; }
-        selItem = li; selTrack = tdata;
-        li.classList.add('selected'); row.setAttribute('aria-expanded','true');
-        setTimeout(() => {
-          const headerOffset = 110;
-          const offsetPosition = li.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-          if (!nick.value) nick.focus();
-        }, 200);
-      }
-      
-      row.addEventListener('click', select);
-      row.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); select(); } });
-
-      nick.addEventListener('input', () => {
-        const n = nick.value.length; 
-        ctr.textContent = `${n} / 15`;
-        ctr.classList.toggle('near', n >= 13);
-      });
-
-      sbtn.addEventListener('click', () => {
-        const u = nick.value.trim();
-        if (!u) { nick.focus(); shake(nick.closest('.nick-wrap')); return; }
-        sbtn.classList.add('loading'); sbtn.disabled = true;
-        localStorage.setItem('mwg_nickname', u);
-        
-        const manualUrl = ytUrlInput.value.trim();
-        const optimizedQuery = `${selTrack.cleanArtist} ${selTrack.cleanSong} Topic`;
-
-        const payload = {
-          ...selTrack, 
-          user: u,
-          manualUrl: manualUrl, // 유튜브 뮤직 URL 우선 적용
-          searchQuery: optimizedQuery // 수동 입력 없을 시 Topic 채널 기반 정밀 검색
-        };
-
-        send(payload, li, sbtn, checkIcon);
-      });
-
-      cbtn.addEventListener('click', () => deselect());
-      $list.appendChild(li);
-    });
   }
 
   async function send(payload, item, btn, checkIcon) {
@@ -1126,28 +1196,37 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD
         body: JSON.stringify({ action: 'add', data: payload })
       });
       const resData = await r.json();
-      if (resData.result === 'error') { throw new Error(resData.error); }
+      
+      if (resData.result === 'error') {
+        throw new Error(resData.error || '알 수 없는 오류가 발생했습니다.');
+      }
+      
       triggerSuccess(item, btn, checkIcon);
+      
     } catch (err) {
       console.error(err);
-      btn.classList.remove('loading'); btn.disabled = false;
+      btn.classList.remove('loading'); 
+      btn.disabled = false;
       toast(err.message || '신청에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   }
 
   function triggerSuccess(item, btn, checkIcon) {
-    btn.classList.remove('loading'); btn.classList.add('success');
+    btn.classList.remove('loading'); 
+    btn.classList.add('success');
     checkIcon.style.display = 'block';
     setTimeout(() => {
       onDone(item);
-      btn.classList.remove('success'); btn.disabled = false;
+      btn.classList.remove('success'); 
+      btn.disabled = false;
       checkIcon.style.display = 'none';
       btn.querySelector('.submit-text').style.display = 'block';
     }, 800);
   }
 
   function onDone(item) {
-    item.classList.remove('selected'); item.classList.add('done');
+    item.classList.remove('selected'); 
+    item.classList.add('done');
     selItem = selTrack = null; 
     toast('신청이 완료되었습니다 🎉');
   }
@@ -1159,24 +1238,80 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD
     selItem = selTrack = null;
   }
   
-  function resetSel() { selItem = selTrack = null; }
-  function hideAllStates() { $home.style.display = 'none'; $loader.classList.remove('active'); $results.classList.remove('active'); }
-  function showHome() { stopAudio(); hideAllStates(); resetSel(); $home.style.display = 'flex'; }
-  function showLoader() { hideAllStates(); resetSel(); $loader.classList.add('active'); }
-  function showEmpty() { hideAllStates(); $list.innerHTML = `<li style="padding:80px 24px;text-align:center;"><p style="font-size:16px;font-weight:600;color:var(--t-hi);">검색 결과가 없습니다</p><p style="font-size:14px;color:var(--t-mid);margin-top:8px;">다른 키워드로 검색해 보세요.</p></li>`; $count.textContent = ''; $results.classList.add('active'); }
+  function resetSel() { 
+    selItem = selTrack = null; 
+  }
+
+  function hideAllStates() { 
+    $home.style.display = 'none'; 
+    $loader.classList.remove('active'); 
+    $results.classList.remove('active'); 
+  }
+  
+  function showHome() { 
+    stopAudio(); 
+    hideAllStates(); 
+    resetSel(); 
+    $home.style.display = 'flex'; 
+  }
+  
+  function showLoader() { 
+    hideAllStates(); 
+    resetSel(); 
+    $loader.classList.add('active'); 
+  }
+  
+  function showEmpty() {
+    hideAllStates();
+    $list.innerHTML = `<li style="padding:80px 24px;text-align:center;"><p style="font-size:16px;font-weight:600;color:var(--t-hi);">검색 결과가 없습니다</p><p style="font-size:14px;color:var(--t-mid);margin-top:8px;">다른 키워드로 검색해 보세요.</p></li>`;
+    $count.textContent = ''; 
+    $results.classList.add('active');
+  }
 
   let _tt = null;
   function toast(msg) {
-    $toast.textContent = msg; $toast.classList.add('show');
-    clearTimeout(_tt); _tt = setTimeout(() => $toast.classList.remove('show'), 2600);
+    $toast.textContent = msg; 
+    $toast.classList.add('show');
+    clearTimeout(_tt); 
+    _tt = setTimeout(() => $toast.classList.remove('show'), 2600);
   }
 
-  function shake(el) { el.animate([ {transform:'translateX(0)'}, {transform:'translateX(-7px)'}, {transform:'translateX(7px)'}, {transform:'translateX(-4px)'}, {transform:'translateX(4px)'}, {transform:'translateX(0)'} ], {duration:360, easing:'ease'}); }
-  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function shake(el) {
+    el.animate([ 
+      {transform:'translateX(0)'},
+      {transform:'translateX(-7px)'}, 
+      {transform:'translateX(7px)'},
+      {transform:'translateX(-4px)'}, 
+      {transform:'translateX(4px)'},
+      {transform:'translateX(0)'} 
+    ], {duration:360, easing:'ease'});
+  }
 
-  $search.addEventListener('input', () => { $clear.classList.toggle('visible', $search.value.length > 0); });
-  $search.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doSearch($search.value); $search.blur(); } });
-  $clear.addEventListener('click', () => { $search.value = ''; $clear.classList.remove('visible'); $search.focus(); });
+  function esc(s) { 
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;'); 
+  }
+
+  $search.addEventListener('input', () => { 
+    $clear.classList.toggle('visible', $search.value.length > 0); 
+  });
+  
+  $search.addEventListener('keydown', e => { 
+    if (e.key === 'Enter') { 
+      e.preventDefault(); 
+      doSearch($search.value); 
+      $search.blur(); 
+    } 
+  });
+  
+  $clear.addEventListener('click', () => { 
+    $search.value = ''; 
+    $clear.classList.remove('visible'); 
+    $search.focus(); 
+  });
 
   showHome();
 })();
