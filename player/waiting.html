@@ -6,8 +6,10 @@
 <title>MIWIG Live Waitlist</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <style>
+
 /* ════════════════════════════════════════
-   Cosmic Dark — Design System (리퀘스트 페이지와 100% 동기화)
+   Cosmic Dark — Design System 
+   (리퀘스트 페이지와 100% 동기화)
 ════════════════════════════════════════ */
 :root {
   --bg:          #07071A;
@@ -29,6 +31,8 @@
   --uv-neon:   #B4A4FF;
   --uv-glow:   rgba(95, 75, 139, 0.45);
   --uv-grad:   linear-gradient(135deg, #5F4B8B 0%, #7D52C4 55%, #A070D8 100%);
+  
+  --spotify:      #1DB954; 
 
   --r-sm:  6px;
   --r-md:  10px;
@@ -54,11 +58,13 @@
   margin: 0; 
   padding: 0; 
 }
+
 html { 
   height: 100%; 
   -webkit-text-size-adjust: 100%; 
   background: var(--bg); 
 }
+
 body {
   min-height: 100%;
   background: var(--bg);
@@ -67,23 +73,43 @@ body {
   /* 모바일 하단 플로팅 버튼을 위한 여백 확보 */
   padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
-a { text-decoration: none; color: inherit; }
-img { display: block; }
-ul { list-style: none; }
-::-webkit-scrollbar { width: 0; height: 0; }
+
+a { 
+  text-decoration: none; 
+  color: inherit; 
+}
+
+img { 
+  display: block; 
+}
+
+ul { 
+  list-style: none; 
+}
+
+::-webkit-scrollbar { 
+  width: 0; 
+  height: 0; 
+}
 
 /* ════════════════════════════════════════
    Cosmic Nebula Background
 ════════════════════════════════════════ */
 .cosmic-bg {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
   background:
     radial-gradient(ellipse 160% 90% at 50% -10%, rgba(95,75,139,0.28) 0%, transparent 58%),
     radial-gradient(ellipse 80%  50% at 90%  95%, rgba(65,45,115,0.14) 0%, transparent 55%),
     radial-gradient(ellipse 55%  35% at  5%  65%, rgba(80,55,130,0.09) 0%, transparent 50%);
 }
+
 .cosmic-bg::after {
-  content: ''; position: absolute; inset: 0;
+  content: '';
+  position: absolute;
+  inset: 0;
   background-image:
     radial-gradient(circle 1px at 18% 22%, rgba(200,190,255,0.55) 0%, transparent 100%),
     radial-gradient(circle 1px at 74% 11%, rgba(200,190,255,0.40) 0%, transparent 100%),
@@ -98,117 +124,357 @@ ul { list-style: none; }
 }
 
 /* ════════════════════════════════════════
-   Header (리퀘스트 페이지와 동일)
+   Header
 ════════════════════════════════════════ */
 .header-wrap {
-  position: sticky; top: 0; z-index: 300;
+  position: sticky;
+  top: 0; 
+  z-index: 300;
   padding: calc(14px + env(safe-area-inset-top)) 20px 14px;
   background: rgba(7, 7, 26, 0.78);
   backdrop-filter: blur(30px) saturate(180%);
   -webkit-backdrop-filter: blur(30px) saturate(180%);
   border-bottom: 1px solid transparent;
   transition: border-color var(--t1), background var(--t2);
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
 .header-wrap.scrolled {
   background: rgba(7, 7, 26, 0.94);
   border-bottom: 1px solid var(--border-dim);
 }
+
 @media (min-width: 600px) {
-  .header-wrap { max-width: 600px; margin: 0 auto; }
+  .header-wrap { 
+    max-width: 600px; 
+    margin: 0 auto; 
+  }
 }
 
-.header-brand { display: flex; align-items: center; gap: 12px; }
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .header-logo { 
-  width: 36px; height: 36px; flex-shrink: 0; border-radius: 9px; object-fit: cover; 
-  box-shadow: 0 0 0 1px rgba(148,130,255,0.22), 0 0 12px rgba(95,75,139,0.50), 0 0 26px rgba(95,75,139,0.16); 
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  object-fit: cover; 
+  box-shadow:
+    0 0 0 1px rgba(148,130,255,0.22),
+    0 0 12px rgba(95,75,139,0.50),
+    0 0 26px rgba(95,75,139,0.16); 
 }
-.header-text { display: flex; flex-direction: column; gap: 2px; }
-.header-title { 
-  font-size: 18px; font-weight: 800; font-style: italic; letter-spacing: -0.3px; line-height: 1.1; 
-  background: linear-gradient(95deg, #F5F2FF 0%, var(--uv-neon) 100%); 
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; 
-}
-.header-sub { font-size: 11px; font-weight: 500; color: var(--t-lo); letter-spacing: 0.3px; }
 
-.live-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--t-lo); letter-spacing: 0.1em; }
-.dot { width: 6px; height: 6px; background: #ff4b4b; border-radius: 50%; box-shadow: 0 0 10px rgba(255, 75, 75, 0.5); animation: blink 1.5s infinite; }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header-title { 
+  font-size: 18px;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.3px;
+  line-height: 1.1; 
+  background: linear-gradient(95deg, #F5F2FF 0%, var(--uv-neon) 100%); 
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text; 
+}
+
+.header-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--t-lo);
+  letter-spacing: 0.3px;
+}
+
+.live-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--t-lo);
+  letter-spacing: 0.1em;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background: #ff4b4b;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 75, 75, 0.5);
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink { 
+  0%, 100% { opacity: 1; } 
+  50% { opacity: 0.3; } 
+}
 
 /* ════════════════════════════════════════
    Waitlist Content
 ════════════════════════════════════════ */
-.container { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; padding: 24px 20px; }
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
 
 .section-label { 
-  font-size: 12px; font-weight: 800; color: var(--uv-neon); 
-  letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 16px; 
-  display: flex; align-items: center; gap: 12px; 
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--uv-neon); 
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 16px; 
+  display: flex;
+  align-items: center;
+  gap: 12px; 
 }
-.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border-mid); }
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-mid);
+}
 
 /* [Now Playing Card] */
-.now-air { margin-bottom: 40px; }
+.now-air {
+  margin-bottom: 40px;
+}
+
 .now-card {
   background: var(--surf-2);
   border: 1px solid rgba(148, 130, 255, 0.2);
-  border-radius: 20px; padding: 20px;
-  display: flex; align-items: center; gap: 20px;
-  box-shadow: 0 14px 36px rgba(0,0,0,0.65), 0 0 28px rgba(95,75,139,0.22);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow:
+    0 14px 36px rgba(0,0,0,0.65),
+    0 0 28px rgba(95,75,139,0.22);
   transition: transform var(--t1), border-color var(--t1);
 }
-.now-card:active { transform: scale(0.98); border-color: var(--uv-bright); }
-.now-art { width: 90px; height: 90px; border-radius: var(--r-md); overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-.now-art img { width: 100%; height: 100%; object-fit: cover; }
-.now-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-.now-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--t-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
-.now-artist { font-size: 14px; color: var(--t-mid); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.now-req { display: inline-block; font-size: 10px; font-weight: 800; color: var(--uv-neon); border: 1px solid rgba(180,164,255,0.3); padding: 3px 8px; border-radius: 4px; align-self: flex-start; }
+
+.now-card:active {
+  transform: scale(0.98);
+  border-color: var(--uv-bright);
+}
+
+.now-art {
+  width: 90px;
+  height: 90px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.now-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.now-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.now-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--t-hi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.now-artist {
+  font-size: 14px;
+  color: var(--t-mid);
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.now-req {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--spotify);
+  border: 1px solid rgba(29, 185, 84, 0.3);
+  padding: 3px 8px;
+  border-radius: 4px;
+  align-self: flex-start;
+}
 
 /* [Queue List] */
-.track-list { display: flex; flex-direction: column; gap: 2px; }
-.track-item { border-radius: var(--r-lg); overflow: hidden; }
+.track-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.track-item {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
 .track-row {
-  display: flex; align-items: center; gap: 14px; padding: 12px;
-  background: transparent; border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: transparent;
+  border-radius: var(--r-lg);
   transition: background var(--t1);
 }
-.track-row:active { background: rgba(148,130,255,0.06); }
+
+.track-row:active {
+  background: rgba(148,130,255,0.06);
+}
 
 .thumb-wrap {
-  position: relative; width: 48px; height: 48px; flex-shrink: 0;
-  border-radius: var(--r-md); overflow: hidden; background: var(--surf-3); border: 1px solid var(--border-dim);
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--surf-3);
+  border: 1px solid var(--border-dim);
 }
-.track-thumb { width: 100%; height: 100%; object-fit: cover; }
-.track-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-.track-title { font-size: 16px; font-weight: 600; color: var(--t-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }
-.track-sub { font-size: 14px; color: var(--t-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
-.track-user { font-size: 11px; font-weight: 700; color: var(--uv-neon); margin-top: 4px; }
 
-.track-trail { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
-.trail-icon { color: var(--t-lo); width: 18px; height: 18px; transition: color var(--t1); }
-.track-row:active .trail-icon { color: var(--uv-neon); }
+.track-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-#empty { text-align: center; padding: 80px 24px; color: var(--t-mid); font-size: 14px; display: none; }
+.track-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.track-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--t-hi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.35;
+}
+
+.track-sub {
+  font-size: 14px;
+  color: var(--t-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.track-user {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--spotify);
+  margin-top: 4px;
+}
+
+.track-trail {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.trail-icon {
+  color: var(--t-lo);
+  width: 18px;
+  height: 18px;
+  transition: color var(--t1);
+}
+
+.track-row:active .trail-icon {
+  color: var(--spotify);
+}
+
+#empty {
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--t-mid);
+  font-size: 14px;
+  display: none;
+}
 
 /* ════════════════════════════════════════
    Floating Button (To Request Page)
 ════════════════════════════════════════ */
 .floating-btn {
   position: fixed;
-  bottom: calc(24px + env(safe-area-inset-bottom)); right: 24px;
-  width: 58px; height: 58px;
-  background: var(--uv-grad); color: white;
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 24px rgba(95, 75, 139, 0.5), 0 0 0 1px rgba(255,255,255,0.1);
-  z-index: 9999; transition: transform 0.2s var(--ease-spring), filter 0.2s;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  right: 24px;
+  width: 58px;
+  height: 58px;
+  background: var(--uv-grad);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 8px 24px rgba(95, 75, 139, 0.5),
+    0 0 0 1px rgba(255,255,255,0.1);
+  z-index: 9999;
+  transition: transform 0.2s var(--ease-spring), filter 0.2s;
 }
-.floating-btn:active { transform: scale(0.85); filter: brightness(1.2); }
-.floating-btn svg { width: 26px; height: 26px; }
+
+.floating-btn:active {
+  transform: scale(0.85);
+  filter: brightness(1.2);
+}
+
+.floating-btn svg {
+  width: 26px;
+  height: 26px;
+}
 
 @media (min-width: 600px) {
-  .now-art { width: 120px; height: 120px; }
-  .now-title { font-size: 24px; }
+  .now-art {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .now-title {
+    font-size: 24px;
+  }
+  
   .floating-btn {
     right: calc(50vw - 276px); /* 600px 중앙 정렬 기준 바깥쪽 배치 */
   }
@@ -227,14 +493,18 @@ ul { list-style: none; }
       <span class="header-sub">미위구 스트리밍 대기 현황</span>
     </div>
   </div>
-  <div class="live-status"><div class="dot"></div>LIVE</div>
+  <div class="live-status">
+    <div class="dot"></div>LIVE
+  </div>
 </header>
 
 <div class="container">
   <div id="onAirSection" class="now-air" style="display:none;">
     <div class="section-label">Now Playing</div>
     <a href="#" id="onAirLink" target="_blank" class="now-card">
-      <div class="now-art"><img id="onAirArt" src="" alt=""></div>
+      <div class="now-art">
+        <img id="onAirArt" src="" alt="">
+      </div>
       <div class="now-info">
         <div id="onAirTitle" class="now-title">-</div>
         <div id="onAirArtist" class="now-artist">-</div>
@@ -260,12 +530,13 @@ ul { list-style: none; }
 </a>
 
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwueKSIcvYi6Y90nN9iFmGD_zrEsx0LuT8lVeZhoQxztUWp13sNEJVonWXywEtScpIjgw/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwPK39xSvzBmjAk5A6xhTAt_l5ilg5Napa1HC-_EbHoYU0dTIUOC0ScVAua6au2kqD8Sg/exec";
 const POLL_INTERVAL = 5000;
 
 // Header scroll effect
 const $headerWrap = document.getElementById('headerWrap');
 let isScrolling = false;
+
 window.addEventListener('scroll', () => {
   if (!isScrolling) {
     window.requestAnimationFrame(() => {
@@ -277,14 +548,20 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 function esc(s) { 
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); 
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;'); 
 }
 
 async function sync() {
   try {
     const res = await fetch(GAS_URL);
     const data = await res.json();
+    
     if (data.result !== "success" || !data.queue) return;
+    
     const q = data.queue;
 
     if (q.length === 0) {
@@ -303,18 +580,21 @@ async function sync() {
     document.getElementById('onAirArtist').textContent = cur.artist;
     document.getElementById('onAirArt').src = cur.thumbUrl || '';
     document.getElementById('onAirUser').textContent = (cur.nickname || 'GUEST').toUpperCase();
-    document.getElementById('onAirLink').href = `https://music.youtube.com/watch?v=${cur.youtubeId}`;
+    
+    // 백엔드에서 spotifyLink를 보내주면 그것을 사용, 없으면 검색 링크로 대체
+    document.getElementById('onAirLink').href = cur.spotifyLink || `https://open.spotify.com/search/${encodeURIComponent(cur.artist + ' ' + cur.title)}`;
 
     // 2. Queue List
     const next = q.slice(1);
     const container = document.getElementById('qContainer');
+    
     if (next.length === 0) {
       document.getElementById('queueSection').style.display = 'none';
     } else {
       document.getElementById('queueSection').style.display = 'block';
       container.innerHTML = next.map(s => `
         <div class="track-item">
-          <a href="https://music.youtube.com/watch?v=${s.youtubeId}" target="_blank" class="track-row">
+          <a href="${s.spotifyLink || '#'}" target="_blank" class="track-row">
             <div class="thumb-wrap">
               <img class="track-thumb" src="${s.thumbUrl || ''}" alt="" loading="lazy">
             </div>
@@ -324,15 +604,17 @@ async function sync() {
               <div class="track-user">REQ: ${esc((s.nickname || 'GUEST').toUpperCase())}</div>
             </div>
             <div class="track-trail">
-              <svg class="trail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"/>
+              <svg class="trail-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
               </svg>
             </div>
           </a>
         </div>
       `).join('');
     }
-  } catch (e) { console.error("Waitlist Update Error:", e); }
+  } catch (e) { 
+    console.error("Waitlist Update Error:", e); 
+  }
 }
 
 sync();
